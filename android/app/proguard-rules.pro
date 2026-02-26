@@ -1,0 +1,6 @@
+-keep class com.stripe.android.** { *; }
+-dontwarn com.stripe.android.**
+-keep class com.google.android.gms.** { *; }
+-dontwarn com.google.android.gms.**
+-keep class com.facebook.react.** { *; }
+-dontwarn com.facebook.react.**
