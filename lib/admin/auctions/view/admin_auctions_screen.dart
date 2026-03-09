@@ -255,6 +255,9 @@ class _AllAuctionsTab extends StatelessWidget {
             onReject: auction.isPendingApproval
                 ? () => controller.rejectAuction(auction.id)
                 : null,
+            onEditPrice: (auction.isLive || auction.status == AuctionStatus.approved)
+                ? () => _showEditPriceDialog(context, auction, controller)
+                : null,
           );
         },
       ),
@@ -276,6 +279,9 @@ class _AllAuctionsTab extends StatelessWidget {
                 : null,
             onReject: auction.isPendingApproval
                 ? () => controller.rejectAuction(auction.id)
+                : null,
+            onEditPrice: (auction.isLive || auction.status == AuctionStatus.approved)
+                ? () => _showEditPriceDialog(context, auction, controller)
                 : null,
           );
         },
@@ -299,11 +305,110 @@ class _AllAuctionsTab extends StatelessWidget {
             onReject: auction.isPendingApproval
                 ? () => controller.rejectAuction(auction.id)
                 : null,
+            onEditPrice: (auction.isLive || auction.status == AuctionStatus.approved)
+                ? () => _showEditPriceDialog(context, auction, controller)
+                : null,
           );
         },
       ),
     );
   }
+}
+
+void _showEditPriceDialog(
+  BuildContext context,
+  AuctionModel auction,
+  AdminAuctionController controller,
+) {
+  final startCtrl = TextEditingController(text: auction.startingBid.toString());
+  final currentCtrl = TextEditingController(
+    text: auction.currentBid?.toString() ?? '',
+  );
+  final incrementCtrl = TextEditingController(text: '500');
+
+  showDialog(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      backgroundColor: AppTheme.bgSecondary,
+      title: Text(
+        'Edit Auction Price',
+        style: TextStyle(color: AppTheme.textPrimary),
+      ),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: startCtrl,
+              decoration: InputDecoration(
+                labelText: 'Starting Bid (AED)',
+                labelStyle: TextStyle(color: AppTheme.textSecondary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              keyboardType: TextInputType.number,
+              style: TextStyle(color: AppTheme.textPrimary),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: currentCtrl,
+              decoration: InputDecoration(
+                labelText: 'Current Bid (AED) - optional',
+                labelStyle: TextStyle(color: AppTheme.textSecondary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              keyboardType: TextInputType.number,
+              style: TextStyle(color: AppTheme.textPrimary),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: incrementCtrl,
+              decoration: InputDecoration(
+                labelText: 'Bid Increment (AED)',
+                labelStyle: TextStyle(color: AppTheme.textSecondary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              keyboardType: TextInputType.number,
+              style: TextStyle(color: AppTheme.textPrimary),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(ctx),
+          child: Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+        ),
+        ElevatedButton(
+          onPressed: () async {
+            final start = double.tryParse(startCtrl.text);
+            if (start == null || start < 1) {
+              ScaffoldMessenger.of(ctx).showSnackBar(
+                const SnackBar(content: Text('Invalid starting bid')),
+              );
+              return;
+            }
+            final current = double.tryParse(currentCtrl.text);
+            final increment = double.tryParse(incrementCtrl.text) ?? 500;
+            Navigator.pop(ctx);
+            await controller.updateAuctionPrice(
+              auction.id,
+              startingBid: start,
+              currentBid: (current != null && current > 0) ? current : null,
+              bidIncrement: increment,
+            );
+          },
+          style: ElevatedButton.styleFrom(backgroundColor: AppTheme.redPrimary),
+          child: const Text('Save'),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Custom Prettier Tab Bar
@@ -414,11 +519,13 @@ class _AdminAuctionCard extends StatelessWidget {
   final AuctionModel auction;
   final VoidCallback? onApprove;
   final VoidCallback? onReject;
+  final VoidCallback? onEditPrice;
 
   const _AdminAuctionCard({
     required this.auction,
     this.onApprove,
     this.onReject,
+    this.onEditPrice,
   });
 
   @override
@@ -653,10 +760,21 @@ class _AdminAuctionCard extends StatelessWidget {
                 ),
 
                 // Action Buttons
-                if (onApprove != null || onReject != null) ...[
+                if (onApprove != null || onReject != null || onEditPrice != null) ...[
                   const SizedBox(height: 20),
                   Row(
                     children: [
+                      if (onEditPrice != null)
+                        Expanded(
+                          child: _ActionButton(
+                            label: 'Edit Price',
+                            icon: Icons.edit_rounded,
+                            color: AppTheme.info,
+                            onPressed: onEditPrice!,
+                          ),
+                        ),
+                      if (onEditPrice != null && (onApprove != null || onReject != null))
+                        const SizedBox(width: 12),
                       if (onApprove != null)
                         Expanded(
                           child: _ActionButton(

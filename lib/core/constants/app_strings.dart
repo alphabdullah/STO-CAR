@@ -20,7 +20,7 @@ class AppStrings {
   static const String deposit = 'Deposit';
   static const String balance = 'Balance';
   static const String verificationRequired = 'Verification Required';
-  static const String verificationDescription = 'To participate in auctions and purchase parts, please deposit 4,500 AED to verify your account.';
+  static const String verificationDescription = 'To place bids in auctions, deposit 4,500 AED to verify your account. Verified users can bid up to 300,000 AED without wallet balance. Parts can be purchased with wallet balance (verified or not).';
   static const String depositNow = 'Deposit Now';
 
   // Auctions
@@ -36,6 +36,13 @@ class AppStrings {
 
   // Parts
   static const String parts = 'Parts';
+  static const String cart = 'Cart';
+  static const String addToCart = 'Add to Cart';
+  static const String buyNow = 'Buy Now';
+  static const String checkout = 'Checkout';
+  static const String shippingAddress = 'Shipping Address';
+  static const String yourCartIsEmpty = 'Your cart is empty';
+  static const String continueShopping = 'Continue Shopping';
   static const String partsMarketplace = 'Parts Marketplace';
   static const String companies = 'Companies';
   static const String partDetails = 'Part Details';
@@ -62,6 +69,7 @@ class AppStrings {
   static const String manageAuctions = 'Manage Auctions';
   static const String manageParts = 'Manage Parts';
   static const String manageBookings = 'Manage Bookings';
+  static const String orders = 'Orders';
   static const String approve = 'Approve';
   static const String reject = 'Reject';
   static const String totalAuctions = 'Total Auctions';

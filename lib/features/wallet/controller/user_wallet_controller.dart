@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/api/api_endpoints.dart';
 import '../../../../state/auth_state.dart';
 import '../../../../services/stripe_service.dart';
 import '../../../../services/wallet_service.dart';
@@ -38,13 +39,23 @@ class UserWalletController extends GetxController {
   /// Load wallet summary from API
   Future<void> loadWalletSummary() async {
     _isLoadingSummary.value = true;
+    _walletSummary.value = null;
     try {
       final data = await _walletService.getWalletSummary();
       _walletSummary.value = WalletSummary.fromJson(data);
       print('UserWalletController: Wallet summary loaded: ${_walletSummary.value?.balance}');
     } catch (e) {
       print('UserWalletController.loadWalletSummary error: $e');
-      // Don't show error to user, just log it
+      // Show empty summary so UI doesn't stay blank
+      _walletSummary.value = const WalletSummary(
+        balance: 0,
+        pendingBalance: 0,
+        totalDeposits: 0,
+        totalWithdrawals: 0,
+        thisMonthDeposits: 0,
+        thisMonthWithdrawals: 0,
+        recentTransactions: [],
+      );
     } finally {
       _isLoadingSummary.value = false;
     }
@@ -63,30 +74,26 @@ class UserWalletController extends GetxController {
       final response = await _stripeService.handleDeposit(_depositAmount.value);
 
       if (response['success'] == true) {
-        // Refresh user data to get updated balance and verification status
+        final msg = response['message']?.toString() ??
+            'Deposit of ${_depositAmount.value} AED successful!';
+
+        // Web opens new tab - no refresh until user returns. Mobile: refresh now
         await _authState.refreshUser();
-        
-        // Reload wallet summary to get updated balance and transactions
         await loadWalletSummary();
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                'Deposit of ${_depositAmount.value} AED successful!',
-              ),
-              backgroundColor: Colors.green,
-            ),
+            SnackBar(content: Text(msg), backgroundColor: Colors.green),
           );
-
-          // Check if wallet is now verified
-          if (_authState.wallet?.isVerified ?? false) {
-             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('Account verified! You can now bid and purchase parts.'),
-                backgroundColor: Colors.blue,
-              ),
-            );
+          if (!msg.contains('window opened')) {
+            if (_authState.wallet?.isVerified ?? false) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Account verified! You can now bid and purchase parts.'),
+                  backgroundColor: Colors.blue,
+                ),
+              );
+            }
           }
         }
         _depositAmount.value = 0.0;
@@ -95,9 +102,19 @@ class UserWalletController extends GetxController {
       }
     } catch (e) {
       print('UserWalletController.deposit error: $e');
-      _errorMessage.value = e.toString().contains('Exception:') 
-          ? e.toString().split('Exception:')[1].trim()
-          : 'Deposit failed. Please try again.';
+      String msg = 'Deposit failed. Please try again.';
+      if (e.toString().contains('StripeConfigException')) {
+        msg = 'Stripe payment is only supported on Android and iOS. Please use the mobile app or emulator.';
+      } else if (e.toString().contains('Exception:')) {
+        msg = e.toString().split('Exception:').last.trim();
+      } else if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
+        msg = 'Cannot connect to server. Is Laravel backend running on ${ApiEndpoints.baseUrl}?';
+      } else if (e.toString().contains('404')) {
+        msg = 'Stripe API not found. Check if backend has /api/v1/payments/stripe routes.';
+      } else if (e.toString().contains('401') || e.toString().contains('403')) {
+        msg = 'Authentication failed. Please login again.';
+      }
+      _errorMessage.value = msg;
     } finally {
       _isLoading.value = false;
     }

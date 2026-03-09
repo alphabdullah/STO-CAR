@@ -31,16 +31,19 @@ class CustomButton extends StatelessWidget {
             width: 20,
             child: CircularProgressIndicator(strokeWidth: 2),
           )
-        : Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: fullWidth ? MainAxisSize.max : MainAxisSize.min,
-            children: [
-              if (icon != null) ...[
-                Icon(icon, size: 20),
-                const SizedBox(width: 8),
+        : FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 20),
+                  const SizedBox(width: 8),
+                ],
+                Text(text, maxLines: 1, overflow: TextOverflow.ellipsis),
               ],
-              Text(text),
-            ],
+            ),
           );
 
     if (outlined) {
@@ -52,7 +55,7 @@ class CustomButton extends StatelessWidget {
             color: backgroundColor ?? Colors.red,
             width: 2,
           ),
-          minimumSize: fullWidth ? const Size(double.infinity, 48) : null,
+          minimumSize: fullWidth ? const Size(double.infinity, 50) : null,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
         ),
         child: buttonContent,
@@ -64,7 +67,7 @@ class CustomButton extends StatelessWidget {
       style: ElevatedButton.styleFrom(
         backgroundColor: backgroundColor,
         foregroundColor: textColor,
-        minimumSize: fullWidth ? const Size(double.infinity, 48) : null,
+        minimumSize: fullWidth ? const Size(double.infinity, 50) : null,
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       ),
       child: buttonContent,

@@ -1,7 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/constants/country_codes.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../controller/signup_controller.dart';
 
@@ -52,8 +56,86 @@ class SignupScreen extends StatelessWidget {
         ? screenWidth * 0.1
         : 24.0;
 
+    Widget buildDocumentUploadCard({
+      required String label,
+      required Uint8List? imageData,
+      required VoidCallback onTap,
+    }) {
+      final cardHeight = isTablet
+          ? 200.0
+          : isLargeMobile
+          ? 180.0
+          : isMediumMobile
+          ? 170.0
+          : 160.0;
+
+      return GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: cardHeight,
+          decoration: BoxDecoration(
+            color: AppDesign.getBgSecondary(context),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppDesign.getBorder(context).withOpacity(0.8)),
+          ),
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            children: [
+              Expanded(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: imageData != null
+                      ? Image.memory(
+                          imageData,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                      : Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: AppDesign.getBgElevated(context),
+                          ),
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.camera_alt_outlined,
+                                  size: 32,
+                                  color: AppDesign.getTextTertiary(context),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Tap to upload',
+                                  style: TextStyle(
+                                    color: AppDesign.getTextTertiary(context),
+                                    fontFamily: AppTheme.fontFamily,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppDesign.getTextPrimary(context),
+                  fontFamily: AppTheme.fontFamily,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(
@@ -67,9 +149,9 @@ class SignupScreen extends StatelessWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                   ),
                   onPressed: () => context.pop(),
                   padding: EdgeInsets.zero,
@@ -152,7 +234,7 @@ class SignupScreen extends StatelessWidget {
                         ? 15.0
                         : 14.0,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -172,22 +254,22 @@ class SignupScreen extends StatelessWidget {
               TextField(
                 onChanged: controller.setName,
                 style: TextStyle(
-                  color: AppTheme.textPrimary,
+                  color: AppDesign.getTextPrimary(context),
                   fontFamily: AppTheme.fontFamily,
                 ),
                 decoration: InputDecoration(
                   hintText: 'Enter your full name',
-                  prefixIcon: const Icon(
+                  prefixIcon: Icon(
                     Icons.person,
-                    color: AppTheme.textMuted,
+                    color: AppDesign.getTextTertiary(context),
                   ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.border),
+                    borderSide: BorderSide(color: AppDesign.getBorder(context)),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppTheme.border),
+                    borderSide: BorderSide(color: AppDesign.getBorder(context)),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -197,9 +279,9 @@ class SignupScreen extends StatelessWidget {
                     ),
                   ),
                   filled: true,
-                  fillColor: AppTheme.bgSecondary,
+                  fillColor: AppDesign.getBgSecondary(context),
                   hintStyle: TextStyle(
-                    color: AppTheme.textMuted,
+                    color: AppDesign.getTextTertiary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -230,7 +312,7 @@ class SignupScreen extends StatelessWidget {
                         ? 15.0
                         : 14.0,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -253,23 +335,23 @@ class SignupScreen extends StatelessWidget {
                 return TextField(
                   onChanged: controller.setEmail,
                   style: TextStyle(
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   decoration: InputDecoration(
                     hintText: 'example@email.com',
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.email_outlined,
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                     ),
                     errorText: hasEmailError ? errorMsg : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -279,9 +361,9 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                     filled: true,
-                    fillColor: AppTheme.bgSecondary,
+                    fillColor: AppDesign.getBgSecondary(context),
                     hintStyle: TextStyle(
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                   ),
@@ -314,7 +396,7 @@ class SignupScreen extends StatelessWidget {
                         ? 15.0
                         : 14.0,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -330,47 +412,91 @@ class SignupScreen extends StatelessWidget {
                     : 6.0,
               ),
 
-              // Phone field - Obx only for error message
+              // Phone field with country code - Obx for error and country
               Obx(() {
                 final errorMsg = controller.errorMessage;
                 final hasPhoneError = errorMsg?.contains('phone') == true;
-                return TextField(
-                  onChanged: controller.setPhone,
-                  style: TextStyle(
-                    color: AppTheme.textPrimary,
-                    fontFamily: AppTheme.fontFamily,
-                  ),
-                  decoration: InputDecoration(
-                    hintText: 'Enter your phone number',
-                    prefixIcon: const Icon(
-                      Icons.phone_outlined,
-                      color: AppTheme.textMuted,
-                    ),
-                    errorText: hasPhoneError ? errorMsg : null,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(
-                        color: AppTheme.redPrimary,
-                        width: 2,
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Country code dropdown
+                    Container(
+                      width: 110,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      decoration: BoxDecoration(
+                        color: AppDesign.getBgSecondary(context),
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: AppDesign.getBorder(context)),
+                      ),
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: controller.countryDialCode,
+                          isExpanded: true,
+                          dropdownColor: AppDesign.getBgSecondary(context),
+                          style: TextStyle(
+                            color: AppDesign.getTextPrimary(context),
+                            fontFamily: AppTheme.fontFamily,
+                            fontSize: 14,
+                          ),
+                          items: countryCodes.map((c) {
+                            final dial = c['dial'] ?? '';
+                            return DropdownMenuItem<String>(
+                              value: dial,
+                              child: Text(
+                                '${c['dial']} ${c['code'] ?? ''}',
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (v) {
+                            if (v != null) controller.setCountryDialCode(v);
+                          },
+                        ),
                       ),
                     ),
-                    filled: true,
-                    fillColor: AppTheme.bgSecondary,
-                    hintStyle: TextStyle(
-                      color: AppTheme.textMuted,
-                      fontFamily: AppTheme.fontFamily,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: TextField(
+                        onChanged: controller.setPhone,
+                        style: TextStyle(
+                          color: AppDesign.getTextPrimary(context),
+                          fontFamily: AppTheme.fontFamily,
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Enter phone number',
+                          prefixIcon: Icon(
+                            Icons.phone_outlined,
+                            color: AppDesign.getTextTertiary(context),
+                            size: 20,
+                          ),
+                          errorText: hasPhoneError ? errorMsg : null,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppDesign.getBorder(context)),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(color: AppDesign.getBorder(context)),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: AppTheme.redPrimary,
+                              width: 2,
+                            ),
+                          ),
+                          filled: true,
+                          fillColor: AppDesign.getBgSecondary(context),
+                          hintStyle: TextStyle(
+                            color: AppDesign.getTextTertiary(context),
+                            fontFamily: AppTheme.fontFamily,
+                          ),
+                        ),
+                        keyboardType: TextInputType.phone,
+                        textInputAction: TextInputAction.next,
+                      ),
                     ),
-                  ),
-                  keyboardType: TextInputType.phone,
-                  textInputAction: TextInputAction.next,
+                  ],
                 );
               }),
 
@@ -398,7 +524,7 @@ class SignupScreen extends StatelessWidget {
                         ? 15.0
                         : 14.0,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -422,32 +548,32 @@ class SignupScreen extends StatelessWidget {
                 return TextField(
                   onChanged: controller.setPassword,
                   style: TextStyle(
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Enter your password',
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.lock_outline,
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         isPasswordVisible
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: AppTheme.textMuted,
+                        color: AppDesign.getTextTertiary(context),
                       ),
                       onPressed: controller.togglePasswordVisibility,
                     ),
                     errorText: hasPasswordError ? errorMsg : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -457,9 +583,9 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                     filled: true,
-                    fillColor: AppTheme.bgSecondary,
+                    fillColor: AppDesign.getBgSecondary(context),
                     hintStyle: TextStyle(
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                   ),
@@ -492,7 +618,7 @@ class SignupScreen extends StatelessWidget {
                         ? 15.0
                         : 14.0,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -517,32 +643,32 @@ class SignupScreen extends StatelessWidget {
                 return TextField(
                   onChanged: controller.setConfirmPassword,
                   style: TextStyle(
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   decoration: InputDecoration(
                     hintText: 'Confirm your password',
-                    prefixIcon: const Icon(
+                    prefixIcon: Icon(
                       Icons.lock_outline,
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                     ),
                     suffixIcon: IconButton(
                       icon: Icon(
                         isConfirmPasswordVisible
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: AppTheme.textMuted,
+                        color: AppDesign.getTextTertiary(context),
                       ),
                       onPressed: controller.toggleConfirmPasswordVisibility,
                     ),
                     errorText: hasMatchError ? errorMsg : null,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -552,9 +678,9 @@ class SignupScreen extends StatelessWidget {
                       ),
                     ),
                     filled: true,
-                    fillColor: AppTheme.bgSecondary,
+                    fillColor: AppDesign.getBgSecondary(context),
                     hintStyle: TextStyle(
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                   ),
@@ -564,6 +690,85 @@ class SignupScreen extends StatelessWidget {
                 );
               }),
 
+              SizedBox(
+                height: isTablet
+                    ? 22.0
+                    : isLargeMobile
+                    ? 18.0
+                    : isMediumMobile
+                    ? 16.0
+                    : 14.0,
+              ),
+
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Upload Emirates ID',
+                  style: TextStyle(
+                    fontSize: isTablet
+                        ? 18.0
+                        : isLargeMobile
+                        ? 16.0
+                        : isMediumMobile
+                        ? 15.0
+                        : 14.0,
+                    fontWeight: FontWeight.w600,
+                    color: AppDesign.getTextPrimary(context),
+                    fontFamily: AppTheme.fontFamily,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Please upload both the front and back of your Emirates Card for verification.',
+                style: TextStyle(
+                  fontSize: isTablet
+                      ? 16.0
+                      : isLargeMobile
+                      ? 15.0
+                      : isMediumMobile
+                      ? 14.0
+                      : 13.0,
+                  color: AppDesign.getTextTertiary(context),
+                  fontFamily: AppTheme.fontFamily,
+                ),
+              ),
+              SizedBox(
+                height: isTablet
+                    ? 16.0
+                    : isLargeMobile
+                    ? 14.0
+                    : isMediumMobile
+                    ? 12.0
+                    : 10.0,
+              ),
+
+              Obx(
+                () {
+                  final uploadSpacing =
+                      isTablet ? 24.0 : isLargeMobile ? 16.0 : 12.0;
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: buildDocumentUploadCard(
+                          label: 'Front Side',
+                          imageData: controller.registrationImageFront,
+                          onTap: () => controller.pickRegistrationImageFront(),
+                        ),
+                      ),
+                      SizedBox(width: uploadSpacing),
+                      Expanded(
+                        child: buildDocumentUploadCard(
+                          label: 'Back Side',
+                          imageData: controller.registrationImageBack,
+                          onTap: () => controller.pickRegistrationImageBack(),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
               SizedBox(
                 height: isTablet
                     ? 32.0
@@ -600,7 +805,7 @@ class SignupScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.transparent,
                       shadowColor: Colors.transparent,
-                      foregroundColor: AppTheme.textPrimary,
+                      foregroundColor: Colors.white,
                       padding: EdgeInsets.symmetric(
                         vertical: isTablet
                             ? 18.0
@@ -622,14 +827,14 @@ class SignupScreen extends StatelessWidget {
                             child: CircularProgressIndicator(
                               strokeWidth: 2,
                               valueColor: const AlwaysStoppedAnimation<Color>(
-                                AppTheme.textPrimary,
+                                Colors.white,
                               ),
                             ),
                           )
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(Icons.person_add, size: 22),
+                              Icon(Icons.person_add, size: 22),
                               SizedBox(
                                 width: isTablet
                                     ? 12.0
@@ -676,7 +881,7 @@ class SignupScreen extends StatelessWidget {
                   Text(
                     "Already have an account? ",
                     style: TextStyle(
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                   ),
@@ -719,7 +924,7 @@ class SignupScreen extends StatelessWidget {
                         ),
                         child: Row(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.error_outline,
                               color: AppTheme.error,
                             ),

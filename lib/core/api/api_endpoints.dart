@@ -6,12 +6,14 @@ class ApiEndpoints {
   ApiEndpoints._();
 
   // Base Configuration
-  // For Android Emulator: use 10.0.2.2 instead of localhost
-  // For iOS Simulator: use localhost
-  // For Physical Device: use your computer's IP address (e.g., http://192.168.1.100:8000)
+  // Debug/Development: Local Laravel backend (php artisan serve on port 8000)
+  // - Windows/Desktop: http://127.0.0.1:8000
+  // - Android Emulator: change to http://10.0.2.2:8000
+  // - Physical Device: use your PC's IP (e.g. http://192.168.1.100:8000)
+  // Release/Production: Live server
   static String get baseUrl {
-    // Live Server URL (Hostinger)
-    return 'https://updated.bidssync.com';
+    // Live backend
+    return 'https://stogroups.com';
   }
 
   static const String apiVersion = 'v1';
@@ -63,6 +65,10 @@ class ApiEndpoints {
   /// Update profile image
   /// POST /api/v1/auth/profile/image
   static const String updateProfileImage = '$authPrefix/profile/image';
+
+  /// Update FCM token for push notifications
+  /// POST /api/v1/auth/profile/fcm-token
+  static const String updateFcmToken = '$authPrefix/profile/fcm-token';
 
   /// Change password
   /// POST /api/v1/auth/change-password
@@ -186,6 +192,32 @@ class ApiEndpoints {
   static const String getFavoriteParts = '$apiPrefix/favorite-parts';
 
   // ============================================================================
+  // CART ENDPOINTS
+  // ============================================================================
+
+  static const String cartPrefix = '$apiPrefix/cart';
+
+  /// Get cart
+  /// GET /api/v1/cart
+  static const String getCart = cartPrefix;
+
+  /// Add to cart
+  /// POST /api/v1/cart
+  static const String addToCart = cartPrefix;
+
+  /// Update cart item
+  /// PUT /api/v1/cart/:id
+  static String updateCartItem(String id) => '$cartPrefix/$id';
+
+  /// Remove from cart
+  /// DELETE /api/v1/cart/:id
+  static String removeFromCart(String id) => '$cartPrefix/$id';
+
+  /// Cart checkout
+  /// POST /api/v1/cart/checkout
+  static const String cartCheckout = '$cartPrefix/checkout';
+
+  // ============================================================================
   // SERVICE TYPES ENDPOINTS
   // ============================================================================
 
@@ -262,6 +294,15 @@ class ApiEndpoints {
   /// Confirm stripe payment
   /// POST /api/v1/payments/stripe/confirm
   static const String confirmStripePayment = '$stripePrefix/confirm';
+
+  /// Create Stripe Checkout Session (for web - redirects to Stripe-hosted page)
+  /// POST /api/v1/payments/stripe/checkout-session
+  static const String createCheckoutSession = '$stripePrefix/checkout-session';
+
+  /// Verify Checkout Session after redirect (credit wallet)
+  /// POST /api/v1/payments/stripe/verify-checkout-session
+  static const String verifyCheckoutSession =
+      '$stripePrefix/verify-checkout-session';
 
   // ============================================================================
   // NOTIFICATIONS ENDPOINTS
@@ -399,4 +440,15 @@ class ApiEndpoints {
   /// DELETE /api/v1/admin/service-fields/:id
   static String deleteServiceField(String id) =>
       '$adminServiceFieldsPrefix/$id';
+
+  /// Get part purchases (orders) - admin ecommerce orders
+  /// GET /api/v1/admin/part-purchases
+  static const String getPartPurchases = '$adminPrefix/part-purchases';
+
+  // Admin Settings
+  /// GET /api/v1/admin/settings
+  static const String getAdminSettings = '$adminPrefix/settings';
+
+  /// PUT /api/v1/admin/settings/stripe
+  static const String updateStripeSettings = '$adminPrefix/settings/stripe';
 }

@@ -6,6 +6,7 @@ import '../../../core/api/api_client.dart' as api;
 import '../../../models/auction_model.dart';
 import '../../../core/api/api_client.dart';
 import '../../../state/auth_state.dart';
+import '../../../state/auction_state.dart';
 
 /// Admin auction controller (MVC pattern - Controller layer)
 class AdminAuctionController extends GetxController {
@@ -173,6 +174,53 @@ class AdminAuctionController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to reject auction. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  Future<void> updateAuctionPrice(
+    String auctionId, {
+    required double startingBid,
+    double? currentBid,
+    double? bidIncrement,
+  }) async {
+    _isLoading.value = true;
+    try {
+      await _adminService.updateAuction(
+        auctionId,
+        startingBid: startingBid,
+        currentBid: currentBid,
+        bidIncrement: bidIncrement,
+      );
+      Get.snackbar(
+        AppStrings.success,
+        'Auction price updated successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 2),
+      );
+      await loadPendingAuctions(forceRefresh: true);
+      Get.find<AuctionState>().loadAuctions(forceRefresh: true);
+    } on api.ApiException catch (e) {
+      Get.snackbar(
+        'Error',
+        e.message,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to update auction. Please try again.',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,

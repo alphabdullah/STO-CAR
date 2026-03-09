@@ -1,106 +1,151 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'app_design_system.dart';
 
-/// Application theme configuration - Dark Automotive Performance UI
+/// STO Car - Full UI Theme
+/// Automotive marketplace: professional, responsive, accessible
 class AppTheme {
   AppTheme._();
 
-  // Color Tokens - Dark Automotive Performance UI
-  // Backgrounds
-  static const Color bgPrimary = Color(0xFF0B0D10);
-  static const Color bgSecondary = Color(0xFF141821);
-  static const Color bgElevated = Color(0xFF1C2130);
-  static const Color border = Color(0xFF242A3A);
+  // ==================== COLORS (Design System Constants) ====================
+  // We keep these 'static const' to prevent breaking legacy 'const' widgets.
+  // Note: These will always return the dark-mode variants for legacy constants.
+  static const Color bgPrimary = AppDesign.darkBgPrimary;
+  static const Color bgSecondary = AppDesign.darkBgSecondary;
+  static const Color bgElevated = AppDesign.darkBgElevated;
+  static const Color bgCard = AppDesign.darkBgCard;
+  static const Color border = AppDesign.darkBorder;
+  static const Color borderLight = AppDesign.darkBorderLight;
 
-  // Red - Only for actions and urgency
-  static const Color redPrimary = Color(0xFFE10600);
-  static const Color redPressed = Color(0xFFB30500);
-  static const Color redSoft = Color(0xFFFF4D4D);
+  static const Color redPrimary = AppDesign.primary;
+  static const Color redPressed = AppDesign.primaryHover;
+  static const Color redSoft = AppDesign.primaryLight;
 
-  // Text Colors
-  static const Color textPrimary = Color(0xFFFFFFFF);
-  static const Color textSecondary = Color(0xFFB4B8C5);
-  static const Color textMuted = Color(0xFF7C8296);
-  static const Color textDisabled = Color(0xFF4A4F63);
+  static const Color textPrimary = AppDesign.darkTextPrimary;
+  static const Color textSecondary = AppDesign.darkTextSecondary;
+  static const Color textMuted = AppDesign.darkTextTertiary;
 
-  // Status Colors
-  static const Color success = Color(0xFF2ED573);
-  static const Color warning = Color(0xFFFFA502);
-  static const Color error = Color(0xFFFF4757);
-  static const Color info = Color(0xFF1E90FF);
+  static const Color success = AppDesign.success;
+  static const Color warning = AppDesign.warning;
+  static const Color error = AppDesign.error;
+  static const Color info = AppDesign.info;
 
-  // Legacy compatibility (mapped to new colors)
-  static const Color primaryColor = redPrimary;
-  static const Color secondaryColor = redPressed;
-  static const Color errorColor = error;
-  static const Color warningColor = warning;
-  static const Color successColor = success;
-  static const Color backgroundColor = bgPrimary;
-  static const Color surfaceColor = bgSecondary;
+  // ==================== DESIGN TOKENS ====================
+  static const double radiusSm = AppDesign.radiusSm;
+  static const double radiusMd = AppDesign.radiusMd;
+  static const double radiusLg = AppDesign.radiusLg;
+  static const double radiusXl = AppDesign.radiusXl;
+  static const double radius2xl = AppDesign.radiusXl;
+  static const double radius3xl = 28;
 
-  // Typography - Inter font family
-  static const String fontFamily = 'Inter';
-  static const String fontFallback =
-      'system-ui, -apple-system, BlinkMacSystemFont, sans-serif';
+  static const double spacingXs = 4;
+  static const double spacingSm = 8;
+  static const double spacingMd = 12;
+  static const double spacingLg = 16;
+  static const double spacingXl = 20;
+  static const double spacing2xl = 24;
 
-  // Dark Theme
-  static ThemeData get lightTheme {
+  static const Duration animFast = AppDesign.fast;
+  static const Duration animNormal = AppDesign.normal;
+  static const Duration animSlow = Duration(milliseconds: 400);
+
+  static const String fontFamily = 'Poppins';
+
+  // ==================== THEMES ====================
+
+  static ThemeData get lightTheme => _createTheme(Brightness.light);
+  static ThemeData get darkTheme => _createTheme(Brightness.dark);
+
+  static ThemeData _createTheme(Brightness brightness) {
+    final bool isDark = brightness == Brightness.dark;
+
+    final Color bgPrimary = isDark
+        ? AppDesign.darkBgPrimary
+        : AppDesign.lightBgPrimary;
+    final Color bgSecondary = isDark
+        ? AppDesign.darkBgSecondary
+        : AppDesign.lightBgSecondary;
+    final Color textPrimary = isDark
+        ? AppDesign.darkTextPrimary
+        : AppDesign.lightTextPrimary;
+    final Color textSecondary = isDark
+        ? AppDesign.darkTextSecondary
+        : AppDesign.lightTextSecondary;
+    final Color border = isDark ? AppDesign.darkBorder : AppDesign.lightBorder;
+
     return ThemeData(
       useMaterial3: true,
-      fontFamily: fontFamily,
-      brightness: Brightness.dark,
-      colorScheme: ColorScheme.dark(
-        primary: redPrimary,
-        onPrimary: textPrimary,
+      brightness: brightness,
+      primaryColor: AppDesign.primary,
+      colorScheme: ColorScheme(
+        brightness: brightness,
+        primary: AppDesign.primary,
+        onPrimary: Colors.white,
         secondary: bgSecondary,
         onSecondary: textPrimary,
-        error: error,
-        onError: textPrimary,
+        error: AppDesign.error,
+        onError: Colors.white,
         surface: bgSecondary,
         onSurface: textPrimary,
+        surfaceContainerHighest: isDark
+            ? AppDesign.darkBgElevated
+            : AppDesign.lightBgTertiary,
+        onSurfaceVariant: textSecondary,
+        outline: border,
       ),
       scaffoldBackgroundColor: bgPrimary,
+      textTheme: GoogleFonts.poppinsTextTheme(
+        isDark ? ThemeData.dark().textTheme : ThemeData.light().textTheme,
+      ).apply(bodyColor: textPrimary, displayColor: textPrimary),
       appBarTheme: AppBarTheme(
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
-        backgroundColor: bgPrimary,
+        backgroundColor: Colors.transparent,
         foregroundColor: textPrimary,
-        iconTheme: const IconThemeData(color: textPrimary),
-        titleTextStyle: const TextStyle(
+        iconTheme: IconThemeData(color: textPrimary, size: 24),
+        titleTextStyle: GoogleFonts.poppins(
           fontSize: 18,
           fontWeight: FontWeight.w600,
           color: textPrimary,
-          fontFamily: fontFamily,
         ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        color: bgSecondary,
-        shadowColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDesign.radiusLg),
+        ),
+        color: isDark ? AppDesign.darkBgCard : AppDesign.lightBgCard,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           elevation: 0,
-          backgroundColor: redPrimary,
-          foregroundColor: textPrimary,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          backgroundColor: AppDesign.primary,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: border,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          minimumSize: const Size(120, 48),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(AppDesign.radiusMd),
           ),
-          textStyle: const TextStyle(
-            fontSize: 14,
+          textStyle: GoogleFonts.poppins(
+            fontSize: 15,
             fontWeight: FontWeight.w600,
-            fontFamily: fontFamily,
           ),
         ),
       ),
-      textButtonTheme: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          foregroundColor: textSecondary,
-          textStyle: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-            fontFamily: fontFamily,
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: textPrimary,
+          side: BorderSide(color: border),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          minimumSize: const Size(120, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesign.radiusMd),
+          ),
+          textStyle: GoogleFonts.poppins(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -108,90 +153,20 @@ class AppTheme {
         filled: true,
         fillColor: bgSecondary,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: border),
+          borderRadius: BorderRadius.circular(AppDesign.radiusMd),
+          borderSide: BorderSide(color: border),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: border),
+          borderRadius: BorderRadius.circular(AppDesign.radiusMd),
+          borderSide: BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: redPrimary, width: 2),
+          borderRadius: BorderRadius.circular(AppDesign.radiusMd),
+          borderSide: const BorderSide(color: AppDesign.primary, width: 2),
         ),
-        hintStyle: const TextStyle(color: textMuted, fontFamily: fontFamily),
-        labelStyle: const TextStyle(
-          color: textSecondary,
-          fontFamily: fontFamily,
-        ),
-      ),
-      dividerTheme: const DividerThemeData(
-        color: border,
-        thickness: 1,
-        space: 1,
-      ),
-      textTheme: const TextTheme(
-        // H1: 28px
-        displayLarge: TextStyle(
-          fontSize: 28,
-          fontWeight: FontWeight.w700,
-          color: textPrimary,
-          fontFamily: fontFamily,
-          height: 1.2,
-        ),
-        // H2: 22px
-        displayMedium: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.w600,
-          color: textPrimary,
-          fontFamily: fontFamily,
-          height: 1.3,
-        ),
-        // H3: 18px
-        displaySmall: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: textPrimary,
-          fontFamily: fontFamily,
-          height: 1.3,
-        ),
-        // Body Large: 16px
-        headlineMedium: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: textPrimary,
-          fontFamily: fontFamily,
-          height: 1.5,
-        ),
-        // Body Regular: 14px
-        titleLarge: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: textPrimary,
-          fontFamily: fontFamily,
-          height: 1.5,
-        ),
-        // Small / Labels: 12px
-        bodyLarge: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: textSecondary,
-          fontFamily: fontFamily,
-          height: 1.4,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: textSecondary,
-          fontFamily: fontFamily,
-          height: 1.5,
-        ),
-        bodySmall: TextStyle(
-          fontSize: 12,
-          fontWeight: FontWeight.w400,
-          color: textMuted,
-          fontFamily: fontFamily,
-          height: 1.4,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
         ),
       ),
     );

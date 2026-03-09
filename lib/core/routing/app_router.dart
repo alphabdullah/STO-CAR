@@ -13,6 +13,8 @@ import '../../features/auctions/view/auctions_screen.dart';
 import '../../features/auctions/view/auction_details_screen.dart';
 import '../../features/parts/view/parts_screen.dart';
 import '../../features/parts/view/company_parts_screen.dart';
+import '../../features/parts/view/purchase_history_screen.dart';
+import '../../features/cart/view/cart_screen.dart';
 import '../../features/bookings/view/bookings_screen.dart';
 import '../../features/bookings/view/new_booking_screen.dart';
 import '../../features/wallet/view/user_wallet_screen.dart';
@@ -23,6 +25,8 @@ import '../../admin/dashboard/view/admin_dashboard_screen.dart';
 import '../../admin/auctions/view/admin_auctions_screen.dart';
 import '../../admin/parts/view/admin_parts_screen.dart';
 import '../../admin/bookings/view/admin_bookings_screen.dart';
+import '../../admin/orders/view/admin_orders_screen.dart';
+import '../../admin/settings/view/admin_settings_screen.dart';
 import '../../admin/bookings/view/form_field_editor_screen.dart';
 
 /// Centralized routing configuration with role-aware navigation
@@ -72,6 +76,7 @@ class AppRouter {
 
         // Protected routes require authentication
         final protectedRoutes = [
+          AppConstants.routeCart,
           AppConstants.routeBookings,
           AppConstants.routeWallet,
           AppConstants.routeProfile,
@@ -130,6 +135,11 @@ class AppRouter {
           },
         ),
         GoRoute(
+          path: AppConstants.routeCart,
+          builder: (context, state) => const CartScreen(),
+          redirect: (context, state) => AuthGuard.check(context),
+        ),
+        GoRoute(
           path: AppConstants.routeBookings,
           builder: (context, state) => const BookingsScreen(),
           redirect: (context, state) => AuthGuard.check(context),
@@ -152,6 +162,11 @@ class AppRouter {
         GoRoute(
           path: AppConstants.routeNotifications,
           builder: (context, state) => const NotificationsScreen(),
+          redirect: (context, state) => AuthGuard.check(context),
+        ),
+        GoRoute(
+          path: AppConstants.routePurchaseHistory,
+          builder: (context, state) => const PurchaseHistoryScreen(),
           redirect: (context, state) => AuthGuard.check(context),
         ),
 
@@ -184,6 +199,16 @@ class AppRouter {
         GoRoute(
           path: AppConstants.routeAdminBookings,
           builder: (context, state) => const AdminBookingsScreen(),
+          redirect: (context, state) => AuthGuard.checkAdmin(context),
+        ),
+        GoRoute(
+          path: AppConstants.routeAdminOrders,
+          builder: (context, state) => const AdminOrdersScreen(),
+          redirect: (context, state) => AuthGuard.checkAdmin(context),
+        ),
+        GoRoute(
+          path: AppConstants.routeAdminSettings,
+          builder: (context, state) => const AdminSettingsScreen(),
           redirect: (context, state) => AuthGuard.checkAdmin(context),
         ),
         GoRoute(

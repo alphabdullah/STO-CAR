@@ -110,6 +110,45 @@ class AdminService {
     }
   }
 
+  /// Update auction (admin - e.g. edit price)
+  ///
+  /// Throws ApiException on error
+  Future<void> updateAuction(
+    String auctionId, {
+    double? startingBid,
+    double? currentBid,
+    double? reservePrice,
+    double? buyNowPrice,
+    double? bidIncrement,
+  }) async {
+    try {
+      final body = <String, dynamic>{};
+      if (startingBid != null) body['starting_bid'] = startingBid;
+      if (currentBid != null) body['current_bid'] = currentBid;
+      if (reservePrice != null) body['reserve_price'] = reservePrice;
+      if (buyNowPrice != null) body['buy_now_price'] = buyNowPrice;
+      if (bidIncrement != null) body['bid_increment'] = bidIncrement;
+
+      if (body.isEmpty) return;
+
+      final response = await _apiClient.put(
+        ApiEndpoints.updateAuction(auctionId),
+        body: body,
+        requiresAuth: true,
+      );
+
+      if (response['success'] != true) {
+        throw ApiException(
+          response['message']?.toString() ?? 'Failed to update auction',
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException('Failed to update auction: ${e.toString()}');
+    }
+  }
+
   /// Reject an auction
   ///
   /// Throws ApiException on error
@@ -215,5 +254,81 @@ class AdminService {
     } catch (e) {
       throw ApiException('Failed to reject booking: ${e.toString()}');
     }
+  }
+
+  /// Get part purchases (orders) - paginated
+  ///
+  /// Returns { data: List<Map>, meta: { current_page, last_page, total, ... } }
+  Future<Map<String, dynamic>> getPartPurchases({
+    int page = 1,
+    String? status,
+    String? search,
+  }) async {
+    try {
+      final query = <String, String>{'page': page.toString()};
+      if (status != null && status.isNotEmpty) query['status'] = status;
+      if (search != null && search.isNotEmpty) query['search'] = search;
+
+      final response = await _apiClient.get(
+        ApiEndpoints.getPartPurchases,
+        queryParameters: query.isNotEmpty ? query : null,
+        requiresAuth: true,
+      );
+
+      if (response['success'] != true) {
+        throw ApiException(
+          response['message']?.toString() ?? 'Failed to load part purchases',
+        );
+      }
+
+      return {
+        'data': response['data'] is List
+            ? (response['data'] as List)
+                .map((e) => e as Map<String, dynamic>)
+                .toList()
+            : <Map<String, dynamic>>[],
+        'meta': response['meta'] as Map<String, dynamic>? ?? {},
+      };
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(
+        'Failed to load part purchases: ${e.toString()}',
+      );
+    }
+  }
+
+  /// Get admin settings (Stripe keys - secret masked)
+  Future<Map<String, dynamic>> getAdminSettings() async {
+    final response = await _apiClient.get(
+      ApiEndpoints.getAdminSettings,
+      requiresAuth: true,
+    );
+    if (response['success'] != true) {
+      throw ApiException(response['message'] ?? 'Failed to load settings');
+    }
+    return (response['data'] as Map<String, dynamic>? ?? {})['stripe'] as Map<String, dynamic>? ?? {};
+  }
+
+  /// Update Stripe settings
+  Future<Map<String, dynamic>> updateStripeSettings({
+    String? stripeKey,
+    String? stripeSecret,
+    String? stripeWebhookSecret,
+  }) async {
+    final body = <String, dynamic>{};
+    if (stripeKey != null && stripeKey.isNotEmpty) body['stripe_key'] = stripeKey;
+    if (stripeSecret != null && stripeSecret.isNotEmpty) body['stripe_secret'] = stripeSecret;
+    if (stripeWebhookSecret != null && stripeWebhookSecret.isNotEmpty) body['stripe_webhook_secret'] = stripeWebhookSecret;
+
+    final response = await _apiClient.put(
+      ApiEndpoints.updateStripeSettings,
+      body: body,
+      requiresAuth: true,
+    );
+    if (response['success'] != true) {
+      throw ApiException(response['message'] ?? 'Failed to update settings');
+    }
+    return (response['data'] as Map<String, dynamic>? ?? {})['stripe'] as Map<String, dynamic>? ?? {};
   }
 }

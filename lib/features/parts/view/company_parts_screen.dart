@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/guards/verification_guard_widget.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../state/parts_state.dart';
 import '../../../state/auth_state.dart';
@@ -35,14 +36,14 @@ class CompanyPartsScreen extends StatelessWidget {
         title: Text(
           company?.name ?? 'Parts',
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontWeight: FontWeight.w600,
             fontFamily: AppTheme.fontFamily,
           ),
         ),
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
+          icon: Icon(Icons.arrow_back, color: AppDesign.getTextPrimary(context)),
           onPressed: () => context.pop(),
         ),
       ),
@@ -182,13 +183,13 @@ class _CompanyHeader extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppTheme.textPrimary.withValues(alpha: 0.2),
+              color: AppDesign.getTextPrimary(context).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.business,
               size: 32,
-              color: AppTheme.bgSecondary,
+              color: AppDesign.getBgSecondary(context),
             ),
           ),
           const SizedBox(width: 16),
@@ -198,10 +199,10 @@ class _CompanyHeader extends StatelessWidget {
               children: [
                 Text(
                   company.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                   ),
                 ),
                 if (company.description != null) ...[
@@ -246,7 +247,7 @@ class _PartCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isInStock ? Colors.green.shade200 : Colors.grey.shade300,
@@ -279,7 +280,7 @@ class _PartCard extends StatelessWidget {
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: AppTheme.bgElevated,
+                        color: AppDesign.getBgElevated(context),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: AppTheme.border, width: 1),
                       ),
@@ -301,7 +302,7 @@ class _PartCard extends StatelessWidget {
                                       return Icon(
                                         Icons.business,
                                         size: 30,
-                                        color: AppTheme.textMuted,
+                                        color: AppDesign.getTextTertiary(context),
                                       );
                                     },
                                   );
@@ -316,7 +317,7 @@ class _PartCard extends StatelessWidget {
                                   return Icon(
                                     Icons.business,
                                     size: 30,
-                                    color: AppTheme.textMuted,
+                                    color: AppDesign.getTextTertiary(context),
                                   );
                                 },
                               ),
@@ -410,10 +411,10 @@ class _PartCard extends StatelessWidget {
                 // Part Name
                 Text(
                   part.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -452,7 +453,7 @@ class _PartCard extends StatelessWidget {
                               'Price',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                                 fontFamily: AppTheme.fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -487,7 +488,7 @@ class _PartCard extends StatelessWidget {
                                 'Available',
                                 style: TextStyle(
                                   fontSize: 11,
-                                  color: AppTheme.textSecondary,
+                                  color: AppDesign.getTextSecondary(context),
                                   fontFamily: AppTheme.fontFamily,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -544,7 +545,7 @@ class _PartCard extends StatelessWidget {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
-                          foregroundColor: AppTheme.textPrimary,
+                          foregroundColor: AppDesign.getTextPrimary(context),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -606,17 +607,17 @@ class _EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.bgSecondary,
+                color: AppDesign.getBgSecondary(context),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 64, color: AppTheme.textMuted),
+              child: Icon(icon, size: 64, color: AppDesign.getTextTertiary(context)),
             ),
             const SizedBox(height: 24),
             Text(
               title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),

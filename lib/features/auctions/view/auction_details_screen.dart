@@ -152,20 +152,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                             color: AppTheme.textMuted,
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Auction not found',
-                            style: TextStyle(
-                              fontSize: 18,
-                              color: AppTheme.textPrimary,
-                              fontFamily: AppTheme.fontFamily,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          ElevatedButton(
-                            onPressed: () =>
-                                context.push(AppConstants.routeAuctions),
-                            child: const Text('Back to Auctions'),
-                          ),
+                          const Text('Loading auction...'),
                         ],
                       ),
                     ),

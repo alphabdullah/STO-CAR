@@ -1,0 +1,23 @@
+{
+  "@@locale": "en",
+  "appTitle": "STO Car Marketplace",
+  "welcomeBack": "Welcome Back!",
+  "login": "Login",
+  "signup": "Signup",
+  "searchHint": "Search for Vehicles, Parts, Services...",
+  "exploreCategories": "Explore Categories",
+  "carAuctions": "Car Auctions",
+  "stoPerformance": "STO Performance",
+  "performanceParts": "Performance Parts",
+  "getVerified": "Get Verified",
+  "notifications": "Notifications",
+  "home": "Home",
+  "auctions": "Auctions",
+  "parts": "Parts",
+  "fullName": "Full Name",
+  "email": "Email",
+  "phone": "Phone Number",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "createAccount": "Create Account"
+}

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../state/notification_state.dart';
 import '../../../state/auth_state.dart';
@@ -19,9 +20,9 @@ class NotificationsScreen extends StatelessWidget {
     final notificationState = Get.put(NotificationState());
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
@@ -40,22 +41,33 @@ class NotificationsScreen extends StatelessWidget {
 }
 
 /// Main content for notifications screen
-class _NotificationsContent extends StatelessWidget {
+class _NotificationsContent extends StatefulWidget {
   final NotificationState notificationState;
 
   const _NotificationsContent({required this.notificationState});
+
+  @override
+  State<_NotificationsContent> createState() => _NotificationsContentState();
+}
+
+class _NotificationsContentState extends State<_NotificationsContent> {
+  @override
+  void initState() {
+    super.initState();
+    widget.notificationState.fetchNotifications();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         // Header Section
-        _HeaderSection(notificationState: notificationState),
+        _HeaderSection(notificationState: widget.notificationState),
 
         // Notifications List
         Expanded(
           child: Obx(() {
-            final notifications = notificationState.notifications;
+            final notifications = widget.notificationState.notifications;
 
             if (notifications.isEmpty) {
               return _EmptyNotificationsView();
@@ -68,7 +80,7 @@ class _NotificationsContent extends StatelessWidget {
                 final notification = notifications[index];
                 return _NotificationCard(
                   notification: notification,
-                  notificationState: notificationState,
+                  notificationState: widget.notificationState,
                 );
               },
             );
@@ -98,8 +110,8 @@ class _HeaderSection extends StatelessWidget {
         8,
       ),
       decoration: BoxDecoration(
-        color: AppTheme.bgPrimary,
-        border: Border(bottom: BorderSide(color: AppTheme.border, width: 1)),
+        color: AppDesign.getBgPrimary(context),
+        border: Border(bottom: BorderSide(color: AppDesign.getBorder(context), width: 1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,9 +120,9 @@ class _HeaderSection extends StatelessWidget {
           Row(
             children: [
               IconButton(
-                icon: const Icon(
+                icon: Icon(
                   Icons.arrow_back_ios_rounded,
-                  color: AppTheme.textPrimary,
+                  color: AppDesign.getTextPrimary(context),
                   size: 24,
                 ),
                 padding: EdgeInsets.zero,
@@ -127,7 +139,7 @@ class _HeaderSection extends StatelessWidget {
                     style: TextStyle(
                       fontSize: isSmallScreen ? 24 : 28,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.textPrimary,
+                      color: AppDesign.getTextPrimary(context),
                       fontFamily: AppTheme.fontFamily,
                       letterSpacing: -0.5,
                     ),
@@ -141,7 +153,7 @@ class _HeaderSection extends StatelessWidget {
                           : 'All caught up!',
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppTheme.textSecondary,
+                        color: AppDesign.getTextSecondary(context),
                         fontFamily: AppTheme.fontFamily,
                       ),
                     );
@@ -199,11 +211,11 @@ class _NotificationCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: notification.isRead ? AppTheme.bgSecondary : AppTheme.bgElevated,
+        color: notification.isRead ? AppDesign.getBgSecondary(context) : AppDesign.getBgElevated(context),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: notification.isRead
-              ? AppTheme.border
+              ? AppDesign.getBorder(context)
               : AppTheme.redPrimary.withValues(alpha: 0.3),
           width: notification.isRead ? 1 : 1.5,
         ),
@@ -238,7 +250,7 @@ class _NotificationCard extends StatelessWidget {
                   height: isSmallScreen ? 44 : 48,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: _getGradientColors(notification.type),
+                      colors: _getGradientColors(context, notification.type),
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -246,6 +258,7 @@ class _NotificationCard extends StatelessWidget {
                     boxShadow: [
                       BoxShadow(
                         color: _getGradientColors(
+                          context,
                           notification.type,
                         )[0].withValues(alpha: 0.3),
                         blurRadius: 8,
@@ -255,7 +268,7 @@ class _NotificationCard extends StatelessWidget {
                   ),
                   child: Icon(
                     _getIcon(notification.type),
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     size: isSmallScreen ? 22 : 24,
                   ),
                 ),
@@ -277,7 +290,7 @@ class _NotificationCard extends StatelessWidget {
                                 fontWeight: notification.isRead
                                     ? FontWeight.w600
                                     : FontWeight.bold,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                               maxLines: 1,
@@ -304,7 +317,7 @@ class _NotificationCard extends StatelessWidget {
                         notification.message,
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 14,
-                          color: AppTheme.textSecondary,
+                          color: AppDesign.getTextSecondary(context),
                           fontFamily: AppTheme.fontFamily,
                           height: 1.4,
                         ),
@@ -319,14 +332,14 @@ class _NotificationCard extends StatelessWidget {
                           Icon(
                             Icons.access_time,
                             size: 12,
-                            color: AppTheme.textMuted,
+                            color: AppDesign.getTextTertiary(context),
                           ),
                           const SizedBox(width: 4),
                           Text(
                             _formatTime(notification.createdAt),
                             style: TextStyle(
                               fontSize: 11,
-                              color: AppTheme.textMuted,
+                              color: AppDesign.getTextTertiary(context),
                               fontFamily: AppTheme.fontFamily,
                             ),
                           ),
@@ -338,7 +351,7 @@ class _NotificationCard extends StatelessWidget {
 
                 // Delete button
                 IconButton(
-                  icon: Icon(Icons.close, size: 18, color: AppTheme.textMuted),
+                  icon: Icon(Icons.close, size: 18, color: AppDesign.getTextTertiary(context)),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(
                     minWidth: 32,
@@ -357,7 +370,7 @@ class _NotificationCard extends StatelessWidget {
     );
   }
 
-  List<Color> _getGradientColors(NotificationType type) {
+  List<Color> _getGradientColors(BuildContext context, NotificationType type) {
     switch (type) {
       case NotificationType.auction:
         return [AppTheme.redPrimary, AppTheme.redPressed];
@@ -370,7 +383,7 @@ class _NotificationCard extends StatelessWidget {
       case NotificationType.parts:
         return [Colors.purple.shade400, Colors.purple.shade600];
       case NotificationType.system:
-        return [AppTheme.textMuted, AppTheme.textMuted.withValues(alpha: 0.8)];
+        return [AppDesign.getTextTertiary(context), AppDesign.getTextTertiary(context).withValues(alpha: 0.8)];
     }
   }
 
@@ -422,13 +435,13 @@ class _EmptyNotificationsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.bgSecondary,
+                color: AppDesign.getBgSecondary(context),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.notifications_none,
                 size: 64,
-                color: AppTheme.textMuted,
+                color: AppDesign.getTextTertiary(context),
               ),
             ),
             const SizedBox(height: 24),
@@ -437,7 +450,7 @@ class _EmptyNotificationsView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -447,7 +460,7 @@ class _EmptyNotificationsView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 14,
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
                 height: 1.5,
               ),
@@ -469,14 +482,14 @@ class _NotAuthenticatedView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.lock_outline, size: 64, color: AppTheme.textMuted),
+            Icon(Icons.lock_outline, size: 64, color: AppDesign.getTextTertiary(context)),
             const SizedBox(height: 24),
             Text(
               'Login Required',
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -485,7 +498,7 @@ class _NotAuthenticatedView extends StatelessWidget {
               'Please login to view your notifications',
               style: TextStyle(
                 fontSize: 14,
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -494,7 +507,7 @@ class _NotAuthenticatedView extends StatelessWidget {
               onPressed: () => context.push(AppConstants.routeLogin),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.redPrimary,
-                foregroundColor: AppTheme.textPrimary,
+                foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
                   vertical: 14,

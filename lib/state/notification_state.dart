@@ -1,12 +1,16 @@
 import 'package:get/get.dart';
 import '../models/notification_model.dart';
+import '../services/notification_service.dart';
+import 'auth_state.dart';
 
 /// Notification state controller
-/// Manages user notifications
+/// Manages user notifications (loads from API)
 class NotificationState extends GetxController {
   static final NotificationState _instance = NotificationState._internal();
   factory NotificationState() => _instance;
   NotificationState._internal();
+
+  final NotificationService _notificationService = NotificationService();
 
   // Observable state
   final _notifications = <NotificationModel>[].obs;
@@ -24,7 +28,31 @@ class NotificationState extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // No mock data - only load from API in child classes or when requested
+    // Fetch notifications automatically if user is authenticated
+    final authState = Get.isRegistered<AuthState>()
+        ? Get.find<AuthState>()
+        : null;
+    if (authState != null && authState.isAuthenticated) {
+      fetchNotifications();
+    }
+  }
+
+  /// Fetch notifications from API (call when user is authenticated)
+  Future<void> fetchNotifications() async {
+    _isLoading.value = true;
+    try {
+      final list = await _notificationService.getNotifications();
+      _notifications.value = list;
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  /// Refresh unread count from API
+  Future<int> refreshUnreadCount() async {
+    final count = await _notificationService.getUnreadCount();
+    // Sync local unread state if needed - we don't have count-only, so fetch triggers update
+    return count;
   }
 
   /// Mark notification as read
@@ -32,6 +60,7 @@ class NotificationState extends GetxController {
     final index = _notifications.indexWhere((n) => n.id == notificationId);
     if (index != -1) {
       _notifications[index] = _notifications[index].copyWith(isRead: true);
+      _notificationService.markAsRead(notificationId);
     }
   }
 
@@ -40,6 +69,7 @@ class NotificationState extends GetxController {
     _notifications.value = _notifications
         .map((n) => n.copyWith(isRead: true))
         .toList();
+    _notificationService.markAllAsRead();
   }
 
   /// Delete notification

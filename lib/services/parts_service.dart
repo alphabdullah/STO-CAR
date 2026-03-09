@@ -126,6 +126,26 @@ class PartsService {
     }
   }
 
+  /// Get user's purchase history (parts they bought)
+  Future<Map<String, dynamic>> getMyPurchases({int page = 1}) async {
+    try {
+      final response = await _apiClient.get(
+        ApiEndpoints.getMyPurchases,
+        queryParameters: {'page': page.toString()},
+        requiresAuth: true,
+      );
+      if (response['success'] == true && response['data'] != null) {
+        return {
+          'data': response['data'] is List ? response['data'] : (response['data']['data'] ?? []),
+          'meta': response['meta'] ?? {},
+        };
+      }
+      return {'data': <dynamic>[], 'meta': {}};
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   /// Get current user's parts
   Future<List<dynamic>> getMyParts() async {
     try {

@@ -4,9 +4,12 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../state/auth_state.dart';
+import '../../../state/theme_state.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../core/api/api_endpoints.dart';
 
 /// User profile screen
 class UserProfileScreen extends StatelessWidget {
@@ -17,13 +20,13 @@ class UserProfileScreen extends StatelessWidget {
     final authState = Get.put(AuthState());
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: SafeArea(
         child: Responsive.constrained(
@@ -231,6 +234,9 @@ class UserProfileScreen extends StatelessWidget {
                     );
                   }),
 
+                  // Theme Selection Section
+                  _buildThemeSelector(context),
+
                   // Account Information Section
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
@@ -287,6 +293,54 @@ class UserProfileScreen extends StatelessWidget {
                       ],
                     ),
                   ),
+
+                  Obx(() {
+                    final user = authState.currentUser;
+                    final front = user?.registrationImageFront;
+                    final back = user?.registrationImageBack;
+                    final hasFront = front != null && front.toString().trim().isNotEmpty;
+                    final hasBack = back != null && back.toString().trim().isNotEmpty;
+                    if (!hasFront && !hasBack) return const SizedBox.shrink();
+
+                    return Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Emirates ID',
+                            style: TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.textPrimary,
+                              fontFamily: AppTheme.fontFamily,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _buildIdImageCard(
+                                  context,
+                                  label: 'Front Side',
+                                  imageUrl: hasFront ? front : null,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _buildIdImageCard(
+                                  context,
+                                  label: 'Back Side',
+                                  imageUrl: hasBack ? back : null,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
 
                   // Logout Button
                   Padding(
@@ -349,6 +403,63 @@ class UserProfileScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: const RoleBottomNav(currentIndex: 4),
+    );
+  }
+
+  Widget _buildThemeSelector(BuildContext context) {
+    final themeState = Get.find<ThemeState>();
+    final isDark = AppDesign.isDark(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'App Theme',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: AppDesign.getTextPrimary(context),
+              fontFamily: AppTheme.fontFamily,
+              letterSpacing: -0.3,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Obx(() {
+            final mode = themeState.themeMode;
+            return Row(
+              children: [
+                Expanded(
+                  child: _ThemeOption(
+                    label: 'Light',
+                    icon: Icons.light_mode_rounded,
+                    isSelected: mode == ThemeMode.light,
+                    onTap: themeState.setLight,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _ThemeOption(
+                    label: 'Dark',
+                    icon: Icons.dark_mode_rounded,
+                    isSelected: mode == ThemeMode.dark,
+                    onTap: themeState.setDark,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: _ThemeOption(
+                    label: 'System',
+                    icon: Icons.settings_brightness_rounded,
+                    isSelected: mode == ThemeMode.system,
+                    onTap: themeState.setSystem,
+                  ),
+                ),
+              ],
+            );
+          }),
+        ],
+      ),
     );
   }
 
@@ -510,6 +621,150 @@ class UserProfileScreen extends StatelessWidget {
                 ),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  static String _resolveImageUrl(String? url) {
+    if (url == null || url.trim().isEmpty) return '';
+    final u = url.trim();
+    if (u.startsWith('http://') || u.startsWith('https://')) return u;
+    final base = ApiEndpoints.baseUrl.replaceFirst(RegExp(r'/api.*'), '');
+    return base.endsWith('/') ? '$base${u.replaceFirst(RegExp(r'^/'), '')}' : '$base$u';
+  }
+
+  Widget _buildIdImageCard(
+    BuildContext context, {
+    required String label,
+    String? imageUrl,
+  }) {
+    final resolvedUrl = _resolveImageUrl(imageUrl);
+    return Container(
+      height: 180,
+      decoration: BoxDecoration(
+        color: AppTheme.bgSecondary,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.border),
+      ),
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: resolvedUrl.isNotEmpty
+                  ? Image.network(
+                      resolvedUrl,
+                      fit: BoxFit.cover,
+                      width: double.infinity,
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return Container(
+                          color: AppTheme.bgElevated,
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(AppTheme.redPrimary),
+                              value:
+                                  progress.expectedTotalBytes != null
+                                      ? progress.cumulativeBytesLoaded /
+                                          progress.expectedTotalBytes!
+                                      : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return _buildIdImagePlaceholder();
+                      },
+                    )
+                  : _buildIdImagePlaceholder(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textPrimary,
+              fontFamily: AppTheme.fontFamily,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildIdImagePlaceholder() {
+    return Container(
+      color: AppTheme.bgElevated,
+      child: Center(
+        child: Icon(
+          Icons.document_scanner_outlined,
+          size: 36,
+          color: AppTheme.textMuted,
+        ),
+      ),
+    );
+  }
+}
+
+/// Theme option chip (Light / Dark / System)
+class _ThemeOption extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _ThemeOption({
+    required this.label,
+    required this.icon,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? AppTheme.redPrimary.withValues(alpha: 0.15)
+                : AppDesign.getBgSecondary(context),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isSelected ? AppTheme.redPrimary : AppDesign.getBorder(context),
+              width: isSelected ? 2 : 1,
+            ),
+          ),
+          child: Column(
+            children: [
+              Icon(
+                icon,
+                size: 24,
+                color: isSelected ? AppTheme.redPrimary : AppDesign.getTextSecondary(context),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? AppTheme.redPrimary : AppDesign.getTextSecondary(context),
+                  fontFamily: AppTheme.fontFamily,
+                ),
+              ),
+            ],
           ),
         ),
       ),

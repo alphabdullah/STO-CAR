@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../constants/app_constants.dart';
+import '../../theme/app_design_system.dart';
 import '../../theme/app_theme.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/user_model.dart';
@@ -96,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen>
     final spacing = (screenHeight * 0.08).clamp(40.0, 80.0);
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       body: SafeArea(
         child: Center(
           child: Column(
@@ -177,7 +178,7 @@ class _AppLogo extends StatelessWidget {
               child: Icon(
                 Icons.directions_car,
                 size: iconSize,
-                color: AppTheme.textPrimary,
+                color: Colors.white,
               ),
             );
           },
@@ -246,7 +247,7 @@ class _CarProgressIndicatorState extends State<_CarProgressIndicator>
               valueColor: const AlwaysStoppedAnimation<Color>(
                 AppTheme.redPrimary,
               ),
-              backgroundColor: AppTheme.bgSecondary,
+              backgroundColor: AppDesign.getBgSecondary(context),
               strokeCap: StrokeCap.round,
             ),
           ),

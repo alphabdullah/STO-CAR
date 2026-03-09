@@ -131,6 +131,28 @@ class PartModel {
   }
 
   factory PartModel.fromMap(Map<String, dynamic> map) {
+    double parseDouble(dynamic value) {
+      if (value == null) return 0.0;
+      if (value is num) return value.toDouble();
+      if (value is String) return double.tryParse(value) ?? 0.0;
+      return 0.0;
+    }
+
+    int parseInt(dynamic value) {
+      if (value == null) return 0;
+      if (value is num) return value.toInt();
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    final priceValue = parseDouble(map['price']);
+    final salePriceValue = map['sale_price'] != null
+        ? parseDouble(map['sale_price'])
+        : null;
+    final currentPriceValue = map['current_price'] != null
+        ? parseDouble(map['current_price'])
+        : (salePriceValue ?? priceValue);
+
     return PartModel(
       id: map['id']?.toString() ?? '',
       companyId:
@@ -145,30 +167,28 @@ class PartModel {
       category: map['category'] ?? '',
       subCategory: map['sub_category'],
       condition: map['condition'] ?? 'new',
-      price: (map['price'] ?? 0.0).toDouble(),
-      salePrice: map['sale_price'] != null
-          ? (map['sale_price'] as num).toDouble()
-          : null,
-      currentPrice: (map['current_price'] ?? map['price'] ?? 0.0).toDouble(),
+      price: priceValue,
+      salePrice: salePriceValue,
+      currentPrice: currentPriceValue,
       brand: map['brand'],
       partNumber: map['part_number'],
       oemNumber: map['oem_number'],
-      yearFrom: map['compatible_year_from'],
-      yearTo: map['compatible_year_to'],
+      yearFrom: parseInt(map['compatible_year_from']),
+      yearTo: parseInt(map['compatible_year_to']),
       location: map['location'],
       images: map['images'] != null ? List<String>.from(map['images']) : [],
       currency: map['currency'] ?? 'AED',
-      stockQuantity: map['quantity'] ?? map['stock_quantity'] ?? 0,
+      stockQuantity: parseInt(map['quantity'] ?? map['stock_quantity']),
       imageUrl: map['featured_image'] ?? map['image_url'],
-      isFeatured: map['is_featured'] ?? false,
-      discountPercentage: map['discount_percentage'],
+      isFeatured: map['is_featured'] == true || map['is_featured'] == 1,
+      discountPercentage: parseInt(map['discount_percentage']),
       compatibleMake: map['compatible_make'],
       compatibleModel: map['compatible_model'],
       specifications: map['specifications'] is Map<String, dynamic>
           ? map['specifications']
           : null,
       createdAt: map['created_at'] != null
-          ? DateTime.parse(map['created_at'])
+          ? DateTime.tryParse(map['created_at'].toString()) ?? DateTime.now()
           : DateTime.now(),
       createdBy: map['creator']?['name'] ?? map['created_by']?.toString(),
     );

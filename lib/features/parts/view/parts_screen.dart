@@ -3,9 +3,11 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../state/parts_state.dart';
 import '../../../state/auth_state.dart';
+import '../../../state/cart_state.dart';
 import '../../../models/part_model.dart';
 import '../../../models/company_model.dart';
 import '../controller/parts_controller.dart';
@@ -20,6 +22,7 @@ class PartsScreen extends StatelessWidget {
     final partsState = Get.put(PartsState());
     final authState = Get.put(AuthState());
     final controller = Get.put(PartsController());
+    Get.put(CartState(), permanent: false);
 
     return Scaffold(
       backgroundColor: AppTheme.bgPrimary,
@@ -34,8 +37,6 @@ class PartsScreen extends StatelessWidget {
                 Obx(
                   () => SliverToBoxAdapter(
                     child: _HeroHeader(
-                      totalCompanies: partsState.companies.length,
-                      totalParts: partsState.parts.length,
                       isAuthenticated: authState.isAuthenticated,
                       onLogin: () => context.push(AppConstants.routeLogin),
                       onSearch: (val) => partsState.setSearchQuery(val),
@@ -65,7 +66,7 @@ class PartsScreen extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Featured Marketplace',
                                 style: TextStyle(
                                   fontSize: 22,
@@ -79,9 +80,9 @@ class PartsScreen extends StatelessWidget {
                                 partsState.selectedCompany != null
                                     ? 'Viewing products from ${partsState.selectedCompany!.name}'
                                     : 'Showing ${partsState.parts.length} specialized components',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 13,
-                                  color: AppTheme.textSecondary,
+                                  color: AppDesign.getTextSecondary(context),
                                 ),
                               ),
                             ],
@@ -179,6 +180,27 @@ class PartsScreen extends StatelessWidget {
                           part: part,
                           onTap: () =>
                               controller.showPartDetails(context, part.id),
+                          onAddToCart: () async {
+                            if (!authState.isAuthenticated) {
+                              context.push(AppConstants.routeLogin);
+                              return;
+                            }
+                            final ok = await Get.find<CartState>().addToCart(
+                              part.id,
+                            );
+                            if (context.mounted && ok) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: const Text(
+                                    'Product successfully added to cart',
+                                  ),
+                                  backgroundColor: AppTheme.success,
+                                  behavior: SnackBarBehavior.floating,
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
                         );
                       }, childCount: partsState.parts.length),
                     ),
@@ -232,7 +254,7 @@ class _FilterSheet extends StatelessWidget {
               height: 4,
               margin: const EdgeInsets.only(bottom: 24),
               decoration: BoxDecoration(
-                color: AppTheme.border,
+                color: AppDesign.getBorder(context),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -258,12 +280,12 @@ class _FilterSheet extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'CONDITION',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textMuted,
+              color: AppDesign.getTextTertiary(context),
               letterSpacing: 1.2,
             ),
           ),
@@ -279,11 +301,11 @@ class _FilterSheet extends StatelessWidget {
                   onSelected: (val) => state.setCondition(val ? cond : null),
                   selectedColor: AppTheme.redPrimary,
                   labelStyle: TextStyle(
-                    color: isSelected ? Colors.white : AppTheme.textSecondary,
+                    color: isSelected ? Colors.white : AppDesign.getTextSecondary(context),
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
-                  backgroundColor: AppTheme.bgElevated,
+                  backgroundColor: AppDesign.getBgElevated(context),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -292,12 +314,12 @@ class _FilterSheet extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          const Text(
+          Text(
             'PRICE RANGE (AED)',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textMuted,
+              color: AppDesign.getTextTertiary(context),
               letterSpacing: 1.2,
             ),
           ),
@@ -307,13 +329,13 @@ class _FilterSheet extends StatelessWidget {
               Expanded(
                 child: TextField(
                   keyboardType: TextInputType.number,
-                  style: const TextStyle(color: AppTheme.textPrimary),
+                  style: TextStyle(color: AppTheme.textPrimary),
                   decoration: InputDecoration(
                     labelText: 'Min',
                     hintText: '0',
-                    hintStyle: const TextStyle(color: AppTheme.textMuted),
+                    hintStyle: TextStyle(color: AppDesign.getTextTertiary(context)),
                     filled: true,
-                    fillColor: AppTheme.bgElevated,
+                    fillColor: AppDesign.getBgElevated(context),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -327,13 +349,13 @@ class _FilterSheet extends StatelessWidget {
               Expanded(
                 child: TextField(
                   keyboardType: TextInputType.number,
-                  style: const TextStyle(color: AppTheme.textPrimary),
+                  style: TextStyle(color: AppTheme.textPrimary),
                   decoration: InputDecoration(
                     labelText: 'Max',
                     hintText: '10000+',
-                    hintStyle: const TextStyle(color: AppTheme.textMuted),
+                    hintStyle: TextStyle(color: AppDesign.getTextTertiary(context)),
                     filled: true,
-                    fillColor: AppTheme.bgElevated,
+                    fillColor: AppDesign.getBgElevated(context),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -372,15 +394,11 @@ class _FilterSheet extends StatelessWidget {
 }
 
 class _HeroHeader extends StatelessWidget {
-  final int totalCompanies;
-  final int totalParts;
   final bool isAuthenticated;
   final VoidCallback onLogin;
   final Function(String) onSearch;
 
   const _HeroHeader({
-    required this.totalCompanies,
-    required this.totalParts,
     required this.isAuthenticated,
     required this.onLogin,
     required this.onSearch,
@@ -498,11 +516,11 @@ class _HeroHeader extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 20),
-                const Text(
+                Text(
                   'Explore Premium Components',
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -512,10 +530,10 @@ class _HeroHeader extends StatelessWidget {
                   style: const TextStyle(color: Colors.white),
                   decoration: InputDecoration(
                     hintText: 'Search parts, brands, OEM...',
-                    hintStyle: TextStyle(color: AppTheme.textMuted),
-                    prefixIcon: const Icon(
+                    hintStyle: TextStyle(color: AppDesign.getTextTertiary(context)),
+                    prefixIcon: Icon(
                       Icons.search,
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                     ),
                     filled: true,
                     fillColor: AppTheme.bgSecondary.withOpacity(0.8),
@@ -530,32 +548,10 @@ class _HeroHeader extends StatelessWidget {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(
-                        color: AppTheme.border.withOpacity(0.5),
+                        color: AppDesign.getBorder(context).withOpacity(0.5),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 24),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _StatCard(
-                        icon: Icons.business_rounded,
-                        label: 'Verified Brands',
-                        value: totalCompanies.toString(),
-                        color: AppTheme.info,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _StatCard(
-                        icon: Icons.inventory_2_rounded,
-                        label: 'Total Parts',
-                        value: totalParts.toString(),
-                        color: AppTheme.success,
-                      ),
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -566,56 +562,16 @@ class _HeroHeader extends StatelessWidget {
   }
 }
 
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final String value;
-  final Color color;
-
-  const _StatCard({
-    required this.icon,
-    required this.label,
-    required this.value,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.bgSecondary.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border.withOpacity(0.5)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimary,
-            ),
-          ),
-          Text(
-            label,
-            style: TextStyle(fontSize: 10, color: AppTheme.textSecondary),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _PartGridCard extends StatelessWidget {
   final PartModel part;
   final VoidCallback onTap;
+  final VoidCallback? onAddToCart;
 
-  const _PartGridCard({required this.part, required this.onTap});
+  const _PartGridCard({
+    required this.part,
+    required this.onTap,
+    this.onAddToCart,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -628,7 +584,7 @@ class _PartGridCard extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppTheme.bgSecondary,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppTheme.border.withOpacity(0.5)),
+            border: Border.all(color: AppDesign.getBorder(context).withOpacity(0.5)),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withOpacity(0.2),
@@ -649,15 +605,15 @@ class _PartGridCard extends StatelessWidget {
                       flex: 5,
                       child: Container(
                         width: double.infinity,
-                        decoration: BoxDecoration(color: AppTheme.bgElevated),
+                        decoration: BoxDecoration(color: AppDesign.getBgElevated(context)),
                         child: part.imageUrl != null
                             ? Image.network(
                                 part.imageUrl!,
                                 fit: BoxFit.cover,
-                                errorBuilder: (c, e, s) => const Center(
+                                errorBuilder: (c, e, s) => Center(
                                   child: Icon(
                                     Icons.image_not_supported_outlined,
-                                    color: AppTheme.textMuted,
+                                    color: AppDesign.getTextTertiary(c),
                                     size: 32,
                                   ),
                                 ),
@@ -741,7 +697,7 @@ class _PartGridCard extends StatelessWidget {
                                   part.brand ?? part.companyName,
                                   style: TextStyle(
                                     fontSize: isCompact ? 10 : 11,
-                                    color: AppTheme.textSecondary,
+                                    color: AppDesign.getTextSecondary(context),
                                     fontWeight: FontWeight.w500,
                                   ),
                                   maxLines: 1,
@@ -758,8 +714,9 @@ class _PartGridCard extends StatelessWidget {
                                         fontSize: 9,
                                         fontFamily: 'monospace',
                                         fontWeight: FontWeight.bold,
-                                        color:
-                                            AppTheme.textMuted.withOpacity(0.8),
+                                        color: AppDesign.getTextTertiary(context).withOpacity(
+                                          0.8,
+                                        ),
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -778,9 +735,9 @@ class _PartGridCard extends StatelessWidget {
                                         if (part.hasDiscount && !isCompact)
                                           Text(
                                             '${part.price.toStringAsFixed(0)} ${part.currency}',
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 10,
-                                              color: AppTheme.textMuted,
+                                              color: AppDesign.getTextTertiary(context),
                                               decoration:
                                                   TextDecoration.lineThrough,
                                             ),
@@ -795,26 +752,34 @@ class _PartGridCard extends StatelessWidget {
                                         ),
                                       ],
                                     ),
-                                    Container(
-                                      padding: EdgeInsets.all(
-                                        isCompact ? 6 : 8,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.redPrimary,
-                                        borderRadius: BorderRadius.circular(12),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: AppTheme.redPrimary
-                                                .withOpacity(0.3),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 4),
+                                    GestureDetector(
+                                      onTap: () {
+                                        if (onAddToCart != null) onAddToCart!();
+                                      },
+                                      behavior: HitTestBehavior.opaque,
+                                      child: Container(
+                                        padding: EdgeInsets.all(
+                                          isCompact ? 6 : 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.redPrimary,
+                                          borderRadius: BorderRadius.circular(
+                                            12,
                                           ),
-                                        ],
-                                      ),
-                                      child: Icon(
-                                        Icons.add_shopping_cart_rounded,
-                                        color: Colors.white,
-                                        size: isCompact ? 14 : 16,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: AppTheme.redPrimary
+                                                  .withOpacity(0.3),
+                                              blurRadius: 8,
+                                              offset: const Offset(0, 4),
+                                            ),
+                                          ],
+                                        ),
+                                        child: Icon(
+                                          Icons.add_shopping_cart_rounded,
+                                          color: Colors.white,
+                                          size: isCompact ? 14 : 16,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -900,7 +865,7 @@ class _EmptyState extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, size: 60, color: AppTheme.textMuted),
+            Icon(icon, size: 60, color: AppDesign.getTextTertiary(context)),
             const SizedBox(height: 16),
             Text(
               title,
@@ -910,7 +875,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               message,
               textAlign: TextAlign.center,
-              style: TextStyle(color: AppTheme.textSecondary),
+              style: TextStyle(color: AppDesign.getTextSecondary(context)),
             ),
           ],
         ),
@@ -935,14 +900,14 @@ class _BrandSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(24, 8, 24, 12),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 12),
           child: Text(
             'SHOP BY BRAND',
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textMuted,
+              color: AppDesign.getTextTertiary(context),
               letterSpacing: 1.5,
             ),
           ),
@@ -1013,7 +978,7 @@ class _BrandCard extends StatelessWidget {
                 border: Border.all(
                   color: isSelected
                       ? AppTheme.redPrimary
-                      : AppTheme.border.withOpacity(0.5),
+                      : AppDesign.getBorder(context).withOpacity(0.5),
                   width: 2,
                 ),
                 boxShadow: isSelected
@@ -1032,7 +997,7 @@ class _BrandCard extends StatelessWidget {
                   child: icon != null
                       ? Icon(
                           icon,
-                          color: isSelected ? Colors.white : AppTheme.textMuted,
+                          color: isSelected ? Colors.white : AppDesign.getTextTertiary(context),
                           size: 28,
                         )
                       : (logoUrl != null && logoUrl!.isNotEmpty)
@@ -1075,7 +1040,7 @@ class _BrandCard extends StatelessWidget {
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
                   color: isSelected
                       ? AppTheme.textPrimary
-                      : AppTheme.textSecondary,
+                      : AppDesign.getTextSecondary(context),
                   fontFamily: AppTheme.fontFamily,
                 ),
                 maxLines: 1,

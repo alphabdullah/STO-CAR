@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
+import '../theme/app_design_system.dart';
 
 /// Global background widget - single source for app background
 /// Wraps user-facing screens with background image
@@ -20,7 +20,7 @@ class AppBackground extends StatelessWidget {
     }
 
     return Container(
-      color: AppTheme.bgPrimary,
+      color: AppDesign.getBgPrimary(context),
       child: child,
     );
   }

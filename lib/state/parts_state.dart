@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import '../models/company_model.dart';
 import '../models/part_model.dart';
+import '../models/purchase_history_model.dart';
 import '../models/sold_part_model.dart';
 import '../services/parts_service.dart';
 
@@ -16,8 +17,10 @@ class PartsState extends GetxController {
   final _companies = <CompanyModel>[].obs;
   final _parts = <PartModel>[].obs;
   final _soldParts = <SoldPartModel>[].obs;
+  final _purchaseHistory = <PurchaseHistoryModel>[].obs;
   final _categories = <String>[].obs;
   final _isLoading = false.obs;
+  final _isLoadingPurchases = false.obs;
 
   // Filters
   final _selectedCategory = 'All'.obs;
@@ -36,8 +39,10 @@ class PartsState extends GetxController {
   RxList<CompanyModel> get companies => _companies;
   RxList<PartModel> get parts => _parts;
   RxList<SoldPartModel> get soldParts => _soldParts;
+  RxList<PurchaseHistoryModel> get purchaseHistory => _purchaseHistory;
   RxList<String> get categories => _categories;
   bool get isLoading => _isLoading.value;
+  bool get isLoadingPurchases => _isLoadingPurchases.value;
 
   String get selectedCategory => _selectedCategory.value;
   String get searchQuery => _searchQuery.value;
@@ -85,11 +90,12 @@ class PartsState extends GetxController {
     );
   }
 
-  /// Fetch parts from API
+  /// Fetch parts from API. Uses per_page=2000 so all 500+ parts load in one go;
+  /// if backend returns multiple pages, fetches all pages and merges.
   Future<void> fetchParts({
     int? page,
     String? category,
-    int perPage = 1000,
+    int perPage = 2000,
     String? brand,
     String? condition,
     String? make,
@@ -103,7 +109,7 @@ class PartsState extends GetxController {
     _isLoading.value = true;
     try {
       final response = await _partsService.getParts(
-        page: page,
+        page: page ?? 1,
         category: category,
         perPage: perPage,
         brand: brand,
@@ -118,35 +124,56 @@ class PartsState extends GetxController {
       );
 
       final List<dynamic> data = response['data'] ?? [];
+      final meta = response['meta'] as Map<String, dynamic>? ?? {};
+      final int lastPage = (meta['last_page'] is int)
+          ? meta['last_page'] as int
+          : ((meta['last_page'] is num) ? (meta['last_page'] as num).toInt() : 1);
+
+      final List<PartModel> parsed = data
+          .map((item) => PartModel.fromMap(item as Map<String, dynamic>))
+          .toList();
 
       if (page == null || page == 1) {
-        _parts.value = data
-            .map((item) => PartModel.fromMap(item as Map<String, dynamic>))
-            .toList();
+        _parts.value = List<PartModel>.from(parsed);
+        // Fetch remaining pages if backend returned paginated results
+        for (int p = 2; p <= lastPage; p++) {
+          final next = await _partsService.getParts(
+            page: p,
+            category: category,
+            perPage: perPage,
+            brand: brand,
+            condition: condition,
+            make: make,
+            model: model,
+            year: year,
+            minPrice: minPrice,
+            maxPrice: maxPrice,
+            search: search,
+            featured: featured,
+          );
+          final nextData = next['data'] as List<dynamic>? ?? [];
+          _parts.addAll(
+            nextData
+                .map((item) => PartModel.fromMap(item as Map<String, dynamic>)),
+          );
+        }
       } else {
-        _parts.addAll(
-          data
-              .map((item) => PartModel.fromMap(item as Map<String, dynamic>))
-              .toList(),
-        );
+        _parts.addAll(parsed);
       }
 
-      // Update company list if not filtering by brand (to show all available brands)
+      // Update company list if not filtering by brand (from all loaded parts)
       if (brand == null && (page == null || page == 1)) {
         final uniqueCompanies = <String, CompanyModel>{};
-        for (var item in data) {
-          if (item['company'] != null) {
-            final comp = item['company'];
-            final companyId = comp['id'].toString();
-            if (!uniqueCompanies.containsKey(companyId)) {
-              uniqueCompanies[companyId] = CompanyModel(
-                id: companyId,
-                name: comp['name'] ?? 'Unknown',
-                description: comp['description'] ?? '',
-                logoUrl: comp['logo'],
-                totalParts: 0,
-              );
-            }
+        for (final part in _parts) {
+          if (part.companyId.isEmpty) continue;
+          if (!uniqueCompanies.containsKey(part.companyId)) {
+            uniqueCompanies[part.companyId] = CompanyModel(
+              id: part.companyId,
+              name: part.companyName,
+              description: '',
+              logoUrl: part.companyLogo,
+              totalParts: 0,
+            );
           }
         }
         _companies.value = uniqueCompanies.values.toList();
@@ -248,6 +275,7 @@ class PartsState extends GetxController {
           stockQuantity: _parts[index].stockQuantity - quantity,
         );
       }
+      loadMyPurchases();
       _isLoading.value = false;
       update();
       return true;
@@ -275,5 +303,22 @@ class PartsState extends GetxController {
   Future<void> deletePart(String partId) async {
     _parts.removeWhere((p) => p.id == partId);
     update();
+  }
+
+  /// Load user's purchase history from API
+  Future<void> loadMyPurchases({bool forceRefresh = false}) async {
+    _isLoadingPurchases.value = true;
+    try {
+      final res = await _partsService.getMyPurchases(page: 1);
+      final data = res['data'] as List<dynamic>? ?? [];
+      _purchaseHistory.value = data
+          .map((e) => PurchaseHistoryModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      _purchaseHistory.clear();
+    } finally {
+      _isLoadingPurchases.value = false;
+      update();
+    }
   }
 }

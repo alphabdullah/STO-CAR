@@ -29,9 +29,7 @@ class StorageService {
   /// Get SharedPreferences instance
   SharedPreferences get prefs {
     if (_prefs == null) {
-      throw Exception(
-        'StorageService not initialized. Call init() first.',
-      );
+      throw Exception('StorageService not initialized. Call init() first.');
     }
     return _prefs!;
   }
@@ -46,10 +44,7 @@ class StorageService {
   /// Save user data as JSON
   Future<bool> saveUserData(Map<String, dynamic> userData) async {
     try {
-      return await prefs.setString(
-        StorageKeys.userData,
-        jsonEncode(userData),
-      );
+      return await prefs.setString(StorageKeys.userData, jsonEncode(userData));
     } catch (e) {
       return false;
     }
@@ -60,7 +55,9 @@ class StorageService {
     try {
       print('📖 StorageService.getUserData() called');
       final userDataString = prefs.getString(StorageKeys.userData);
-      print('   - Raw string from SharedPreferences: ${userDataString != null ? "${userDataString.substring(0, userDataString.length > 200 ? 200 : userDataString.length)}..." : "null"}');
+      print(
+        '   - Raw string from SharedPreferences: ${userDataString != null ? "${userDataString.substring(0, userDataString.length > 200 ? 200 : userDataString.length)}..." : "null"}',
+      );
       if (userDataString == null) {
         print('   - No user data string found in SharedPreferences');
         return null;
@@ -93,7 +90,9 @@ class StorageService {
   String? getToken() {
     print('📖 StorageService.getToken() called');
     final token = prefs.getString(StorageKeys.authToken);
-    print('   - Token: ${token != null ? "${token.substring(0, token.length > 30 ? 30 : token.length)}..." : "null"}');
+    print(
+      '   - Token: ${token != null ? "${token.substring(0, token.length > 30 ? 30 : token.length)}..." : "null"}',
+    );
     return token;
   }
 
@@ -145,7 +144,9 @@ class StorageService {
     try {
       print('📖 StorageService.getLoginApiResponse() called');
       final responseString = prefs.getString(StorageKeys.loginApiResponse);
-      print('   - Raw string from SharedPreferences: ${responseString != null ? "${responseString.substring(0, responseString.length > 200 ? 200 : responseString.length)}..." : "null"}');
+      print(
+        '   - Raw string from SharedPreferences: ${responseString != null ? "${responseString.substring(0, responseString.length > 200 ? 200 : responseString.length)}..." : "null"}',
+      );
       if (responseString == null) {
         print('   - No login API response found in SharedPreferences');
         return null;

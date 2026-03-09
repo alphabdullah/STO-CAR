@@ -22,6 +22,8 @@ class AppConstants {
   static const String routeAuctions = '/auctions';
   static const String routeAuctionDetails = '/auctions/:id';
   static const String routeParts = '/parts';
+  static const String routeCart = '/cart';
+  static const String routePurchaseHistory = '/purchase-history';
   static const String routeBookings = '/bookings';
   static const String routeNewBooking = '/bookings/new';
   static const String routeWallet = '/wallet';
@@ -39,9 +41,14 @@ class AppConstants {
   static const String routeAdminAuctions = '/admin/auctions';
   static const String routeAdminParts = '/admin/parts';
   static const String routeAdminBookings = '/admin/bookings';
+  static const String routeAdminOrders = '/admin/orders';
+  static const String routeAdminSettings = '/admin/settings';
   static const String routeFormFieldEditor = '/admin/bookings/form-fields';
 
   // Stripe
   static const String stripePublishableKey = 'pk_test_51RE5Jx2erDAmayX4DCTfsC9Qtj533KAvCNGRbMiD3fCIouIv9JEYsTr7R1mXF1ac2GL4gU54pTR9KPy1LMZWOCIf00QJckKGJD';
+  /// Required by Stripe SDK for Payment Sheet. Use any identifier for test.
+  static const String stripeMerchantIdentifier = 'merchant.stocar.marketplace';
 }
+
 

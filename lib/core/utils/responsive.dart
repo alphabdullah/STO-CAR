@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Utility class for responsive layout design
+/// Responsive utilities - all mobile devices, ultra-modern breakpoints
 class Responsive extends StatelessWidget {
   final Widget mobile;
   final Widget? tablet;
@@ -13,34 +13,29 @@ class Responsive extends StatelessWidget {
     required this.desktop,
   });
 
-  // Screen size breakpoints
   static const double mobileMax = 600;
   static const double tabletMax = 1024;
 
   static bool isMobile(BuildContext context) =>
       MediaQuery.of(context).size.width < mobileMax;
-
   static bool isTablet(BuildContext context) =>
       MediaQuery.of(context).size.width >= mobileMax &&
       MediaQuery.of(context).size.width < tabletMax;
-
   static bool isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= tabletMax;
 
-  @override
-  Widget build(BuildContext context) {
-    final double width = MediaQuery.of(context).size.width;
+  static double width(BuildContext context) => MediaQuery.of(context).size.width;
+  static double height(BuildContext context) => MediaQuery.of(context).size.height;
 
-    if (width >= tabletMax) {
-      return desktop;
-    } else if (width >= mobileMax && tablet != null) {
-      return tablet!;
-    } else {
-      return mobile;
-    }
+  /// Adaptive padding - responsive for small phones to tablets
+  static double hp(BuildContext context) {
+    final w = width(context);
+    if (w < 360) return 12;
+    if (w < 600) return 16;
+    if (w < 768) return 20;
+    return 24;
   }
 
-  /// Wraps content with a max width on larger screens
   static Widget constrained(Widget child, {double maxWidth = 1200}) {
     return Center(
       child: ConstrainedBox(
@@ -48,5 +43,13 @@ class Responsive extends StatelessWidget {
         child: child,
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final w = width(context);
+    if (w >= tabletMax) return desktop;
+    if (w >= mobileMax && tablet != null) return tablet!;
+    return mobile;
   }
 }

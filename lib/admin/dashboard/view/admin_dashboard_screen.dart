@@ -126,6 +126,26 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               ),
                             ),
                             SizedBox(width: isSmallScreen ? 8 : 12),
+                            // Settings Button
+                            Container(
+                              decoration: BoxDecoration(
+                                color: AppTheme.bgSecondary,
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(color: AppTheme.border, width: 1.5),
+                              ),
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => context.go(AppConstants.routeAdminSettings),
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Container(
+                                    padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+                                    child: Icon(Icons.settings_rounded, color: AppTheme.textPrimary, size: isSmallScreen ? 20 : 24),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: isSmallScreen ? 4 : 6),
                             // Refresh Button
                             Container(
                               decoration: BoxDecoration(

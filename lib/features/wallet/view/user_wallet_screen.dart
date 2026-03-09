@@ -1,24 +1,71 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/custom_card.dart';
 import '../../../core/shared_widgets/custom_button.dart';
 import '../../../core/background/app_background.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/wallet_model.dart';
 import '../controller/user_wallet_controller.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../services/stripe_service.dart';
 
 /// User wallet screen
-class UserWalletScreen extends StatelessWidget {
+class UserWalletScreen extends StatefulWidget {
   const UserWalletScreen({super.key});
 
   @override
+  State<UserWalletScreen> createState() => _UserWalletScreenState();
+}
+
+class _UserWalletScreenState extends State<UserWalletScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // When returning from Stripe Checkout (web) with success + session_id
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        final state = GoRouterState.of(context);
+        final sessionId = state.uri.queryParameters['session_id'];
+        if (state.uri.queryParameters['payment'] == 'success' && sessionId != null) {
+          final controller = Get.find<UserWalletController>();
+          final authState = Get.find<AuthState>();
+          try {
+            final stripeService = StripeService();
+            final res = await stripeService.verifyCheckoutSession(sessionId);
+            if (res['success'] == true && res['data']?['credited'] == true) {
+              await controller.loadWalletSummary();
+              await authState.refreshUser();
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Payment successful! Balance updated.'),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            } else {
+              await controller.loadWalletSummary();
+              await authState.refreshUser();
+            }
+          } catch (_) {
+            await controller.loadWalletSummary();
+            await authState.refreshUser();
+          }
+          if (mounted) context.go('/wallet');
+        }
+      } catch (_) {}
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final authState = Get.put(AuthState());
+    final authState = Get.find<AuthState>();
     final controller = Get.put(UserWalletController());
 
     return AppBackground(
@@ -27,7 +74,18 @@ class UserWalletScreen extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          title: const Text(AppStrings.wallet),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_ios_new_rounded),
+            onPressed: () => context.pop(),
+          ),
+          title: Text(
+            AppStrings.wallet,
+            style: TextStyle(
+              color: AppDesign.getTextPrimary(context),
+              fontWeight: FontWeight.w600,
+              fontFamily: AppTheme.fontFamily,
+            ),
+          ),
         ),
         body: SafeArea(
           child: Responsive.constrained(
@@ -63,21 +121,28 @@ class UserWalletScreen extends StatelessWidget {
                         );
                       }
 
+                      final balance = walletSummary?.balance ?? 0.0;
                       return CustomCard(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Text(
                               AppStrings.balance,
-                              style: Theme.of(context).textTheme.bodyMedium,
+                              style: TextStyle(
+                                color: AppDesign.getTextSecondary(context),
+                                fontSize: 14,
+                                fontFamily: AppTheme.fontFamily,
+                              ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              '${walletSummary?.balance ?? 0.0} ${AppConstants.currency}',
-                              style: Theme.of(context).textTheme.displaySmall
-                                  ?.copyWith(
-                                    color: Colors.blue,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              '$balance ${AppConstants.currency}',
+                              style: TextStyle(
+                                color: AppTheme.info,
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                fontFamily: AppTheme.fontFamily,
+                              ),
                             ),
                             const SizedBox(height: 16),
                             Row(
@@ -94,12 +159,14 @@ class UserWalletScreen extends StatelessWidget {
                                   isVerified
                                       ? 'Account Verified'
                                       : 'Verification Required',
-                                  style: Theme.of(context).textTheme.titleMedium
-                                      ?.copyWith(
-                                        color: isVerified
-                                            ? AppTheme.success
-                                            : AppTheme.warning,
-                                      ),
+                                  style: TextStyle(
+                                    color: isVerified
+                                        ? AppTheme.success
+                                        : AppTheme.warning,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppTheme.fontFamily,
+                                  ),
                                 ),
                               ],
                             ),
@@ -157,12 +224,24 @@ class UserWalletScreen extends StatelessWidget {
                                 const SizedBox(width: 8),
                                 Text(
                                   AppStrings.verificationRequired,
-                                  style: Theme.of(context).textTheme.titleLarge,
+                                  style: TextStyle(
+                                    color: AppDesign.getTextPrimary(context),
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppTheme.fontFamily,
+                                  ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 8),
-                            Text(AppStrings.verificationDescription),
+                            Text(
+                              AppStrings.verificationDescription,
+                              style: TextStyle(
+                                color: AppDesign.getTextSecondary(context),
+                                fontSize: 14,
+                                fontFamily: AppTheme.fontFamily,
+                              ),
+                            ),
                             const SizedBox(height: 16),
                             Container(
                               padding: const EdgeInsets.all(12),
@@ -180,14 +259,12 @@ class UserWalletScreen extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Text(
                                     '${AppConstants.requiredWalletDeposit} ${AppConstants.currency}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .titleLarge
-                                        ?.copyWith(
-                                          color: AppTheme.info,
-                                          fontFamily: AppTheme.fontFamily,
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                    style: TextStyle(
+                                      color: AppTheme.info,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: AppTheme.fontFamily,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -199,7 +276,12 @@ class UserWalletScreen extends StatelessWidget {
                     const SizedBox(height: 16),
                     Text(
                       'Deposit Amount',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: TextStyle(
+                        color: AppDesign.getTextPrimary(context),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppTheme.fontFamily,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Obx(
@@ -228,7 +310,12 @@ class UserWalletScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     Text(
                       'Quick Deposit',
-                      style: Theme.of(context).textTheme.titleMedium,
+                      style: TextStyle(
+                        color: AppDesign.getTextPrimary(context),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppTheme.fontFamily,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Row(
@@ -256,6 +343,7 @@ class UserWalletScreen extends StatelessWidget {
     );
   }
 }
+
 
 /// Transaction item widget
 class _TransactionItem extends StatelessWidget {
@@ -304,7 +392,7 @@ class _TransactionItem extends StatelessWidget {
                 Text(
                   '$date at $time',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                   ),
                 ),
               ],

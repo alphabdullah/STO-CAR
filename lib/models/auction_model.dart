@@ -284,13 +284,19 @@ class AuctionModel {
   static String? _cleanImageUrl(String? url) {
     if (url == null || url.isEmpty || url == 'null') return null;
 
-    // If it's a full URL and already looks like a valid uploaded path,
-    // keep it as-is (the API often returns bidssync.com/data-upload/...).
+    // If it's a full URL, keep as-is when it points to valid image hosts.
     if (url.startsWith('http')) {
+      // Laravel storage: /storage/auctions/... (from asset('storage/...'))
+      if (url.contains('/storage/')) {
+        // Rewrite local storage URL to use our new API CORS route
+        if (url.contains('127.0.0.1:8000') || url.contains('localhost:8000')) {
+          return url.replaceFirst('/storage/', '/api/v1/storage/');
+        }
+        return url;
+      }
+      // Legacy data-upload paths
       if (url.contains('/data-upload/uploads/')) return url;
       if (url.contains('data-upload.bidssync.com/data-upload/')) return url;
-
-      // Some responses might omit the /data-upload/ segment on the upload host.
       if (url.contains('data-upload.bidssync.com/') &&
           !url.contains('data-upload.bidssync.com/data-upload/')) {
         return url.replaceFirst(
@@ -331,7 +337,7 @@ class AuctionModel {
       }
     }
 
-    // Use main API domain path (matches featured_image in API response)
-    return 'https://bidssync.com/data-upload/$finalPath';
+    // Use main API domain path
+    return 'https://stogroups.com/storage/$finalPath';
   }
 }

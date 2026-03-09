@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/guards/auth_guard_widget.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../state/booking_state.dart';
 import '../../../state/auth_state.dart';
@@ -19,13 +20,13 @@ class BookingsScreen extends StatelessWidget {
     final authState = Get.put(AuthState());
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: AuthGuardWidget(
         actionDescription: 'Login to view and create bookings',
@@ -112,7 +113,7 @@ class _BookingsContentState extends State<_BookingsContent> {
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary,
+                        color: AppDesign.getTextPrimary(context),
                         fontFamily: AppTheme.fontFamily,
                         letterSpacing: -0.5,
                       ),
@@ -122,7 +123,7 @@ class _BookingsContentState extends State<_BookingsContent> {
                       '$bookingsCount ${bookingsCount == 1 ? 'booking' : 'bookings'}',
                       style: TextStyle(
                         fontSize: 14,
-                        color: AppTheme.textSecondary,
+                        color: AppDesign.getTextSecondary(context),
                         fontFamily: AppTheme.fontFamily,
                       ),
                     ),
@@ -157,9 +158,9 @@ class _BookingsContentState extends State<_BookingsContent> {
                           height: 24,
                           fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
-                            return const Icon(
+                            return Icon(
                               Icons.add_rounded,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               size: 24,
                             );
                           },
@@ -257,13 +258,13 @@ class _EmptyBookingsView extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.bgSecondary,
+                color: AppDesign.getBgSecondary(context),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.calendar_today_outlined,
                 size: 64,
-                color: AppTheme.textMuted,
+                color: AppDesign.getTextTertiary(context),
               ),
             ),
             const SizedBox(height: 24),
@@ -272,7 +273,7 @@ class _EmptyBookingsView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -281,7 +282,7 @@ class _EmptyBookingsView extends StatelessWidget {
               'Book your first service appointment',
               style: TextStyle(
                 fontSize: 16,
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
               textAlign: TextAlign.center,
@@ -322,7 +323,7 @@ class _EmptyBookingsView extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  foregroundColor: AppTheme.textPrimary,
+                  foregroundColor: AppDesign.getTextPrimary(context),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -359,9 +360,9 @@ class _BookingCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.2),
@@ -477,7 +478,7 @@ class _BookingCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.textPrimary,
+                      color: AppDesign.getTextPrimary(context),
                       fontFamily: AppTheme.fontFamily,
                       letterSpacing: -0.3,
                     ),
@@ -546,7 +547,7 @@ class _BookingCard extends StatelessWidget {
                             icon: Icons.confirmation_number_outlined,
                             label: 'Booking #',
                             value: bookingNumber,
-                            iconColor: AppTheme.textSecondary,
+                            iconColor: AppDesign.getTextSecondary(context),
                           ),
                         ],
                       ],
@@ -559,12 +560,12 @@ class _BookingCard extends StatelessWidget {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [AppTheme.bgElevated, AppTheme.bgSecondary],
+                        colors: [AppTheme.bgElevated, AppDesign.getBgSecondary(context)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: AppTheme.border, width: 1.5),
+                      border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.1),
@@ -588,7 +589,7 @@ class _BookingCard extends StatelessWidget {
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
-                                  color: AppTheme.textPrimary,
+                                  color: AppDesign.getTextPrimary(context),
                                   fontFamily: AppTheme.fontFamily,
                                   letterSpacing: 0.3,
                                 ),
@@ -597,7 +598,7 @@ class _BookingCard extends StatelessWidget {
                               Icon(
                                 Icons.arrow_forward_rounded,
                                 size: 20,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                               ),
                             ],
                           ),
@@ -723,7 +724,7 @@ class _InfoRow extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textSecondary,
+                  color: AppDesign.getTextSecondary(context),
                   fontWeight: FontWeight.w500,
                   fontFamily: AppTheme.fontFamily,
                   letterSpacing: 0.2,
@@ -734,7 +735,7 @@ class _InfoRow extends StatelessWidget {
                 value,
                 style: TextStyle(
                   fontSize: 15,
-                  color: AppTheme.textPrimary,
+                  color: AppDesign.getTextPrimary(context),
                   fontWeight: FontWeight.w600,
                   fontFamily: AppTheme.fontFamily,
                 ),

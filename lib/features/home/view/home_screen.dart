@@ -5,12 +5,18 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_design_system.dart';
+import '../../../state/locale_state.dart';
+import 'package:sto_car_app/l10n/app_localizations.dart';
 import '../../../state/auth_state.dart';
 import '../../../state/auction_state.dart';
 import '../../../state/parts_state.dart';
+import '../../../state/cart_state.dart';
 import '../../../state/notification_state.dart';
 import '../../auctions/widgets/auction_card.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../core/shared_widgets/theme_toggle.dart';
+import '../../../core/shared_widgets/premium_hero.dart';
 
 /// Unified home screen for both guest and logged-in users
 class HomeScreen extends StatelessWidget {
@@ -24,7 +30,7 @@ class HomeScreen extends StatelessWidget {
       final partsState = Get.find<PartsState>();
 
       return Scaffold(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         drawer: Obx(
           () => authState.isAuthenticated
               ? _buildDrawer(context, authState)
@@ -56,6 +62,11 @@ class HomeScreen extends StatelessWidget {
                             child: _CustomHeader(authState: authState),
                           ),
 
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20),
+                            child: PremiumHeroBanner(),
+                          ),
+
                           SizedBox(height: verticalSpacing),
 
                           // Search Bar
@@ -74,13 +85,12 @@ class HomeScreen extends StatelessWidget {
                               horizontal: horizontalPadding,
                             ),
                             child: Text(
-                              'Explore Categories',
-                              style: Theme.of(context).textTheme.displayMedium
-                                  ?.copyWith(
-                                    fontWeight: FontWeight.w600,
-                                    color: AppTheme.textPrimary,
-                                    fontSize: isSmallScreen ? 20.0 : null,
-                                  ),
+                              AppLocalizations.of(context)!.exploreCategories,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: AppDesign.getTextPrimary(context),
+                                fontSize: isSmallScreen ? 20.0 : 24,
+                              ),
                             ),
                           ),
 
@@ -129,7 +139,7 @@ class HomeScreen extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(
                                       horizontal: isSmallScreen ? 16.0 : 20.0,
                                     ),
-                                    child: _AuthButtonsRow(),
+                                    child: _BottomAccountCTA(),
                                   ),
                                   SizedBox(height: isSmallScreen ? 64.0 : 80.0),
                                 ],
@@ -176,8 +186,9 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildDrawer(BuildContext context, AuthState authState) {
+    Get.put(CartState(), permanent: false);
     return Drawer(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.bgPrimary,
       width: MediaQuery.of(context).size.width * 0.85,
       child: Column(
         children: [
@@ -214,6 +225,63 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 _DrawerMenuItem(
+                  icon: Icons.shopping_bag_rounded,
+                  title: 'Purchase History',
+                  onTap: () {
+                    Navigator.pop(context);
+                    Get.find<PartsState>().loadMyPurchases();
+                    context.push(AppConstants.routePurchaseHistory);
+                  },
+                ),
+                _DrawerMenuItem(
+                  icon: Icons.shopping_cart_rounded,
+                  title: AppStrings.cart,
+                  trailing: Obx(() {
+                    final cartState = Get.find<CartState>();
+                    final count = cartState.itemCount.value;
+                    if (count <= 0) {
+                      return Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: AppDesign.getTextTertiary(context),
+                        size: 16,
+                      );
+                    }
+                    return Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppTheme.redPrimary,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Text(
+                            '$count',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.arrow_forward_ios_rounded,
+                          color: AppDesign.getTextTertiary(context),
+                          size: 16,
+                        ),
+                      ],
+                    );
+                  }),
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.push(AppConstants.routeCart);
+                  },
+                ),
+                _DrawerMenuItem(
                   icon: Icons.calendar_today_rounded,
                   title: AppStrings.booking,
                   onTap: () {
@@ -238,8 +306,8 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
                 const SizedBox(height: 8),
-                const Divider(
-                  color: AppTheme.border,
+                Divider(
+                  color: AppDesign.getBorder(context),
                   height: 1,
                   indent: 20,
                   endIndent: 20,
@@ -295,7 +363,7 @@ class _DrawerHeader extends StatelessWidget {
                   width: 100,
                   height: 100,
                   decoration: BoxDecoration(
-                    color: AppTheme.bgPrimary,
+                    color: AppDesign.getBgPrimary(context),
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
@@ -323,7 +391,7 @@ class _DrawerHeader extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.directions_car,
-                            color: AppTheme.textPrimary,
+                            color: Colors.white,
                             size: 50,
                           ),
                         );
@@ -340,8 +408,8 @@ class _DrawerHeader extends StatelessWidget {
                 return Center(
                   child: Text(
                     user?.name ?? 'User',
-                    style: const TextStyle(
-                      color: AppTheme.textPrimary,
+                    style: TextStyle(
+                      color: AppDesign.getTextPrimary(context),
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       fontFamily: AppTheme.fontFamily,
@@ -359,7 +427,7 @@ class _DrawerHeader extends StatelessWidget {
                   child: Text(
                     user?.email ?? '',
                     style: TextStyle(
-                      color: AppTheme.textPrimary.withValues(alpha: 0.85),
+                      color: AppDesign.getTextPrimary(context).withValues(alpha: 0.85),
                       fontSize: 13,
                       fontFamily: AppTheme.fontFamily,
                     ),
@@ -380,10 +448,10 @@ class _DrawerHeader extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: AppTheme.bgPrimary.withValues(alpha: 0.25),
+                      color: AppDesign.getBgPrimary(context).withValues(alpha: 0.25),
                       borderRadius: BorderRadius.circular(25),
                       border: Border.all(
-                        color: AppTheme.textPrimary.withValues(alpha: 0.3),
+                        color: AppDesign.getTextPrimary(context).withValues(alpha: 0.3),
                         width: 1,
                       ),
                     ),
@@ -393,13 +461,13 @@ class _DrawerHeader extends StatelessWidget {
                         Icon(
                           isVerified ? Icons.verified : Icons.pending_outlined,
                           size: 18,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                         ),
                         const SizedBox(width: 8),
                         Text(
                           isVerified ? 'Verified Account' : 'Not Verified',
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
+                          style: TextStyle(
+                            color: AppDesign.getTextPrimary(context),
                             fontSize: 13,
                             fontWeight: FontWeight.w600,
                             fontFamily: AppTheme.fontFamily,
@@ -424,25 +492,27 @@ class _DrawerMenuItem extends StatelessWidget {
   final String title;
   final VoidCallback onTap;
   final bool isDestructive;
+  final Widget? trailing;
 
   const _DrawerMenuItem({
     required this.icon,
     required this.title,
     required this.onTap,
     this.isDestructive = false,
+    this.trailing,
   });
 
   @override
   Widget build(BuildContext context) {
     final iconColor = isDestructive
         ? AppTheme.redPrimary
-        : AppTheme.textPrimary;
+        : AppDesign.getTextPrimary(context);
     final textColor = isDestructive
         ? AppTheme.redPrimary
-        : AppTheme.textPrimary;
+        : AppDesign.getTextPrimary(context);
     final bgColor = isDestructive
         ? AppTheme.redPrimary.withValues(alpha: 0.1)
-        : AppTheme.bgSecondary;
+        : AppDesign.getBgSecondary(context);
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -502,12 +572,15 @@ class _DrawerMenuItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Arrow icon
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  color: AppTheme.textMuted,
-                  size: 16,
-                ),
+                // Trailing (e.g. cart count badge) or Arrow
+                if (trailing != null)
+                  trailing!
+                else
+                  Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    color: AppDesign.getTextTertiary(context),
+                    size: 16,
+                  ),
               ],
             ),
           ),
@@ -556,7 +629,7 @@ class _CustomHeader extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.menu_rounded,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.textPrimary,
                           size: menuIconSize,
                         ),
                         padding: EdgeInsets.zero,
@@ -569,12 +642,12 @@ class _CustomHeader extends StatelessWidget {
                       SizedBox(width: isSmallScreen ? 4.0 : 8.0),
                     Flexible(
                       child: Text(
-                        'Welcome Back!',
+                        AppLocalizations.of(context)!.welcomeBack,
                         style: TextStyle(
                           fontSize: fontSize,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
-                          fontFamily: AppTheme.fontFamily,
+                          fontWeight: FontWeight.w700,
+                          color: Theme.of(context).colorScheme.onSurface,
+                          letterSpacing: -0.5,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -584,79 +657,143 @@ class _CustomHeader extends StatelessWidget {
                 ),
               ),
             ),
-
-            // Right side: Language and Notification icons
+            // Right side: Language, Cart, and Notification icons
             Row(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // Theme Toggle
+                const ThemeToggle(),
+                SizedBox(width: iconSpacing),
+
                 // Language icon with dropdown
                 _LanguageSelector(iconSize: iconSize),
                 SizedBox(width: iconSpacing),
+
+                // Cart icon
+                Obx(() {
+                  final cartState = Get.put(CartState());
+                  final itemCount = cartState.itemCount.value;
+
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(24),
+                    onTap: () {
+                      if (authState.isAuthenticated) {
+                        context.push(AppConstants.routeCart);
+                      } else {
+                        context.push(AppConstants.routeLogin);
+                      }
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            Icons.shopping_cart_outlined,
+                            color: AppDesign.textPrimary,
+                            size: iconSize,
+                          ),
+                        ),
+                        if (authState.isAuthenticated && itemCount > 0)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: AppDesign.primary,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppDesign.bgPrimary,
+                                  width: 2,
+                                ),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                itemCount > 9 ? '9+' : '$itemCount',
+                                style: TextStyle(
+                                  color: AppDesign.textPrimary,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }),
+                SizedBox(width: iconSpacing),
+
                 // Notification icon
                 Obx(() {
                   final notificationState = Get.put(NotificationState());
                   final unreadCount = notificationState.unreadCount;
 
-                  return Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      IconButton(
-                        padding: EdgeInsets.zero,
-                        constraints: BoxConstraints(
-                          minWidth: isSmallScreen ? 40 : (isTablet ? 56 : 48),
-                          minHeight: isSmallScreen ? 40 : (isTablet ? 56 : 48),
-                        ),
-                        icon: Image.asset(
-                          'assets/images/notification.png',
-                          width: iconSize,
-                          height: iconSize,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Icon(
-                              Icons.notifications_outlined,
-                              color: AppTheme.textPrimary,
-                              size: iconSize,
-                            );
-                          },
-                        ),
-                        onPressed: authState.isAuthenticated
-                            ? () {
-                                context.push(AppConstants.routeNotifications);
-                              }
-                            : null,
-                      ),
-                      if (authState.isAuthenticated && unreadCount > 0)
-                        Positioned(
-                          right: isSmallScreen ? 4 : (isTablet ? 8 : 6),
-                          top: isSmallScreen ? 4 : (isTablet ? 8 : 6),
-                          child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(
-                              color: AppTheme.redPrimary,
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: AppTheme.bgPrimary,
-                                width: 2,
-                              ),
-                            ),
-                            constraints: const BoxConstraints(
-                              minWidth: 16,
-                              minHeight: 16,
-                            ),
-                            child: Text(
-                              unreadCount > 9 ? '9+' : '$unreadCount',
-                              style: const TextStyle(
-                                color: AppTheme.textPrimary,
-                                fontSize: 9,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: AppTheme.fontFamily,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(24),
+                    onTap: () {
+                      if (authState.isAuthenticated) {
+                        context.push(AppConstants.routeNotifications);
+                      } else {
+                        context.push(AppConstants.routeLogin);
+                      }
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset(
+                            'assets/images/notification.png',
+                            width: iconSize,
+                            height: iconSize,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Icon(
+                                Icons.notifications_outlined,
+                                color: AppDesign.textPrimary,
+                                size: iconSize,
+                              );
+                            },
                           ),
                         ),
-                    ],
+                        if (authState.isAuthenticated && unreadCount > 0)
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: AppDesign.primary,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: AppDesign.bgPrimary,
+                                  width: 2,
+                                ),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                unreadCount > 9 ? '9+' : '$unreadCount',
+                                style: TextStyle(
+                                  color: AppDesign.textPrimary,
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   );
                 }),
               ],
@@ -679,12 +816,9 @@ class _LanguageSelector extends StatefulWidget {
 }
 
 class _LanguageSelectorState extends State<_LanguageSelector> {
-  String _selectedLanguage = 'English';
   final List<Map<String, String>> _languages = [
     {'code': 'en', 'name': 'English', 'native': 'English'},
     {'code': 'ar', 'name': 'Arabic', 'native': 'العربية'},
-    {'code': 'fr', 'name': 'French', 'native': 'Français'},
-    {'code': 'es', 'name': 'Spanish', 'native': 'Español'},
   ];
 
   double get iconSize => widget.iconSize;
@@ -704,10 +838,11 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
         overlay.size.height - position.dy - button.size.height - 8,
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      color: AppTheme.bgElevated,
+      color: AppDesign.getBgElevated(context),
       elevation: 8,
       items: _languages.map((language) {
-        final isSelected = _selectedLanguage == language['name'];
+        final localeState = Get.find<LocaleState>();
+        final isSelected = localeState.locale.languageCode == language['code'];
         return PopupMenuItem<String>(
           value: language['code'],
           padding: EdgeInsets.zero,
@@ -725,7 +860,7 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
                   width: 32,
                   height: 32,
                   decoration: BoxDecoration(
-                    color: isSelected ? AppTheme.redPrimary : AppTheme.border,
+                    color: isSelected ? AppTheme.redPrimary : AppDesign.getBorder(context),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Center(
@@ -733,8 +868,8 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
                       language['code']!.toUpperCase(),
                       style: TextStyle(
                         color: isSelected
-                            ? AppTheme.textPrimary
-                            : AppTheme.textSecondary,
+                            ? AppDesign.getTextPrimary(context)
+                            : AppDesign.getTextSecondary(context),
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         fontFamily: AppTheme.fontFamily,
@@ -752,8 +887,8 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
                         language['name']!,
                         style: TextStyle(
                           color: isSelected
-                              ? AppTheme.textPrimary
-                              : AppTheme.textSecondary,
+                              ? AppDesign.getTextPrimary(context)
+                              : AppDesign.getTextSecondary(context),
                           fontSize: 14,
                           fontWeight: isSelected
                               ? FontWeight.w600
@@ -765,7 +900,7 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
                         Text(
                           language['native']!,
                           style: TextStyle(
-                            color: AppTheme.textMuted,
+                            color: AppDesign.getTextTertiary(context),
                             fontSize: 12,
                             fontFamily: AppTheme.fontFamily,
                           ),
@@ -786,21 +921,20 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
       }).toList(),
     ).then((value) {
       if (value != null) {
-        setState(() {
-          _selectedLanguage = _languages.firstWhere(
-            (lang) => lang['code'] == value,
-          )['name']!;
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Language changed to $_selectedLanguage'),
-            backgroundColor: AppTheme.bgSecondary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        Get.find<LocaleState>().locale = Locale(value);
+        final name = _languages.firstWhere((l) => l['code'] == value)['name']!;
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Language changed to $name'),
+              backgroundColor: AppDesign.getBgSecondary(context),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-          ),
-        );
+          );
+        }
       }
     });
   }
@@ -825,7 +959,7 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
         errorBuilder: (context, error, stackTrace) {
           return Icon(
             Icons.language_rounded,
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             size: iconSize,
           );
         },
@@ -841,33 +975,21 @@ class _SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-            spreadRadius: 0,
-          ),
-        ],
+        color: AppDesign.getBgSecondary(context),
+        borderRadius: BorderRadius.circular(AppDesign.radiusLg),
+        border: Border.all(color: AppDesign.getBorder(context)),
       ),
       child: TextField(
         decoration: InputDecoration(
-          hintText: 'Search for Vehicles, Parts, Services...',
-          hintStyle: const TextStyle(
-            color: AppTheme.textMuted,
-            fontSize: 15,
-            fontFamily: AppTheme.fontFamily,
-          ),
-          prefixIcon: const Icon(
+          hintText: AppLocalizations.of(context)!.searchHint,
+          hintStyle: TextStyle(color: AppDesign.getTextTertiary(context), fontSize: 15),
+          prefixIcon: Icon(
             Icons.search,
-            color: AppTheme.textSecondary,
+            color: AppDesign.getTextSecondary(context),
             size: 22,
           ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(AppDesign.radiusLg),
             borderSide: BorderSide.none,
           ),
           filled: true,
@@ -877,11 +999,7 @@ class _SearchBar extends StatelessWidget {
             vertical: 16,
           ),
         ),
-        style: const TextStyle(
-          color: AppTheme.textPrimary,
-          fontSize: 15,
-          fontFamily: AppTheme.fontFamily,
-        ),
+        style: TextStyle(color: AppDesign.textPrimary, fontSize: 15),
         onSubmitted: (value) {
           ScaffoldMessenger.of(
             context,
@@ -1120,263 +1238,241 @@ class _FeatureCard extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        return InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(20),
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 220),
-            decoration: BoxDecoration(
-              color: AppTheme.bgSecondary,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: AppTheme.border, width: 1),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.3),
-                  blurRadius: 15,
-                  offset: const Offset(0, 2),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 1),
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: Stack(
-              children: [
-                // Main content - Column layout with icon on top
-                Padding(
-                  padding: EdgeInsets.all(cardPadding),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // Top section: Icon and Title
-                      Flexible(
-                        flex: 1,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Icon or Image on top - larger without background container
-                            iconImage != null
-                                ? SizedBox(
-                                    width: iconSize,
-                                    height: iconSize,
-                                    child: Image.asset(
-                                      iconImage!,
-                                      width: iconSize,
-                                      height: iconSize,
-                                      fit: BoxFit.contain,
-                                      filterQuality: FilterQuality.high,
-                                      cacheWidth:
-                                          (iconSize *
-                                                  MediaQuery.of(
-                                                    context,
-                                                  ).devicePixelRatio)
-                                              .round(),
-                                      cacheHeight:
-                                          (iconSize *
-                                                  MediaQuery.of(
-                                                    context,
-                                                  ).devicePixelRatio)
-                                              .round(),
-                                      errorBuilder: (context, error, stackTrace) {
-                                        // Fallback to icon if image fails to load
-                                        debugPrint(
-                                          'Error loading image: $iconImage',
-                                        );
-                                        debugPrint('Error: $error');
-                                        return Icon(
-                                          icon ?? Icons.image_not_supported,
-                                          size: iconSize,
-                                          color: AppTheme.textPrimary,
-                                        );
-                                      },
-                                    ),
-                                  )
-                                : Icon(
-                                    icon,
-                                    size: iconSize,
-                                    color: AppTheme.textPrimary,
+        return Material(
+          color: AppDesign.bgCard,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDesign.radiusLg),
+          ),
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(AppDesign.radiusLg),
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 200),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(AppDesign.radiusLg),
+                border: Border.all(color: AppDesign.border),
+              ),
+              child: Stack(
+                children: [
+                  // Main content - Column layout with icon on top
+                  Padding(
+                    padding: EdgeInsets.all(cardPadding),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // Top section: Icon and Title
+                        Flexible(
+                          flex: 1,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                // Icon or Image on top - larger without background container
+                                iconImage != null
+                                    ? SizedBox(
+                                        width: iconSize,
+                                        height: iconSize,
+                                        child: Image.asset(
+                                          iconImage!,
+                                          width: iconSize,
+                                          height: iconSize,
+                                          fit: BoxFit.contain,
+                                          filterQuality: FilterQuality.high,
+                                          cacheWidth:
+                                              (iconSize *
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).devicePixelRatio)
+                                                  .round(),
+                                          cacheHeight:
+                                              (iconSize *
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).devicePixelRatio)
+                                                  .round(),
+                                          errorBuilder: (context, error, stackTrace) {
+                                            // Fallback to icon if image fails to load
+                                            debugPrint(
+                                              'Error loading image: $iconImage',
+                                            );
+                                            debugPrint('Error: $error');
+                                            return Icon(
+                                              icon ?? Icons.image_not_supported,
+                                              size: iconSize,
+                                              color: AppDesign.getTextPrimary(context),
+                                            );
+                                          },
+                                        ),
+                                      )
+                                    : Icon(
+                                        icon,
+                                        size: iconSize,
+                                        color: AppDesign.getTextPrimary(context),
+                                      ),
+
+                                SizedBox(
+                                  height: isTablet
+                                      ? 10.0
+                                      : isLargeMobile
+                                      ? 8.0
+                                      : isMediumMobile
+                                      ? 6.0
+                                      : 4.0,
+                                ),
+
+                                // Title
+                                Text(
+                                  title,
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: titleFontSize + 1,
+                                    color: AppDesign.getTextPrimary(context),
+                                    letterSpacing: -0.3,
+                                    height: 1.2,
                                   ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
 
-                            SizedBox(
-                              height: isTablet
-                                  ? 10.0
-                                  : isLargeMobile
-                                  ? 8.0
-                                  : isMediumMobile
-                                  ? 6.0
-                                  : 4.0,
-                            ),
+                                SizedBox(
+                                  height: isTablet
+                                      ? 4.0
+                                      : isLargeMobile
+                                      ? 3.0
+                                      : isMediumMobile
+                                      ? 2.0
+                                      : 2.0,
+                                ),
 
-                            // Title
-                            Text(
-                              title,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                                fontSize: titleFontSize + 1,
-                                color: AppTheme.textPrimary,
-                                letterSpacing: -0.3,
-                                height: 1.2,
-                                fontFamily: AppTheme.fontFamily,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-
-                            SizedBox(
-                              height: isTablet
-                                  ? 4.0
-                                  : isLargeMobile
-                                  ? 3.0
-                                  : isMediumMobile
-                                  ? 2.0
-                                  : 2.0,
-                            ),
-
-                            // Subtitle
-                            Text(
-                              subtitle,
-                              style: TextStyle(
-                                color: AppTheme.textSecondary,
-                                fontSize: subtitleFontSize,
-                                fontWeight: FontWeight.w400,
-                                letterSpacing: 0.1,
-                                height: 1.3,
-                                fontFamily: AppTheme.fontFamily,
-                              ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      SizedBox(
-                        height: isTablet
-                            ? 12.0
-                            : isLargeMobile
-                            ? 10.0
-                            : isMediumMobile
-                            ? 8.0
-                            : 6.0,
-                      ),
-
-                      // Bottom section: Button - Elegant navigation button
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: AppTheme.bgElevated,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.border, width: 1),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.2),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                              spreadRadius: 0,
-                            ),
-                          ],
-                        ),
-                        child: Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: onTap,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: isTablet
-                                    ? 12.0
-                                    : isLargeMobile
-                                    ? 11.0
-                                    : isMediumMobile
-                                    ? 10.0
-                                    : 9.0,
-                                horizontal: isTablet
-                                    ? 16.0
-                                    : isLargeMobile
-                                    ? 14.0
-                                    : isMediumMobile
-                                    ? 12.0
-                                    : 10.0,
-                              ),
-                              child: const Icon(
-                                Icons.arrow_forward_rounded,
-                                size: 18.0,
-                                color: AppTheme.textSecondary,
-                              ),
+                                // Subtitle
+                                Text(
+                                  subtitle,
+                                  style: TextStyle(
+                                    color: AppDesign.textSecondary,
+                                    fontSize: subtitleFontSize,
+                                    fontWeight: FontWeight.w400,
+                                    letterSpacing: 0.1,
+                                    height: 1.3,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ),
 
-                // Badge in top right
-                if (badgeText != null)
-                  Positioned(
-                    top: cardPadding * 0.6,
-                    right: cardPadding * 0.6,
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isTablet
-                            ? 10.0
-                            : isLargeMobile
-                            ? 9.0
-                            : isMediumMobile
-                            ? 8.0
-                            : 7.0,
-                        vertical: isTablet
-                            ? 6.0
-                            : isLargeMobile
-                            ? 5.0
-                            : isMediumMobile
-                            ? 4.0
-                            : 3.0,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [AppTheme.redPrimary, AppTheme.redPressed],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.redPrimary.withValues(alpha: 0.4),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                            spreadRadius: 0,
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        badgeText!,
-                        style: TextStyle(
-                          color: AppTheme.textPrimary,
-                          fontSize: isTablet
+                        SizedBox(
+                          height: isTablet
                               ? 12.0
                               : isLargeMobile
-                              ? 11.0
-                              : isMediumMobile
                               ? 10.0
-                              : 9.0,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
-                          fontFamily: AppTheme.fontFamily,
+                              : isMediumMobile
+                              ? 8.0
+                              : 6.0,
+                        ),
+
+                        // Bottom section: Button - Clean minimal
+                        Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: AppDesign.bgTertiary,
+                            borderRadius: BorderRadius.circular(
+                              AppDesign.radiusSm,
+                            ),
+                            border: Border.all(color: AppDesign.border),
+                          ),
+                          child: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              onTap: onTap,
+                              borderRadius: BorderRadius.circular(
+                                AppDesign.radiusSm,
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: isTablet
+                                      ? 12.0
+                                      : isLargeMobile
+                                      ? 11.0
+                                      : isMediumMobile
+                                      ? 10.0
+                                      : 9.0,
+                                  horizontal: isTablet
+                                      ? 16.0
+                                      : isLargeMobile
+                                      ? 14.0
+                                      : isMediumMobile
+                                      ? 12.0
+                                      : 10.0,
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  size: 18.0,
+                                  color: AppDesign.textSecondary,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Badge in top right
+                  if (badgeText != null)
+                    Positioned(
+                      top: cardPadding * 0.6,
+                      right: cardPadding * 0.6,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isTablet
+                              ? 10.0
+                              : isLargeMobile
+                              ? 9.0
+                              : isMediumMobile
+                              ? 8.0
+                              : 7.0,
+                          vertical: isTablet
+                              ? 6.0
+                              : isLargeMobile
+                              ? 5.0
+                              : isMediumMobile
+                              ? 4.0
+                              : 3.0,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppDesign.primary,
+                          borderRadius: BorderRadius.circular(
+                            AppDesign.radiusSm,
+                          ),
+                        ),
+                        child: Text(
+                          badgeText!,
+                          style: TextStyle(
+                            color: AppDesign.textPrimary,
+                            fontSize: isTablet
+                                ? 12.0
+                                : isLargeMobile
+                                ? 11.0
+                                : isMediumMobile
+                                ? 10.0
+                                : 9.0,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.3,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           ),
         );
@@ -1385,134 +1481,133 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-/// Authentication Buttons Row
-class _AuthButtonsRow extends StatelessWidget {
+/// Professional Account CTA Section for the Home Page
+class _BottomAccountCTA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  AppTheme.redPrimary,
-                  AppTheme.redPressed,
-                  AppTheme.redPrimary,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                stops: const [0.0, 0.5, 1.0],
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final h = MediaQuery.of(context).size.width < 360 ? 46.0 : 50.0;
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: isDark
+              ? [AppDesign.darkBgCard, AppDesign.darkBgTertiary]
+              : [AppDesign.lightBgCard, AppDesign.lightBgTertiary],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(
+          color: isDark ? AppDesign.darkBorder : AppDesign.lightBorder,
+          width: 2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppDesign.primary.withOpacity(0.1),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.account_circle_outlined,
+                  color: AppDesign.primary,
+                  size: 32,
+                ),
               ),
-              borderRadius: BorderRadius.circular(18),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.redPrimary.withValues(alpha: 0.4),
-                  blurRadius: 16,
-                  offset: const Offset(0, 6),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: AppTheme.redPrimary.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 3),
-                  spreadRadius: -2,
-                ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => context.push(AppConstants.routeLogin),
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.lock_rounded,
-                        size: 22,
-                        color: AppTheme.textPrimary,
+              const SizedBox(width: 16),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Unlock Full Access',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -0.5,
                       ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        AppStrings.login,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: AppTheme.fontFamily,
-                          color: AppTheme.textPrimary,
-                          letterSpacing: 0.5,
-                        ),
+                    ),
+                    Text(
+                      'Join our elite community of car enthusiasts.',
+                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: h,
+                  child: ElevatedButton(
+                    onPressed: () => context.push(AppConstants.routeLogin),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppDesign.primary,
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    ],
+                    ),
+                    child: const Text(
+                      'Login Now',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [AppTheme.bgElevated, AppTheme.bgSecondary],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(18),
-              border: Border.all(color: AppTheme.redPrimary, width: 2),
-              boxShadow: [
-                BoxShadow(
-                  color: AppTheme.redPrimary.withValues(alpha: 0.2),
-                  blurRadius: 12,
-                  offset: const Offset(0, 4),
-                  spreadRadius: 0,
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.15),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                  spreadRadius: 0,
-                ),
-              ],
-            ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () => context.push(AppConstants.routeSignup),
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(vertical: 18),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.person_add_rounded,
-                        size: 22,
-                        color: AppTheme.redPrimary,
+              const SizedBox(width: 12),
+              Expanded(
+                child: SizedBox(
+                  height: h,
+                  child: OutlinedButton(
+                    onPressed: () => context.push(AppConstants.routeSignup),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: isDark ? Colors.white : Colors.black,
+                      side: BorderSide(
+                        color: isDark
+                            ? AppDesign.darkBorder
+                            : AppDesign.lightBorder,
+                        width: 1.5,
                       ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        'Signup',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.redPrimary,
-                          fontFamily: AppTheme.fontFamily,
-                          letterSpacing: 0.5,
-                        ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
                       ),
-                    ],
+                    ),
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -1542,7 +1637,7 @@ class _LiveAuctionsPreview extends StatelessWidget {
                 'Live Auctions',
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                   fontWeight: FontWeight.w600,
-                  color: AppTheme.textPrimary,
+                  color: AppDesign.getTextPrimary(context),
                 ),
               ),
               TextButton(
