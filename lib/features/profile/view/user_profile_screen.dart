@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/app_strings.dart';
+import 'package:sto_car_app/l10n/app_localizations.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
@@ -216,8 +216,10 @@ class UserProfileScreen extends StatelessWidget {
                                   const SizedBox(width: 8),
                                   Text(
                                     isVerified
-                                        ? 'Verified Account'
-                                        : 'Unverified Account',
+                                        ? AppLocalizations.of(context)!
+                                            .verifiedAccount
+                                        : AppLocalizations.of(context)!
+                                            .notVerified,
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.bold,
@@ -244,7 +246,7 @@ class UserProfileScreen extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Account Information',
+                          AppLocalizations.of(context)!.accountInformation,
                           style: TextStyle(
                             fontSize: 22,
                             fontWeight: FontWeight.bold,
@@ -262,14 +264,14 @@ class UserProfileScreen extends StatelessWidget {
                               _InfoCard(
                                 icon: Icons.email_outlined,
                                 iconColor: AppTheme.info,
-                                label: 'Email',
+                                label: AppLocalizations.of(context)!.email,
                                 value: user?.email ?? 'N/A',
                               ),
                               const SizedBox(height: 12),
                               _InfoCard(
                                 icon: Icons.badge_outlined,
                                 iconColor: AppTheme.warning,
-                                label: 'Role',
+                                label: AppLocalizations.of(context)!.role,
                                 value:
                                     user?.role
                                         .toString()
@@ -282,7 +284,8 @@ class UserProfileScreen extends StatelessWidget {
                               _InfoCard(
                                 icon: Icons.calendar_today_outlined,
                                 iconColor: AppTheme.redPrimary,
-                                label: 'Member Since',
+                                label:
+                                    AppLocalizations.of(context)!.memberSince,
                                 value: user?.createdAt != null
                                     ? user!.createdAt!.toString().split(' ')[0]
                                     : 'N/A',
@@ -308,7 +311,7 @@ class UserProfileScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Emirates ID',
+                            AppLocalizations.of(context)!.emiratesId,
                             style: TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
@@ -323,7 +326,7 @@ class UserProfileScreen extends StatelessWidget {
                               Expanded(
                                 child: _buildIdImageCard(
                                   context,
-                                  label: 'Front Side',
+                                  label: AppLocalizations.of(context)!.frontSide,
                                   imageUrl: hasFront ? front : null,
                                 ),
                               ),
@@ -331,7 +334,7 @@ class UserProfileScreen extends StatelessWidget {
                               Expanded(
                                 child: _buildIdImageCard(
                                   context,
-                                  label: 'Back Side',
+                                  label: AppLocalizations.of(context)!.backSide,
                                   imageUrl: hasBack ? back : null,
                                 ),
                               ),
@@ -380,7 +383,7 @@ class UserProfileScreen extends StatelessWidget {
                                 ),
                                 const SizedBox(width: 12),
                                 Text(
-                                  AppStrings.logout,
+                                  AppLocalizations.of(context)!.logout,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -408,14 +411,13 @@ class UserProfileScreen extends StatelessWidget {
 
   Widget _buildThemeSelector(BuildContext context) {
     final themeState = Get.find<ThemeState>();
-    final isDark = AppDesign.isDark(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'App Theme',
+            AppLocalizations.of(context)!.appTheme,
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -431,7 +433,7 @@ class UserProfileScreen extends StatelessWidget {
               children: [
                 Expanded(
                   child: _ThemeOption(
-                    label: 'Light',
+                    label: AppLocalizations.of(context)!.lightTheme,
                     icon: Icons.light_mode_rounded,
                     isSelected: mode == ThemeMode.light,
                     onTap: themeState.setLight,
@@ -440,7 +442,7 @@ class UserProfileScreen extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _ThemeOption(
-                    label: 'Dark',
+                    label: AppLocalizations.of(context)!.darkTheme,
                     icon: Icons.dark_mode_rounded,
                     isSelected: mode == ThemeMode.dark,
                     onTap: themeState.setDark,
@@ -449,7 +451,7 @@ class UserProfileScreen extends StatelessWidget {
                 const SizedBox(width: 10),
                 Expanded(
                   child: _ThemeOption(
-                    label: 'System',
+                    label: AppLocalizations.of(context)!.systemTheme,
                     icon: Icons.settings_brightness_rounded,
                     isSelected: mode == ThemeMode.system,
                     onTap: themeState.setSystem,
@@ -470,11 +472,11 @@ class UserProfileScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-            color: AppTheme.bgSecondary,
+            color: AppDesign.getBgSecondary(context),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.3),
+                color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withValues(alpha: 0.2),
                 blurRadius: 24,
                 offset: const Offset(0, 8),
               ),
@@ -513,11 +515,11 @@ class UserProfileScreen extends StatelessWidget {
 
                 // Title
                 Text(
-                  'Logout',
+                  AppLocalizations.of(context)!.logoutTitle,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -525,10 +527,10 @@ class UserProfileScreen extends StatelessWidget {
 
                 // Message
                 Text(
-                  'Are you sure you want to logout?',
+                  AppLocalizations.of(context)!.logoutMessage,
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   textAlign: TextAlign.center,
@@ -541,10 +543,10 @@ class UserProfileScreen extends StatelessWidget {
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          color: AppTheme.bgElevated,
+                          color: AppDesign.getBgElevated(context),
                           borderRadius: BorderRadius.circular(14),
                           border: Border.all(
-                            color: AppTheme.border,
+                            color: AppDesign.getBorder(context),
                             width: 1.5,
                           ),
                         ),
@@ -557,11 +559,11 @@ class UserProfileScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               alignment: Alignment.center,
                               child: Text(
-                                AppStrings.cancel,
+                                AppLocalizations.of(context)!.cancel,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w600,
-                                  color: AppTheme.textPrimary,
+                                  color: AppDesign.getTextPrimary(context),
                                   fontFamily: AppTheme.fontFamily,
                                 ),
                               ),
@@ -604,11 +606,11 @@ class UserProfileScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               alignment: Alignment.center,
                               child: Text(
-                                AppStrings.logout,
+                                AppLocalizations.of(context)!.logout,
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.textPrimary,
+                                  color: Colors.white,
                                   fontFamily: AppTheme.fontFamily,
                                 ),
                               ),
@@ -791,12 +793,15 @@ class _InfoCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black)
+                .withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -832,7 +837,7 @@ class _InfoCard extends StatelessWidget {
                   label,
                   style: TextStyle(
                     fontSize: 13,
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                     fontWeight: FontWeight.w500,
                     fontFamily: AppTheme.fontFamily,
                     letterSpacing: 0.2,
@@ -843,7 +848,7 @@ class _InfoCard extends StatelessWidget {
                   value,
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontWeight: FontWeight.w600,
                     fontFamily: AppTheme.fontFamily,
                   ),

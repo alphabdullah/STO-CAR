@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../models/auction_model.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 
 /// Redesigned Auction Card - Premium, Responsive, and Overflow-Safe
 class AuctionCard extends StatelessWidget {
@@ -44,15 +45,18 @@ class AuctionCard extends StatelessWidget {
       height: cardHeight,
       margin: const EdgeInsets.only(bottom: 12, left: 12, right: 12),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(borderRadius),
         border: Border.all(
-          color: AppTheme.border.withValues(alpha: 0.5),
+          color: AppDesign.getBorder(context).withValues(alpha: 0.5),
           width: 0.8,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black)
+                .withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -86,7 +90,7 @@ class AuctionCard extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                'Lot #${auction.id}',
+                                AppLocalizations.of(context)!.lotNumber(auction.id),
                                 style: TextStyle(
                                   fontSize: 8,
                                   color: AppDesign.getTextTertiary(context),
@@ -95,7 +99,7 @@ class AuctionCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
-                            if (auction.isLive) _buildLiveBadge(),
+                            if (auction.isLive) _buildLiveBadge(context),
                           ],
                         ),
                         const SizedBox(height: 2),
@@ -129,7 +133,7 @@ class AuctionCard extends StatelessWidget {
                             Expanded(
                               child: _buildMiniInfo(
                                 context,
-                                'Bids',
+                                AppLocalizations.of(context)!.bids,
                                 bidCount.toString(),
                               ),
                             ),
@@ -137,7 +141,7 @@ class AuctionCard extends StatelessWidget {
                             Expanded(
                               child: _buildMiniInfo(
                                 context,
-                                'Time',
+                                AppLocalizations.of(context)!.time,
                                 _formatShortTime(timeRemaining),
                                 color: timeRemaining.inHours < 24
                                     ? AppTheme.warning
@@ -158,7 +162,7 @@ class AuctionCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Current Bid',
+                                    AppLocalizations.of(context)!.currentBid,
                                     style: TextStyle(
                                       fontSize: 8,
                                       color: AppDesign.getTextTertiary(context),
@@ -176,7 +180,7 @@ class AuctionCard extends StatelessWidget {
                                 ],
                               ),
                             ),
-                            _buildArrowIcon(),
+                            _buildArrowIcon(context),
                           ],
                         ),
                       ],
@@ -191,20 +195,20 @@ class AuctionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildLiveBadge() {
+  Widget _buildLiveBadge(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       decoration: BoxDecoration(
         color: AppTheme.success.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          CircleAvatar(radius: 2.5, backgroundColor: AppTheme.success),
-          SizedBox(width: 3),
+          const CircleAvatar(radius: 2.5, backgroundColor: AppTheme.success),
+          const SizedBox(width: 3),
           Text(
-            'LIVE',
+            AppLocalizations.of(context)!.live,
             style: TextStyle(
               fontSize: 7,
               color: AppTheme.success,
@@ -245,17 +249,17 @@ class AuctionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildArrowIcon() {
+  Widget _buildArrowIcon(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(6),
       decoration: BoxDecoration(
         color: AppTheme.redPrimary,
         borderRadius: BorderRadius.circular(6),
       ),
-      child: const Icon(
+      child: Icon(
         Icons.arrow_forward_ios_rounded,
         size: 10,
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.onPrimary,
       ),
     );
   }
@@ -297,21 +301,28 @@ class AuctionCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
+                  color: (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black)
+                      .withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.camera_alt_outlined,
-                      color: Colors.white,
+                      color: Theme.of(context).brightness == Brightness.dark
+                          ? Colors.black
+                          : Colors.white,
                       size: 8,
                     ),
                     const SizedBox(width: 2),
                     Text(
                       '${auction.images.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: Theme.of(context).brightness == Brightness.dark
+                            ? Colors.black
+                            : Colors.white,
                         fontSize: 8,
                         fontWeight: FontWeight.bold,
                       ),
@@ -335,7 +346,7 @@ class AuctionCard extends StatelessWidget {
                 child: Icon(
                   isOutbid ? Icons.trending_down : Icons.trending_up,
                   size: 10,
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onPrimary,
                 ),
               ),
             ),

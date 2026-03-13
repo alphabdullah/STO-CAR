@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/guards/verification_guard_widget.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_design_system.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/auction_state.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/auction_model.dart';
@@ -62,13 +63,13 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     final isTablet = screenWidth >= 768;
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: SafeArea(
         child: Responsive.constrained(
@@ -108,17 +109,17 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.error_outline,
                             size: 64,
-                            color: AppTheme.textMuted,
+                            color: AppDesign.getTextTertiary(context),
                           ),
                           const SizedBox(height: 16),
-                          const Text(
-                            'Auction not found',
+                          Text(
+                            AppLocalizations.of(context)!.auctionNotFound,
                             style: TextStyle(
                               fontSize: 18,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               fontFamily: AppTheme.fontFamily,
                             ),
                           ),
@@ -126,7 +127,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                           ElevatedButton(
                             onPressed: () =>
                                 context.push(AppConstants.routeAuctions),
-                            child: const Text('Back to Auctions'),
+                            child: Text(AppLocalizations.of(context)!.backToAuctions),
                           ),
                         ],
                       ),
@@ -146,13 +147,17 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.error_outline,
                             size: 64,
-                            color: AppTheme.textMuted,
+                            color: AppDesign.getTextTertiary(context),
                           ),
                           const SizedBox(height: 16),
-                          const Text('Loading auction...'),
+                          Text(
+                            AppLocalizations.of(context)!.loadingAuction,
+                            style: TextStyle(
+                                color: AppDesign.getTextPrimary(context)),
+                          ),
                         ],
                       ),
                     ),
@@ -220,7 +225,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.end,
                                           children: [
-                                            _buildBiddedBadge(
+                                            _buildBiddedBadge(context,
                                               currentAuction.bids.any(
                                                 (bid) =>
                                                     bid.userId ==
@@ -248,7 +253,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                             ? 28
                                             : 24,
                                         fontWeight: FontWeight.bold,
-                                        color: AppTheme.textPrimary,
+                                        color: AppDesign.getTextPrimary(context),
                                         fontFamily: AppTheme.fontFamily,
                                         height: 1.2,
                                         letterSpacing: -0.5,
@@ -261,7 +266,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                         .description
                                         .isNotEmpty) ...[
                                       Text(
-                                        'Description',
+                                        AppLocalizations.of(context)!.description,
                                         style: TextStyle(
                                           fontSize: isTablet
                                               ? 22
@@ -269,7 +274,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                               ? 20
                                               : 18,
                                           fontWeight: FontWeight.bold,
-                                          color: AppTheme.textPrimary,
+                                          color: AppDesign.getTextPrimary(context),
                                           fontFamily: AppTheme.fontFamily,
                                         ),
                                       ),
@@ -279,12 +284,12 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                           isTablet ? 20 : 16,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppTheme.bgSecondary,
+                                          color: AppDesign.getBgSecondary(context),
                                           borderRadius: BorderRadius.circular(
                                             12,
                                           ),
                                           border: Border.all(
-                                            color: Colors.grey.shade200,
+                                            color: AppDesign.getBorder(context),
                                           ),
                                         ),
                                         child: Text(
@@ -295,7 +300,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                                 : isLargeMobile
                                                 ? 15
                                                 : 14,
-                                            color: AppTheme.textSecondary,
+                                            color: AppDesign.getTextSecondary(context),
                                             height: 1.6,
                                             fontFamily: AppTheme.fontFamily,
                                           ),
@@ -306,6 +311,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
 
                                     // Stats Grid
                                     _buildStatsGrid(
+                                      context,
                                       currentAuction,
                                       timeRemaining,
                                       bidCount,
@@ -347,7 +353,8 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: IconButton(
-          icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimary),
+          icon: Icon(Icons.arrow_back,
+              color: AppDesign.getTextPrimary(context)),
           onPressed: () => context.push(AppConstants.routeAuctions),
           padding: EdgeInsets.zero,
           constraints: const BoxConstraints(),
@@ -370,13 +377,13 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     final images = auction.images;
 
     if (images.isEmpty) {
-      return _buildImagePlaceholder(auction, height: imageHeight);
+      return _buildImagePlaceholder(context, auction, height: imageHeight);
     }
 
     return Container(
       height: imageHeight,
       width: double.infinity,
-      color: AppTheme.bgSecondary,
+      color: AppDesign.getBgSecondary(context),
       child: Stack(
         children: [
           PageView.builder(
@@ -391,11 +398,11 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                 images[index],
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    _buildImagePlaceholder(auction, height: imageHeight),
+                    _buildImagePlaceholder(context, auction, height: imageHeight),
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Container(
-                    color: AppTheme.bgSecondary,
+                    color: AppDesign.getBgSecondary(context),
                     child: Center(
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
@@ -430,10 +437,16 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                       shape: BoxShape.circle,
                       color: _currentImageIndex == index
                           ? AppTheme.redPrimary
-                          : Colors.white.withValues(alpha: 0.5),
+                          : (Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black)
+                              .withValues(alpha: 0.5),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.3),
+                          color: (Theme.of(context).brightness == Brightness.dark
+                                  ? Colors.white
+                                  : Colors.black)
+                              .withValues(alpha: 0.3),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),
@@ -454,13 +467,18 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.black.withValues(alpha: 0.6),
+                  color: (Theme.of(context).brightness == Brightness.dark
+                          ? Colors.white
+                          : Colors.black)
+                      .withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
                   '${_currentImageIndex + 1} / ${images.length}',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? Colors.black
+                        : Colors.white,
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                   ),
@@ -472,7 +490,8 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     );
   }
 
-  Widget _buildImagePlaceholder(AuctionModel auction, {double? height}) {
+  Widget _buildImagePlaceholder(
+      BuildContext context, AuctionModel auction, {double? height}) {
     return Container(
       width: double.infinity,
       height: height ?? 300,
@@ -480,7 +499,10 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [AppTheme.bgSecondary, AppTheme.bgElevated],
+          colors: [
+            AppDesign.getBgSecondary(context),
+            AppDesign.getBgElevated(context),
+          ],
         ),
       ),
       child: Center(
@@ -490,20 +512,20 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.bgSecondary.withValues(alpha: 0.9),
+                color: AppDesign.getBgSecondary(context).withValues(alpha: 0.9),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 Icons.directions_car_rounded,
                 size: 64,
-                color: AppTheme.textMuted.withValues(alpha: 0.5),
+                color: AppDesign.getTextTertiary(context).withValues(alpha: 0.5),
               ),
             ),
             const SizedBox(height: 16),
             Text(
               '${auction.carMake} ${auction.carModel}',
               style: TextStyle(
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 fontFamily: AppTheme.fontFamily,
@@ -515,7 +537,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     );
   }
 
-  Widget _buildBiddedBadge(bool isWinning) {
+  Widget _buildBiddedBadge(BuildContext context, bool isWinning) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
       decoration: BoxDecoration(
@@ -542,15 +564,17 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
         children: [
           Icon(
             isWinning ? Icons.trending_up_rounded : Icons.trending_down_rounded,
-            color: AppTheme.textPrimary,
+            color: Theme.of(context).colorScheme.onPrimary,
             size: 18,
           ),
           const SizedBox(width: 6),
           Text(
-            isWinning ? 'Winning Bid' : 'Outbid',
-            style: const TextStyle(
+            isWinning
+            ? AppLocalizations.of(context)!.winningBid
+            : AppLocalizations.of(context)!.outbid,
+            style: TextStyle(
               fontSize: 13,
-              color: AppTheme.textPrimary,
+              color: Theme.of(context).colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
               letterSpacing: 0.5,
             ),
@@ -561,6 +585,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
   }
 
   Widget _buildStatsGrid(
+    BuildContext context,
     AuctionModel auction,
     Duration timeRemaining,
     int bidCount,
@@ -576,11 +601,11 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
           children: [
             Expanded(
               child: _buildStatCard(
+                context,
                 iconImage: 'assets/images/money.png',
-                label: 'Current Bid',
+                label: AppLocalizations.of(context)!.currentBid,
                 value: '${auction.currentBid ?? auction.startingBid}',
                 currency: 'AED',
-                color: AppTheme.textPrimary,
                 isTablet: isTablet,
                 isLargeMobile: isLargeMobile,
                 isMediumMobile: isMediumMobile,
@@ -589,10 +614,10 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
             SizedBox(width: spacing),
             Expanded(
               child: _buildStatCard(
+                context,
                 iconImage: 'assets/images/calendar.png',
-                label: 'Time Left',
-                value: _formatTimeRemaining(timeRemaining),
-                color: AppTheme.textPrimary,
+                label: AppLocalizations.of(context)!.timeLeft,
+                value: _formatTimeRemaining(context, timeRemaining),
                 isTablet: isTablet,
                 isLargeMobile: isLargeMobile,
                 isMediumMobile: isMediumMobile,
@@ -602,10 +627,10 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
         ),
         SizedBox(height: spacing),
         _buildStatCard(
+          context,
           iconImage: 'assets/images/auction.png',
-          label: 'Total Bids',
+          label: AppLocalizations.of(context)!.totalBids,
           value: '$bidCount',
-          color: AppTheme.textPrimary,
           isTablet: isTablet,
           isLargeMobile: isLargeMobile,
           isMediumMobile: isMediumMobile,
@@ -614,7 +639,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     );
   }
 
-  String _formatTimeRemaining(Duration duration) {
+  String _formatTimeRemaining(BuildContext context, Duration duration) {
     if (duration.inDays > 0) {
       return '${duration.inDays}d ${duration.inHours.remainder(24)}h';
     } else if (duration.inHours > 0) {
@@ -622,17 +647,17 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     } else if (duration.inMinutes > 0) {
       return '${duration.inMinutes}m';
     } else {
-      return 'Ending soon';
+      return AppLocalizations.of(context)!.endingSoon;
     }
   }
 
-  Widget _buildStatCard({
+  Widget _buildStatCard(
+    BuildContext context, {
     IconData? icon,
     String? iconImage,
     required String label,
     required String value,
     String? currency,
-    required Color color,
     bool isTablet = false,
     bool isLargeMobile = false,
     bool isMediumMobile = false,
@@ -666,9 +691,9 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
     return Container(
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -687,7 +712,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                           return Icon(
                             icon ?? Icons.image_not_supported,
                             size: iconSize,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                           );
                         },
                       ),
@@ -695,7 +720,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                   : Icon(
                       icon ?? Icons.info,
                       size: iconSize,
-                      color: AppTheme.textPrimary,
+                      color: AppDesign.getTextPrimary(context),
                     ),
               SizedBox(width: isTablet ? 16 : 12),
               Flexible(
@@ -703,7 +728,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                   label,
                   style: TextStyle(
                     fontSize: labelFontSize,
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                     fontWeight: FontWeight.w600,
                     letterSpacing: 0.3,
                     fontFamily: AppTheme.fontFamily,
@@ -724,7 +749,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                   style: TextStyle(
                     fontSize: valueFontSize,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     letterSpacing: -0.5,
                     fontFamily: AppTheme.fontFamily,
                   ),
@@ -740,7 +765,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                     currency,
                     style: TextStyle(
                       fontSize: currencyFontSize,
-                      color: AppTheme.textPrimary,
+                      color: AppDesign.getTextPrimary(context),
                       fontWeight: FontWeight.w600,
                       fontFamily: AppTheme.fontFamily,
                     ),
@@ -814,27 +839,27 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppTheme.textPrimary.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
                         Icons.login_rounded,
                         size: 24,
-                        color: AppTheme.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 16),
                     Text(
-                      'Login to Place Bid',
+                      AppLocalizations.of(context)!.loginToPlaceBid,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.0,
-                        color: AppTheme.textPrimary,
+                        color: Colors.white,
                         fontFamily: AppTheme.fontFamily,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.3),
+                            color: AppDesign.getTextTertiary(context),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -880,7 +905,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Verification Required',
+                      AppLocalizations.of(context)!.verificationRequired,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -893,7 +918,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
               ),
               const SizedBox(height: 12),
               Text(
-                'Please verify your account to place bids',
+                AppLocalizations.of(context)!.verifyAccountToPlaceBids,
                 style: TextStyle(
                   fontSize: 14,
                   color: AppTheme.warning,
@@ -930,15 +955,15 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                           Icon(
                             Icons.account_balance_wallet,
                             size: 20,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Verify Now',
+                            AppLocalizations.of(context)!.verifyNow,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               fontFamily: AppTheme.fontFamily,
                             ),
                           ),
@@ -954,7 +979,7 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
       }
 
       return VerificationGuardWidget(
-        actionDescription: 'Verify your account to place bids',
+        actionDescription: AppLocalizations.of(context)!.verifyAccountToPlaceBids,
         child: Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -1000,13 +1025,13 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: AppTheme.textPrimary.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(
                         Icons.gavel_rounded,
                         size: 24,
-                        color: AppTheme.textPrimary,
+                        color: Colors.white,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -1016,17 +1041,17 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                 (bid) =>
                                     bid.userId == authState.currentUser?.id,
                               )
-                          ? 'Update Bid'
-                          : AppStrings.placeBid,
+                          ? AppLocalizations.of(context)!.updateBid
+                          : AppLocalizations.of(context)!.placeBid,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.0,
-                        color: AppTheme.textPrimary,
+                        color: Colors.white,
                         fontFamily: AppTheme.fontFamily,
                         shadows: [
                           Shadow(
-                            color: Colors.black.withValues(alpha: 0.3),
+                            color: AppDesign.getTextTertiary(context),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),

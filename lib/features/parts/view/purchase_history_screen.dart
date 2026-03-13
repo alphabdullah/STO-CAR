@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/purchase_history_model.dart';
 import '../../../state/parts_state.dart';
 
@@ -37,7 +38,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         title: Text(
-          'Purchase History',
+          AppLocalizations.of(context)!.purchaseHistory,
           style: TextStyle(
             color: AppDesign.getTextPrimary(context),
             fontSize: 20,
@@ -70,7 +71,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen> {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No purchases yet',
+                    AppLocalizations.of(context)!.noPurchasesYet,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
@@ -79,7 +80,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Parts you purchase will appear here',
+                    AppLocalizations.of(context)!.purchaseHistoryEmptyMessage,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
@@ -90,10 +91,10 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen> {
                   ElevatedButton.icon(
                     onPressed: () => context.go(AppConstants.routeParts),
                     icon: const Icon(Icons.storefront_rounded, size: 20),
-                    label: const Text('Browse Parts'),
+                    label: Text(AppLocalizations.of(context)!.browseParts),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.redPrimary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
                   ),
@@ -168,7 +169,7 @@ class _PurchaseHistoryCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Seller: ${purchase.sellerName}',
+                    '${AppLocalizations.of(context)!.seller}: ${purchase.sellerName}',
                     style: TextStyle(
                       fontSize: 12,
                       color: AppDesign.getTextSecondary(context),
@@ -206,7 +207,7 @@ class _PurchaseHistoryCard extends StatelessWidget {
                   if (purchase.trackingNumber != null && purchase.trackingNumber!.isNotEmpty) ...[
                     const SizedBox(height: 4),
                     Text(
-                      'Tracking: ${purchase.trackingNumber}',
+                      '${AppLocalizations.of(context)!.tracking}: ${purchase.trackingNumber}',
                       style: TextStyle(
                         fontSize: 11,
                         color: AppTheme.info,

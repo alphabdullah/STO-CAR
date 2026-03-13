@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/guards/verification_guard_widget.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_design_system.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/parts_state.dart';
 import '../../../state/cart_state.dart';
 import '../../../state/auth_state.dart';
@@ -31,7 +33,7 @@ class PartsController extends GetxController {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${selectedPart.name} purchased successfully!'),
+            content: Text(AppLocalizations.of(context)!.purchasedSuccess(selectedPart.name)),
             backgroundColor: AppTheme.success,
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 2),
@@ -39,8 +41,8 @@ class PartsController extends GetxController {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Purchase failed. Please try again.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.purchaseFailed),
             backgroundColor: AppTheme.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -61,7 +63,7 @@ class PartsController extends GetxController {
 
     showDialog(
       context: context,
-      barrierColor: Colors.black.withOpacity(0.9),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
       builder: (context) => Dialog(
         backgroundColor: Colors.transparent,
         insetPadding: EdgeInsets.symmetric(
@@ -72,12 +74,12 @@ class PartsController extends GetxController {
           width: double.infinity,
           constraints: const BoxConstraints(maxWidth: 520),
           decoration: BoxDecoration(
-            color: AppTheme.bgSecondary,
+            color: AppDesign.getBgSecondary(context),
             borderRadius: BorderRadius.circular(32),
-            border: Border.all(color: AppTheme.border.withOpacity(0.5)),
+            border: Border.all(color: AppDesign.getBorder(context).withValues(alpha: 0.5)),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.6),
+                color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withValues(alpha: 0.25),
                 blurRadius: 40,
                 offset: const Offset(0, 20),
               ),
@@ -92,9 +94,9 @@ class PartsController extends GetxController {
                   Container(
                     height: screenWidth < 400 ? 220 : 280,
                     width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: AppTheme.bgElevated,
-                      borderRadius: BorderRadius.vertical(
+                    decoration: BoxDecoration(
+                      color: AppDesign.getBgElevated(context),
+                      borderRadius: const BorderRadius.vertical(
                         top: Radius.circular(32),
                       ),
                     ),
@@ -108,11 +110,11 @@ class PartsController extends GetxController {
                               child: Image.network(
                                 part.images[index],
                                 fit: BoxFit.cover,
-                                errorBuilder: (c, e, s) => const Center(
+                                errorBuilder: (c, e, s) => Center(
                                   child: Icon(
                                     Icons.image_not_supported_outlined,
                                     size: 40,
-                                    color: AppTheme.textMuted,
+                                    color: AppDesign.getTextTertiary(c),
                                   ),
                                 ),
                               ),
@@ -126,11 +128,11 @@ class PartsController extends GetxController {
                                   child: Image.network(
                                     part.imageUrl!,
                                     fit: BoxFit.cover,
-                                    errorBuilder: (c, e, s) => const Center(
+                                    errorBuilder: (c, e, s) => Center(
                                       child: Icon(
                                         Icons.image_not_supported_outlined,
                                         size: 40,
-                                        color: AppTheme.textMuted,
+                                        color: AppDesign.getTextTertiary(c),
                                       ),
                                     ),
                                   ),
@@ -167,12 +169,12 @@ class PartsController extends GetxController {
                                 ),
                               ],
                             ),
-                            child: const Row(
+                            child: Row(
                               children: [
-                                Icon(Icons.bolt, color: Colors.black, size: 14),
-                                SizedBox(width: 4),
+                                const Icon(Icons.bolt, color: Colors.black, size: 14),
+                                const SizedBox(width: 4),
                                 Text(
-                                  'FEATURED',
+                                  AppLocalizations.of(context)!.featured,
                                   style: TextStyle(
                                     fontSize: 9,
                                     fontWeight: FontWeight.w900,
@@ -263,9 +265,8 @@ class PartsController extends GetxController {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: _getConditionColor(
-                                part.condition,
-                              ).withOpacity(0.1),
+                              color: _getConditionColor(context, part.condition)
+                                  .withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
@@ -273,7 +274,7 @@ class PartsController extends GetxController {
                               style: TextStyle(
                                 fontSize: 10,
                                 fontWeight: FontWeight.bold,
-                                color: _getConditionColor(part.condition),
+                                color: _getConditionColor(context, part.condition),
                               ),
                             ),
                           ),
@@ -285,7 +286,7 @@ class PartsController extends GetxController {
                         style: TextStyle(
                           fontSize: isCompact ? 22 : 26,
                           fontWeight: FontWeight.w800,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           height: 1.2,
                           letterSpacing: -0.5,
                         ),
@@ -301,9 +302,9 @@ class PartsController extends GetxController {
                           const SizedBox(width: 8),
                           Text(
                             part.brand ?? part.companyName,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontSize: 15,
-                              color: AppTheme.textSecondary,
+                              color: AppDesign.getTextSecondary(context),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -314,7 +315,7 @@ class PartsController extends GetxController {
                         part.description,
                         style: TextStyle(
                           fontSize: 14,
-                          color: AppTheme.textSecondary.withOpacity(0.9),
+                          color: AppDesign.getTextSecondary(context).withValues(alpha: 0.9),
                           height: 1.6,
                         ),
                       ),
@@ -324,54 +325,50 @@ class PartsController extends GetxController {
                       Container(
                         padding: const EdgeInsets.all(20),
                         decoration: BoxDecoration(
-                          color: AppTheme.bgElevated,
+                          color: AppDesign.getBgElevated(context),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
-                            color: AppTheme.border.withOpacity(0.3),
+                            color: AppDesign.getBorder(context).withValues(alpha: 0.3),
                           ),
                         ),
                         child: Column(
                           children: [
-                            _buildSpecRow(
-                              'Part Inventory #',
-                              part.partNumber ?? 'N/A',
-                            ),
+                            _buildSpecRow(context, AppLocalizations.of(context)!.partInventoryNumber, part.partNumber ?? 'N/A'),
                             Divider(
                               height: 24,
-                              color: AppTheme.border.withOpacity(0.5),
+                              color: AppDesign.getBorder(context).withValues(alpha: 0.5),
                             ),
-                            _buildSpecRow(
-                              'OEM Reference #',
-                              part.oemNumber ?? 'N/A',
-                            ),
+                            _buildSpecRow(context, AppLocalizations.of(context)!.oemReferenceNumber, part.oemNumber ?? 'N/A'),
                             Divider(
                               height: 24,
-                              color: AppTheme.border.withOpacity(0.5),
+                              color: AppDesign.getBorder(context).withValues(alpha: 0.5),
                             ),
                             _buildSpecRow(
+                              context,
                               'Compatibility',
-                              '${part.compatibleMake ?? ""} ${part.compatibleModel ?? ""}'
-                                  .trim(),
+                              '${part.compatibleMake ?? ""} ${part.compatibleModel ?? ""}'.trim(),
                             ),
                             if (part.yearFrom != null) ...[
                               Divider(
                                 height: 24,
-                                color: AppTheme.border.withOpacity(0.5),
+                                color: AppDesign.getBorder(context).withValues(alpha: 0.5),
                               ),
                               _buildSpecRow(
-                                'Year Compatibility',
-                                '${part.yearFrom} - ${part.yearTo ?? "Present"}',
+                                context,
+                                AppLocalizations.of(context)!.yearCompatibility,
+                                '${part.yearFrom} - ${part.yearTo ?? AppLocalizations.of(context)!.present}',
                               ),
                             ],
                             Divider(
                               height: 24,
-                              color: AppTheme.border.withOpacity(0.5),
+                              color: AppDesign.getBorder(context).withValues(alpha: 0.5),
                             ),
                             _buildSpecRow(
-                              'Stock Status',
+                              context,
+                              AppLocalizations.of(context)!.stockStatus,
                               part.stockQuantity > 0
-                                  ? '${part.stockQuantity} Units available'
-                                  : 'Contact for restocking',
+                                  ? AppLocalizations.of(context)!.unitsAvailable(part.stockQuantity)
+                                  : AppLocalizations.of(context)!.contactForRestocking,
                               valueColor: part.stockQuantity > 0
                                   ? AppTheme.success
                                   : AppTheme.redPrimary,
@@ -401,9 +398,9 @@ class PartsController extends GetxController {
                                       if (part.hasDiscount)
                                         Text(
                                           '${part.price.toStringAsFixed(0)} ${part.currency}',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 14,
-                                            color: AppTheme.textMuted,
+                                            color: AppDesign.getTextTertiary(context),
                                             decoration:
                                                 TextDecoration.lineThrough,
                                           ),
@@ -419,7 +416,7 @@ class PartsController extends GetxController {
                                             style: TextStyle(
                                               fontSize: isCompact ? 32 : 40,
                                               fontWeight: FontWeight.w900,
-                                              color: AppTheme.textPrimary,
+                                              color: AppDesign.getTextPrimary(context),
                                               letterSpacing: -1.5,
                                               height: 1,
                                             ),
@@ -460,17 +457,17 @@ class PartsController extends GetxController {
                                           ),
                                         ),
                                       ),
-                                      child: const Row(
+                                      child: Row(
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          Icon(
+                                          const Icon(
                                             Icons.verified_rounded,
                                             size: 14,
                                             color: AppTheme.success,
                                           ),
-                                          SizedBox(width: 6),
+                                          const SizedBox(width: 6),
                                           Text(
-                                            'IN STOCK',
+                                            AppLocalizations.of(context)!.inStock.toUpperCase(),
                                             style: TextStyle(
                                               fontSize: 10,
                                               fontWeight: FontWeight.w900,
@@ -496,7 +493,7 @@ class PartsController extends GetxController {
                                         onPressed: part.isInStock
                                             ? () => _addToCart(context, part.id)
                                             : null,
-                                        label: 'Add to Cart',
+                                        label: AppLocalizations.of(context)!.addToCart,
                                         icon: Icons.add_shopping_cart_rounded,
                                       ),
                                     ),
@@ -511,7 +508,7 @@ class PartsController extends GetxController {
                                                 part.id,
                                               )
                                             : null,
-                                        label: 'Buy Now',
+                                        label: AppLocalizations.of(context)!.buyNow,
                                       ),
                                     ),
                                   ],
@@ -525,7 +522,7 @@ class PartsController extends GetxController {
                                           ? () =>
                                                 _purchasePart(context, part.id)
                                           : null,
-                                      label: 'Buy Now',
+                                      label: AppLocalizations.of(context)!.buyNow,
                                       width: double.infinity,
                                     ),
                                     const SizedBox(height: 12),
@@ -534,7 +531,7 @@ class PartsController extends GetxController {
                                       onPressed: part.isInStock
                                           ? () => _addToCart(context, part.id)
                                           : null,
-                                      label: 'Add to Cart',
+                                      label: AppLocalizations.of(context)!.addToCart,
                                       icon: Icons.add_shopping_cart_rounded,
                                       width: double.infinity,
                                     ),
@@ -580,7 +577,7 @@ class PartsController extends GetxController {
     double? width,
   }) {
     return VerificationGuardWidget(
-      actionDescription: 'Verify account to purchase',
+      actionDescription: AppLocalizations.of(context)!.verifyAccountToPurchase,
       inline: true,
       child: Container(
         width: width,
@@ -665,17 +662,17 @@ class PartsController extends GetxController {
     );
   }
 
-  Widget _buildSpecRow(String label, String value, {Color? valueColor}) {
+  Widget _buildSpecRow(BuildContext context, String label, String value, {Color? valueColor}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.bold,
-            color: AppTheme.textMuted,
+            color: AppDesign.getTextTertiary(context),
           ),
         ),
         const SizedBox(width: 16),
@@ -686,7 +683,7 @@ class PartsController extends GetxController {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: valueColor ?? AppTheme.textPrimary,
+              color: valueColor ?? AppDesign.getTextPrimary(context),
             ),
           ),
         ),
@@ -694,7 +691,7 @@ class PartsController extends GetxController {
     );
   }
 
-  Color _getConditionColor(String condition) {
+  Color _getConditionColor(BuildContext context, String condition) {
     switch (condition.toLowerCase()) {
       case 'new':
         return AppTheme.success;
@@ -703,7 +700,7 @@ class PartsController extends GetxController {
       case 'refurbished':
         return AppTheme.info;
       default:
-        return AppTheme.textMuted;
+        return AppDesign.getTextTertiary(context);
     }
   }
 
@@ -722,11 +719,11 @@ class PartsController extends GetxController {
       Navigator.pop(context); // Close dialog
       if (ok) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Product successfully added to cart'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.productAddedToCart),
             backgroundColor: AppTheme.success,
             behavior: SnackBarBehavior.floating,
-            duration: Duration(seconds: 2),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -743,7 +740,7 @@ class PartsController extends GetxController {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('${part.name} purchased successfully!'),
+            content: Text(AppLocalizations.of(context)!.purchasedSuccess(part.name)),
             backgroundColor: AppTheme.success,
             behavior: SnackBarBehavior.floating,
             duration: const Duration(seconds: 2),
@@ -751,8 +748,8 @@ class PartsController extends GetxController {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Purchase failed. Please try again.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.purchaseFailed),
             backgroundColor: AppTheme.error,
             behavior: SnackBarBehavior.floating,
           ),

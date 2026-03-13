@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_design_system.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/auction_state.dart';
 import '../../../state/auth_state.dart';
 import '../controller/auction_controller.dart';
@@ -54,7 +56,7 @@ class _AuctionsScreenState extends State<AuctionsScreen>
     }
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       body: SafeArea(
         child: Responsive.constrained(
           Column(
@@ -65,9 +67,9 @@ class _AuctionsScreenState extends State<AuctionsScreen>
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: IconButton(
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.arrow_back,
-                      color: AppTheme.textPrimary,
+                      color: AppDesign.getTextPrimary(context),
                     ),
                     onPressed: () =>
                         context.push(AppConstants.routeHomeFeature),
@@ -139,8 +141,8 @@ class _LiveAuctionsTab extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.6,
                     child: _EmptyState(
                       icon: Icons.gavel_outlined,
-                      title: 'No Live Auctions',
-                      message: 'There are currently no live auctions available',
+                      title: AppLocalizations.of(context)!.noLiveAuctions,
+                      message: AppLocalizations.of(context)!.noLiveAuctionsMessage,
                     ),
                   ),
                 ],
@@ -251,8 +253,8 @@ class _BiddedAuctionsTabState extends State<_BiddedAuctionsTab> {
                 height: MediaQuery.of(context).size.height * 0.6,
                 child: _EmptyState(
                   icon: Icons.gavel_outlined,
-                  title: 'No Bids Yet',
-                  message: 'Login to view your bidded auctions',
+                  title: AppLocalizations.of(context)!.noBidsYet,
+                  message: AppLocalizations.of(context)!.loginToViewBiddedAuctions,
                 ),
               ),
             ],
@@ -296,8 +298,8 @@ class _BiddedAuctionsTabState extends State<_BiddedAuctionsTab> {
                     height: MediaQuery.of(context).size.height * 0.6,
                     child: _EmptyState(
                       icon: Icons.gavel_outlined,
-                      title: 'No Bids Yet',
-                      message: 'You haven\'t placed any bids on live auctions',
+                      title: AppLocalizations.of(context)!.noBidsYet,
+                      message: AppLocalizations.of(context)!.noBidsPlacedMessage,
                     ),
                   ),
                 ],
@@ -400,8 +402,8 @@ class _ClosedAuctionsTab extends StatelessWidget {
                 height: MediaQuery.of(context).size.height * 0.6,
                 child: _EmptyState(
                   icon: Icons.history,
-                  title: 'No Closed Auctions',
-                  message: 'Login to view your closed auctions',
+                  title: AppLocalizations.of(context)!.noClosedAuctions,
+                  message: AppLocalizations.of(context)!.loginToViewClosedAuctions,
                 ),
               ),
             ],
@@ -424,9 +426,8 @@ class _ClosedAuctionsTab extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * 0.6,
                     child: _EmptyState(
                       icon: Icons.history,
-                      title: 'No Closed Auctions',
-                      message:
-                          'You don\'t have any closed auctions where you were outbid',
+                      title: AppLocalizations.of(context)!.noClosedAuctions,
+                      message: AppLocalizations.of(context)!.noClosedAuctionsOutbid,
                     ),
                   ),
                 ],
@@ -460,19 +461,20 @@ class _CustomTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border, width: 1),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1),
       ),
       child: Row(
         children: [
           Expanded(
             child: _CustomTab(
-              label: 'Live Auctions',
+              label: l10n.liveAuctions,
               index: 0,
               controller: controller,
             ),
@@ -480,7 +482,7 @@ class _CustomTabBar extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: _CustomTab(
-              label: 'My Bids',
+              label: l10n.myBids,
               index: 1,
               controller: controller,
             ),
@@ -488,7 +490,7 @@ class _CustomTabBar extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: _CustomTab(
-              label: 'Closed',
+              label: l10n.closed,
               index: 2,
               controller: controller,
             ),
@@ -551,7 +553,9 @@ class _CustomTab extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
+                color: isSelected
+                    ? AppDesign.getTextPrimary(context)
+                    : AppDesign.getTextTertiary(context),
                 fontFamily: AppTheme.fontFamily,
                 letterSpacing: 0.5,
               ),
@@ -585,17 +589,18 @@ class _EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.bgSecondary,
+                color: AppDesign.getBgSecondary(context),
                 shape: BoxShape.circle,
               ),
-              child: Icon(icon, size: 64, color: AppTheme.textMuted),
+              child: Icon(
+                  icon, size: 64, color: AppDesign.getTextTertiary(context)),
             ),
             const SizedBox(height: 24),
             Text(
               title,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -603,7 +608,7 @@ class _EmptyState extends StatelessWidget {
             Text(
               message,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
               textAlign: TextAlign.center,

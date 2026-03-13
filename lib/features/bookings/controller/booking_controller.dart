@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/booking_state.dart';
 import '../../../services/booking_service.dart';
 import '../../../core/api/api_client.dart' as api;
@@ -50,11 +51,11 @@ class BookingController extends GetxController {
   Future<void> submitBooking(BuildContext context) async {
     // Validate form
     if (nameController.text.trim().isEmpty) {
-      _showError(context, 'Please enter your name');
+      _showError(context, AppLocalizations.of(context)!.pleaseEnterName);
       return;
     }
     if (phoneController.text.trim().isEmpty) {
-      _showError(context, 'Please enter your phone number');
+      _showError(context, AppLocalizations.of(context)!.pleaseEnterPhoneNumber);
       return;
     }
     if (carModelController.text.trim().isEmpty) {
@@ -62,7 +63,7 @@ class BookingController extends GetxController {
       return;
     }
     if (carNameController.text.trim().isEmpty) {
-      _showError(context, 'Please enter car name');
+      _showError(context, AppLocalizations.of(context)!.pleaseEnterCarName);
       return;
     }
     if (selectedDate.value == null) {
@@ -70,7 +71,7 @@ class BookingController extends GetxController {
       return;
     }
     if (selectedTime.value == null) {
-      _showError(context, 'Please select a time');
+      _showError(context, AppLocalizations.of(context)!.pleaseSelectTime);
       return;
     }
 

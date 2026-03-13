@@ -5,6 +5,7 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/guards/verification_guard_widget.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/parts_state.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/part_model.dart';
@@ -29,12 +30,12 @@ class CompanyPartsScreen extends StatelessWidget {
     final company = partsState.selectedCompany;
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         title: Text(
-          company?.name ?? 'Parts',
+          company?.name ?? AppLocalizations.of(context)!.parts,
           style: TextStyle(
             color: AppDesign.getTextPrimary(context),
             fontWeight: FontWeight.w600,
@@ -63,8 +64,8 @@ class CompanyPartsScreen extends StatelessWidget {
         if (parts.isEmpty) {
           return _EmptyState(
             icon: Icons.inventory_2_outlined,
-            title: 'No Parts Available',
-            message: 'This company doesn\'t have any parts listed yet',
+            title: AppLocalizations.of(context)!.noPartsAvailable,
+            message: AppLocalizations.of(context)!.noPartsAvailableMessage,
             companyName: company?.name,
           );
         }
@@ -183,13 +184,13 @@ class _CompanyHeader extends StatelessWidget {
             width: 60,
             height: 60,
             decoration: BoxDecoration(
-              color: AppDesign.getTextPrimary(context).withValues(alpha: 0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(
+            child: const Icon(
               Icons.business,
               size: 32,
-              color: AppDesign.getBgSecondary(context),
+              color: Colors.white,
             ),
           ),
           const SizedBox(width: 16),
@@ -199,10 +200,10 @@ class _CompanyHeader extends StatelessWidget {
               children: [
                 Text(
                   company.name,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: AppDesign.getTextPrimary(context),
+                    color: Colors.white,
                   ),
                 ),
                 if (company.description != null) ...[
@@ -250,12 +251,17 @@ class _PartCard extends StatelessWidget {
         color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: isInStock ? Colors.green.shade200 : Colors.grey.shade300,
+          color: isInStock
+              ? AppTheme.success.withValues(alpha: 0.5)
+              : AppDesign.getBorder(context),
           width: isInStock ? 2 : 1,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
+            color: (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black)
+                .withValues(alpha: 0.15),
             blurRadius: 16,
             offset: const Offset(0, 4),
             spreadRadius: 0,
@@ -282,7 +288,7 @@ class _PartCard extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: AppDesign.getBgElevated(context),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppTheme.border, width: 1),
+                        border: Border.all(color: AppDesign.getBorder(context), width: 1),
                       ),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
@@ -393,7 +399,7 @@ class _PartCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            isInStock ? 'In Stock' : 'Out of Stock',
+                            isInStock ? AppLocalizations.of(context)!.inStock : AppLocalizations.of(context)!.outOfStock,
                             style: TextStyle(
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
@@ -426,7 +432,7 @@ class _PartCard extends StatelessWidget {
                   part.description,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.grey.shade600,
+                    color: AppDesign.getTextSecondary(context),
                     height: 1.4,
                   ),
                   maxLines: 2,
@@ -450,7 +456,7 @@ class _PartCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Price',
+                              AppLocalizations.of(context)!.price,
                               style: TextStyle(
                                 fontSize: 11,
                                 color: AppDesign.getTextSecondary(context),
@@ -485,7 +491,7 @@ class _PartCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Available',
+                                AppLocalizations.of(context)!.available,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: AppDesign.getTextSecondary(context),
@@ -514,7 +520,7 @@ class _PartCard extends StatelessWidget {
                 if (isInStock && onPurchase != null) ...[
                   const SizedBox(height: 16),
                   VerificationGuardWidget(
-                    actionDescription: 'Verify your account to purchase parts',
+                    actionDescription: AppLocalizations.of(context)!.verifyAccountToPurchaseParts,
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -535,8 +541,8 @@ class _PartCard extends StatelessWidget {
                       child: ElevatedButton.icon(
                         onPressed: onPurchase,
                         icon: const Icon(Icons.shopping_cart, size: 20),
-                        label: const Text(
-                          'Purchase',
+                        label: Text(
+                          AppLocalizations.of(context)!.purchase,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -626,7 +632,7 @@ class _EmptyState extends StatelessWidget {
               message,
               style: Theme.of(
                 context,
-              ).textTheme.bodyMedium?.copyWith(color: Colors.grey.shade600),
+              ).textTheme.bodyMedium?.copyWith(color: AppDesign.getTextSecondary(context)),
               textAlign: TextAlign.center,
             ),
           ],

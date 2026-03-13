@@ -5,6 +5,7 @@ import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/guards/auth_guard_widget.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/booking_state.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/booking_model.dart';
@@ -29,7 +30,7 @@ class BookingsScreen extends StatelessWidget {
         iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: AuthGuardWidget(
-        actionDescription: 'Login to view and create bookings',
+        actionDescription: AppLocalizations.of(context)!.loginToViewBookings,
         child: Responsive.constrained(_BookingsContent()),
       ),
       bottomNavigationBar: Obx(
@@ -109,7 +110,7 @@ class _BookingsContentState extends State<_BookingsContent> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Service Bookings',
+                      AppLocalizations.of(context)!.serviceBookings,
                       style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.bold,
@@ -120,7 +121,9 @@ class _BookingsContentState extends State<_BookingsContent> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '$bookingsCount ${bookingsCount == 1 ? 'booking' : 'bookings'}',
+                      bookingsCount == 1
+                          ? AppLocalizations.of(context)!.bookingCount(bookingsCount)
+                          : AppLocalizations.of(context)!.bookingsCount(bookingsCount),
                       style: TextStyle(
                         fontSize: 14,
                         color: AppDesign.getTextSecondary(context),
@@ -269,7 +272,7 @@ class _EmptyBookingsView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Text(
-              'No Bookings Yet',
+              AppLocalizations.of(context)!.noBookingsYet,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -279,7 +282,7 @@ class _EmptyBookingsView extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Book your first service appointment',
+              AppLocalizations.of(context)!.bookFirstServiceAppointment,
               style: TextStyle(
                 fontSize: 16,
                 color: AppDesign.getTextSecondary(context),
@@ -316,14 +319,14 @@ class _EmptyBookingsView extends StatelessWidget {
                     return const Icon(Icons.add, size: 22);
                   },
                 ),
-                label: const Text(
-                  'Book a Service',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                label: Text(
+                  AppLocalizations.of(context)!.bookService,
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,
                   shadowColor: Colors.transparent,
-                  foregroundColor: AppDesign.getTextPrimary(context),
+                  foregroundColor: Theme.of(context).colorScheme.onPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -348,7 +351,7 @@ class _BookingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor(booking.status);
+    final statusColor = _getStatusColor(context, booking.status);
     final carInfo = _getCarInfo(booking);
     final time = booking.formData['time']?.toString() ?? '';
     final phone = booking.formData['phoneNumber']?.toString() ?? '';
@@ -365,13 +368,13 @@ class _BookingCard extends StatelessWidget {
         border: Border.all(color: AppDesign.getBorder(context), width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.2),
+            color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withValues(alpha: 0.12),
             blurRadius: 12,
             offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
+            color: (Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black).withValues(alpha: 0.06),
             blurRadius: 6,
             offset: const Offset(0, 2),
             spreadRadius: 0,
@@ -430,7 +433,7 @@ class _BookingCard extends StatelessWidget {
                             ),
                             const SizedBox(width: 8),
                             Text(
-                              _getStatusText(booking.status),
+                              _getStatusText(context, booking.status),
                               style: TextStyle(
                                 fontSize: 13,
                                 color: statusColor,
@@ -507,7 +510,7 @@ class _BookingCard extends StatelessWidget {
                         if (carInfo.isNotEmpty) ...[
                           _InfoRow(
                             icon: Icons.directions_car,
-                            label: 'Vehicle',
+                            label: AppLocalizations.of(context)!.vehicle,
                             value: carInfo,
                             iconColor: Colors.blue,
                           ),
@@ -516,7 +519,7 @@ class _BookingCard extends StatelessWidget {
                         if (date.isNotEmpty) ...[
                           _InfoRow(
                             icon: Icons.calendar_today_rounded,
-                            label: 'Date',
+                            label: AppLocalizations.of(context)!.date,
                             value: date,
                             iconColor: Colors.teal,
                           ),
@@ -525,7 +528,7 @@ class _BookingCard extends StatelessWidget {
                         if (time.isNotEmpty) ...[
                           _InfoRow(
                             icon: Icons.access_time,
-                            label: 'Time',
+                            label: AppLocalizations.of(context)!.time,
                             value: time,
                             iconColor: Colors.orange,
                           ),
@@ -534,7 +537,7 @@ class _BookingCard extends StatelessWidget {
                         if (phone.isNotEmpty) ...[
                           _InfoRow(
                             icon: Icons.phone,
-                            label: 'Phone',
+                            label: AppLocalizations.of(context)!.phoneShort,
                             value: phone,
                             iconColor: Colors.green,
                           ),
@@ -545,7 +548,7 @@ class _BookingCard extends StatelessWidget {
                             phone.isEmpty) ...[
                           _InfoRow(
                             icon: Icons.confirmation_number_outlined,
-                            label: 'Booking #',
+                            label: AppLocalizations.of(context)!.bookingNumber,
                             value: bookingNumber,
                             iconColor: AppDesign.getTextSecondary(context),
                           ),
@@ -585,7 +588,7 @@ class _BookingCard extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                'View Details',
+                                AppLocalizations.of(context)!.viewDetails,
                                 style: TextStyle(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
@@ -647,7 +650,7 @@ class _BookingCard extends StatelessWidget {
     }
   }
 
-  Color _getStatusColor(BookingStatus status) {
+  Color _getStatusColor(BuildContext context, BookingStatus status) {
     switch (status) {
       case BookingStatus.pending:
         return AppTheme.warning;
@@ -658,11 +661,11 @@ class _BookingCard extends StatelessWidget {
       case BookingStatus.completed:
         return AppTheme.info;
       case BookingStatus.cancelled:
-        return AppTheme.textMuted;
+        return AppDesign.getTextTertiary(context);
     }
   }
 
-  String _getStatusText(BookingStatus status) {
+  String _getStatusText(BuildContext context, BookingStatus status) {
     switch (status) {
       case BookingStatus.pending:
         return AppStrings.pending;
@@ -673,7 +676,7 @@ class _BookingCard extends StatelessWidget {
       case BookingStatus.completed:
         return AppStrings.completed;
       case BookingStatus.cancelled:
-        return 'Cancelled';
+        return AppLocalizations.of(context)!.cancelled;
     }
   }
 }

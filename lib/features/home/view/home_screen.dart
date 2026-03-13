@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_design_system.dart';
@@ -162,21 +161,35 @@ class HomeScreen extends StatelessWidget {
     } catch (e) {
       // Fallback UI if there's an error
       return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(title: const Text('STO - Car Marketplace')),
+        backgroundColor: AppDesign.getBgPrimary(context),
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context)!.appTitle),
+          backgroundColor: AppDesign.getBgPrimary(context),
+          foregroundColor: AppDesign.getTextPrimary(context),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.error_outline, size: 64, color: Colors.red),
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: AppDesign.error,
+              ),
               const SizedBox(height: 16),
-              Text('Error loading home screen: $e'),
+              Text(
+                'Error loading home screen: $e',
+                style: TextStyle(color: AppDesign.getTextPrimary(context)),
+              ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
                   // Try to reload
                 },
-                child: const Text('Retry'),
+                child: Text(
+                  'Retry',
+                  style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+                ),
               ),
             ],
           ),
@@ -188,7 +201,7 @@ class HomeScreen extends StatelessWidget {
   Widget _buildDrawer(BuildContext context, AuthState authState) {
     Get.put(CartState(), permanent: false);
     return Drawer(
-      backgroundColor: AppDesign.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       width: MediaQuery.of(context).size.width * 0.85,
       child: Column(
         children: [
@@ -202,7 +215,7 @@ class HomeScreen extends StatelessWidget {
               children: [
                 _DrawerMenuItem(
                   icon: Icons.home_rounded,
-                  title: 'Home',
+                  title: AppLocalizations.of(context)!.home,
                   onTap: () {
                     Navigator.pop(context);
                     context.go(AppConstants.routeHomeFeature);
@@ -210,7 +223,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.gavel,
-                  title: AppStrings.auctions,
+                  title: AppLocalizations.of(context)!.auctions,
                   onTap: () {
                     Navigator.pop(context);
                     context.push(AppConstants.routeAuctions);
@@ -218,7 +231,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.build_rounded,
-                  title: AppStrings.parts,
+                  title: AppLocalizations.of(context)!.parts,
                   onTap: () {
                     Navigator.pop(context);
                     context.push(AppConstants.routeParts);
@@ -226,7 +239,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.shopping_bag_rounded,
-                  title: 'Purchase History',
+                  title: AppLocalizations.of(context)!.purchaseHistory,
                   onTap: () {
                     Navigator.pop(context);
                     Get.find<PartsState>().loadMyPurchases();
@@ -235,7 +248,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.shopping_cart_rounded,
-                  title: AppStrings.cart,
+                  title: AppLocalizations.of(context)!.cart,
                   trailing: Obx(() {
                     final cartState = Get.find<CartState>();
                     final count = cartState.itemCount.value;
@@ -260,8 +273,8 @@ class HomeScreen extends StatelessWidget {
                           ),
                           child: Text(
                             '$count',
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onPrimary,
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                             ),
@@ -283,7 +296,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.calendar_today_rounded,
-                  title: AppStrings.booking,
+                  title: AppLocalizations.of(context)!.booking,
                   onTap: () {
                     Navigator.pop(context);
                     context.push(AppConstants.routeBookings);
@@ -291,7 +304,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.account_balance_wallet_rounded,
-                  title: AppStrings.wallet,
+                  title: AppLocalizations.of(context)!.wallet,
                   onTap: () {
                     Navigator.pop(context);
                     context.push(AppConstants.routeWallet);
@@ -299,7 +312,7 @@ class HomeScreen extends StatelessWidget {
                 ),
                 _DrawerMenuItem(
                   icon: Icons.person_rounded,
-                  title: AppStrings.profile,
+                  title: AppLocalizations.of(context)!.profile,
                   onTap: () {
                     Navigator.pop(context);
                     context.push(AppConstants.routeProfile);
@@ -315,7 +328,7 @@ class HomeScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 _DrawerMenuItem(
                   icon: Icons.logout_rounded,
-                  title: AppStrings.logout,
+                  title: AppLocalizations.of(context)!.logout,
                   isDestructive: true,
                   onTap: () async {
                     await authState.logout();
@@ -367,7 +380,10 @@ class _DrawerHeader extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.3),
+                        color: (Theme.of(context).brightness == Brightness.dark
+                                ? Colors.white
+                                : Colors.black)
+                            .withValues(alpha: Theme.of(context).brightness == Brightness.dark ? 0.15 : 0.3),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),
@@ -391,7 +407,7 @@ class _DrawerHeader extends StatelessWidget {
                           ),
                           child: Icon(
                             Icons.directions_car,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             size: 50,
                           ),
                         );
@@ -465,7 +481,9 @@ class _DrawerHeader extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          isVerified ? 'Verified Account' : 'Not Verified',
+                          isVerified
+                              ? AppLocalizations.of(context)!.verifiedAccount
+                              : AppLocalizations.of(context)!.notVerified,
                           style: TextStyle(
                             color: AppDesign.getTextPrimary(context),
                             fontSize: 13,
@@ -521,7 +539,10 @@ class _DrawerMenuItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.08),
+            color: (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black)
+                .withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -629,7 +650,7 @@ class _CustomHeader extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.menu_rounded,
-                          color: AppDesign.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           size: menuIconSize,
                         ),
                         padding: EdgeInsets.zero,
@@ -662,9 +683,9 @@ class _CustomHeader extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                // Theme Toggle
-                const ThemeToggle(),
-                SizedBox(width: iconSpacing),
+                // // Theme Toggle
+                // const ThemeToggle(),
+                // SizedBox(width: iconSpacing),
 
                 // Language icon with dropdown
                 _LanguageSelector(iconSize: iconSize),
@@ -691,7 +712,7 @@ class _CustomHeader extends StatelessWidget {
                           padding: const EdgeInsets.all(8.0),
                           child: Icon(
                             Icons.shopping_cart_outlined,
-                            color: AppDesign.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             size: iconSize,
                           ),
                         ),
@@ -705,7 +726,7 @@ class _CustomHeader extends StatelessWidget {
                                 color: AppDesign.primary,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: AppDesign.bgPrimary,
+                                  color: AppDesign.getBgPrimary(context),
                                   width: 2,
                                 ),
                               ),
@@ -716,7 +737,7 @@ class _CustomHeader extends StatelessWidget {
                               child: Text(
                                 itemCount > 9 ? '9+' : '$itemCount',
                                 style: TextStyle(
-                                  color: AppDesign.textPrimary,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -757,7 +778,7 @@ class _CustomHeader extends StatelessWidget {
                             errorBuilder: (context, error, stackTrace) {
                               return Icon(
                                 Icons.notifications_outlined,
-                                color: AppDesign.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 size: iconSize,
                               );
                             },
@@ -773,7 +794,7 @@ class _CustomHeader extends StatelessWidget {
                                 color: AppDesign.primary,
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: AppDesign.bgPrimary,
+                                  color: AppDesign.getBgPrimary(context),
                                   width: 2,
                                 ),
                               ),
@@ -784,7 +805,7 @@ class _CustomHeader extends StatelessWidget {
                               child: Text(
                                 unreadCount > 9 ? '9+' : '$unreadCount',
                                 style: TextStyle(
-                                  color: AppDesign.textPrimary,
+                                  color: Theme.of(context).colorScheme.onPrimary,
                                   fontSize: 9,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -922,11 +943,12 @@ class _LanguageSelectorState extends State<_LanguageSelector> {
     ).then((value) {
       if (value != null) {
         Get.find<LocaleState>().locale = Locale(value);
-        final name = _languages.firstWhere((l) => l['code'] == value)['name']!;
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Language changed to $name'),
+              content: Text(
+                AppLocalizations.of(context)!.languageChanged,
+              ),
               backgroundColor: AppDesign.getBgSecondary(context),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
@@ -982,7 +1004,10 @@ class _SearchBar extends StatelessWidget {
       child: TextField(
         decoration: InputDecoration(
           hintText: AppLocalizations.of(context)!.searchHint,
-          hintStyle: TextStyle(color: AppDesign.getTextTertiary(context), fontSize: 15),
+          hintStyle: TextStyle(
+            color: AppDesign.getTextTertiary(context),
+            fontSize: 15,
+          ),
           prefixIcon: Icon(
             Icons.search,
             color: AppDesign.getTextSecondary(context),
@@ -999,11 +1024,18 @@ class _SearchBar extends StatelessWidget {
             vertical: 16,
           ),
         ),
-        style: TextStyle(color: AppDesign.textPrimary, fontSize: 15),
+        style: TextStyle(
+            color: AppDesign.getTextPrimary(context), fontSize: 15),
         onSubmitted: (value) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text('Searching for: $value')));
+          if (value.isEmpty) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                '${AppLocalizations.of(context)!.searchHint} : $value',
+              ),
+              backgroundColor: AppDesign.getBgSecondary(context),
+            ),
+          );
         },
       ),
     );
@@ -1051,7 +1083,7 @@ class _ContentCardsSection extends StatelessWidget {
             _CarAuctionsCard(auctionsCount: liveAuctionsCount),
             _STOPerformanceCard(),
             _PerformancePartsCard(partsCount: companiesCount),
-            _GetVerifiedCard(),
+            // _GetVerifiedCard(),
           ],
         );
       } catch (e) {
@@ -1066,7 +1098,7 @@ class _ContentCardsSection extends StatelessWidget {
             _CarAuctionsCard(auctionsCount: 0),
             _STOPerformanceCard(),
             _PerformancePartsCard(partsCount: 0),
-            _GetVerifiedCard(),
+            // _GetVerifiedCard(),
           ],
         );
       }
@@ -1083,8 +1115,9 @@ class _CarAuctionsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _FeatureCard(
-      title: 'Car Auctions',
-      subtitle: '$auctionsCount live auctions',
+      title: AppLocalizations.of(context)!.carAuctions,
+      subtitle:
+          '$auctionsCount ${AppLocalizations.of(context)!.liveAuctions}',
       iconImage: 'assets/images/auction.png',
       iconColor: AppTheme.redPrimary,
       showIconBackground: false,
@@ -1101,8 +1134,8 @@ class _STOPerformanceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final authState = AuthState();
     return _FeatureCard(
-      title: 'STO Performance',
-      subtitle: 'Book a service',
+      title: AppLocalizations.of(context)!.serviceBooking,
+      subtitle: AppLocalizations.of(context)!.bookService,
       iconImage: 'assets/images/calendar.png',
       iconColor: Colors.blue.shade700,
       showIconBackground: false,
@@ -1127,8 +1160,8 @@ class _PerformancePartsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _FeatureCard(
-      title: 'Performance Parts',
-      subtitle: '$partsCount companies',
+      title: AppLocalizations.of(context)!.performanceParts,
+      subtitle: '$partsCount ${AppLocalizations.of(context)!.companies}',
       iconImage: 'assets/images/repair.png',
       iconColor: Colors.purple.shade700,
       showIconBackground: false,
@@ -1140,30 +1173,33 @@ class _PerformancePartsCard extends StatelessWidget {
 }
 
 /// Get Verified Card
-class _GetVerifiedCard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final authState = AuthState();
-    return Obx(() {
-      final isVerified = authState.isVerified;
-      return _FeatureCard(
-        title: 'Get Verified',
-        subtitle: isVerified ? 'Account verified' : 'Verify your account',
-        iconImage: 'assets/images/verify.png',
-        iconColor: isVerified ? Colors.green.shade700 : Colors.orange.shade700,
-        showIconBackground: false,
-        onTap: () {
-          if (authState.isAuthenticated) {
-            context.push(AppConstants.routeWallet);
-          } else {
-            context.push(AppConstants.routeLogin);
-          }
-        },
-        buttonColor: AppTheme.redPrimary,
-      );
-    });
-  }
-}
+// class _GetVerifiedCard extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     final authState = AuthState();
+//     return Obx(() {
+//       final isVerified = authState.isVerified;
+//       return _FeatureCard(
+//         title: AppLocalizations.of(context)!.getVerified,
+//         subtitle: isVerified
+//             ? AppLocalizations.of(context)!.verifiedAccount
+//             : AppLocalizations.of(context)!.getVerified,
+//         iconImage: 'assets/images/verify.png',
+//         iconColor:
+//             isVerified ? Colors.green.shade700 : Colors.orange.shade700,
+//         showIconBackground: false,
+//         onTap: () {
+//           if (authState.isAuthenticated) {
+//             context.push(AppConstants.routeWallet);
+//           } else {
+//             context.push(AppConstants.routeLogin);
+//           }
+//         },
+//         buttonColor: AppTheme.redPrimary,
+//       );
+//     });
+//   }
+// }
 
 /// Feature Card Widget - Icon on top, button to navigate
 class _FeatureCard extends StatelessWidget {
@@ -1239,7 +1275,7 @@ class _FeatureCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Material(
-          color: AppDesign.bgCard,
+          color: AppDesign.getBgCard(context),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppDesign.radiusLg),
           ),
@@ -1250,7 +1286,7 @@ class _FeatureCard extends StatelessWidget {
               constraints: const BoxConstraints(minHeight: 200),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(AppDesign.radiusLg),
-                border: Border.all(color: AppDesign.border),
+                border: Border.all(color: AppDesign.getBorder(context)),
               ),
               child: Stack(
                 children: [
@@ -1295,16 +1331,20 @@ class _FeatureCard extends StatelessWidget {
                                                         context,
                                                       ).devicePixelRatio)
                                                   .round(),
-                                          errorBuilder: (context, error, stackTrace) {
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
                                             // Fallback to icon if image fails to load
                                             debugPrint(
                                               'Error loading image: $iconImage',
                                             );
                                             debugPrint('Error: $error');
                                             return Icon(
-                                              icon ?? Icons.image_not_supported,
+                                              icon ??
+                                                  Icons.image_not_supported,
                                               size: iconSize,
-                                              color: AppDesign.getTextPrimary(context),
+                                              color: AppDesign.getTextPrimary(
+                                                context,
+                                              ),
                                             );
                                           },
                                         ),
@@ -1312,7 +1352,9 @@ class _FeatureCard extends StatelessWidget {
                                     : Icon(
                                         icon,
                                         size: iconSize,
-                                        color: AppDesign.getTextPrimary(context),
+                                        color: AppDesign.getTextPrimary(
+                                          context,
+                                        ),
                                       ),
 
                                 SizedBox(
@@ -1354,7 +1396,7 @@ class _FeatureCard extends StatelessWidget {
                                 Text(
                                   subtitle,
                                   style: TextStyle(
-                                    color: AppDesign.textSecondary,
+                                    color: AppDesign.getTextSecondary(context),
                                     fontSize: subtitleFontSize,
                                     fontWeight: FontWeight.w400,
                                     letterSpacing: 0.1,
@@ -1383,11 +1425,11 @@ class _FeatureCard extends StatelessWidget {
                         Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            color: AppDesign.bgTertiary,
+                            color: AppDesign.getBgTertiary(context),
                             borderRadius: BorderRadius.circular(
                               AppDesign.radiusSm,
                             ),
-                            border: Border.all(color: AppDesign.border),
+                            border: Border.all(color: AppDesign.getBorder(context)),
                           ),
                           child: Material(
                             color: Colors.transparent,
@@ -1416,7 +1458,7 @@ class _FeatureCard extends StatelessWidget {
                                 child: Icon(
                                   Icons.arrow_forward_rounded,
                                   size: 18.0,
-                                  color: AppDesign.textSecondary,
+                                  color: AppDesign.getTextSecondary(context),
                                 ),
                               ),
                             ),
@@ -1457,7 +1499,7 @@ class _FeatureCard extends StatelessWidget {
                         child: Text(
                           badgeText!,
                           style: TextStyle(
-                            color: AppDesign.textPrimary,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: isTablet
                                 ? 12.0
                                 : isLargeMobile
@@ -1485,27 +1527,30 @@ class _FeatureCard extends StatelessWidget {
 class _BottomAccountCTA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final h = MediaQuery.of(context).size.width < 360 ? 46.0 : 50.0;
 
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: isDark
-              ? [AppDesign.darkBgCard, AppDesign.darkBgTertiary]
-              : [AppDesign.lightBgCard, AppDesign.lightBgTertiary],
+          colors: [
+            AppDesign.getBgCard(context),
+            AppDesign.getBgTertiary(context),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(28),
         border: Border.all(
-          color: isDark ? AppDesign.darkBorder : AppDesign.lightBorder,
+          color: AppDesign.getBorder(context),
           width: 2,
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: (Theme.of(context).brightness == Brightness.dark
+                    ? Colors.white
+                    : Colors.black)
+                .withValues(alpha: 0.05),
             blurRadius: 15,
             offset: const Offset(0, 8),
           ),
@@ -1529,21 +1574,25 @@ class _BottomAccountCTA extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 16),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Unlock Full Access',
+                      AppLocalizations.of(context)!.unlockFullAccess,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         letterSpacing: -0.5,
+                        color: AppDesign.getTextPrimary(context),
                       ),
                     ),
                     Text(
-                      'Join our elite community of car enthusiasts.',
-                      style: TextStyle(fontSize: 13, color: Colors.grey),
+                      AppLocalizations.of(context)!.joinEliteCommunity,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: AppDesign.getTextTertiary(context),
+                      ),
                     ),
                   ],
                 ),
@@ -1560,15 +1609,15 @@ class _BottomAccountCTA extends StatelessWidget {
                     onPressed: () => context.push(AppConstants.routeLogin),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppDesign.primary,
-                      foregroundColor: Colors.white,
+                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text(
-                      'Login Now',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.loginNow,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1583,20 +1632,18 @@ class _BottomAccountCTA extends StatelessWidget {
                   child: OutlinedButton(
                     onPressed: () => context.push(AppConstants.routeSignup),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: isDark ? Colors.white : Colors.black,
+                      foregroundColor: AppDesign.getTextPrimary(context),
                       side: BorderSide(
-                        color: isDark
-                            ? AppDesign.darkBorder
-                            : AppDesign.lightBorder,
+                        color: AppDesign.getBorder(context),
                         width: 1.5,
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                     ),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(
+                    child: Text(
+                      AppLocalizations.of(context)!.register,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
@@ -1634,7 +1681,7 @@ class _LiveAuctionsPreview extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Live Auctions',
+                AppLocalizations.of(context)!.liveAuctions,
                 style: Theme.of(context).textTheme.displayMedium?.copyWith(
                   fontWeight: FontWeight.w600,
                   color: AppDesign.getTextPrimary(context),
@@ -1645,8 +1692,8 @@ class _LiveAuctionsPreview extends StatelessWidget {
                 child: Row(
                   children: [
                     Text(
-                      'View All',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.viewAll,
+                      style: const TextStyle(
                         color: AppTheme.redPrimary,
                         fontWeight: FontWeight.w600,
                       ),

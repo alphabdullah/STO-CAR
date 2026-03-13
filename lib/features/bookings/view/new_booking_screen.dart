@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/theme/app_design_system.dart';
+import '../../../l10n/app_localizations.dart';
 import '../controller/booking_controller.dart';
 import '../../../core/utils/responsive.dart';
 
@@ -14,13 +16,13 @@ class NewBookingScreen extends StatelessWidget {
     final controller = Get.put(BookingController());
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: SafeArea(
         child: Responsive.constrained(
@@ -32,9 +34,9 @@ class NewBookingScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_rounded,
-                        color: AppTheme.textPrimary,
+                        color: AppDesign.getTextPrimary(context),
                         size: 24,
                       ),
                       onPressed: () => context.pop(),
@@ -43,16 +45,16 @@ class NewBookingScreen extends StatelessWidget {
                         minWidth: 40,
                         minHeight: 40,
                       ),
-                      tooltip: 'Back',
+                      tooltip: AppLocalizations.of(context)!.back,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
-                        'Book a Service',
+                        AppLocalizations.of(context)!.bookService,
                         style: TextStyle(
                           fontSize: 28,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                           letterSpacing: -0.5,
                         ),
@@ -127,44 +129,44 @@ class _BookingForm extends StatelessWidget {
 
           // Name Field
           _FormField(
-            label: 'Full Name',
+            label: AppLocalizations.of(context)!.fullName,
             controller: controller.nameController,
             icon: Icons.person_outline_rounded,
             keyboardType: TextInputType.name,
-            hintText: 'Enter your full name',
+            hintText: AppLocalizations.of(context)!.enterFullName,
           ),
 
           const SizedBox(height: 20),
 
           // Phone Number Field
           _FormField(
-            label: 'Phone Number',
+            label: AppLocalizations.of(context)!.phone,
             controller: controller.phoneController,
             icon: Icons.phone_outlined,
             keyboardType: TextInputType.phone,
-            hintText: 'Enter your phone number',
+            hintText: AppLocalizations.of(context)!.enterPhoneNumber,
           ),
 
           const SizedBox(height: 20),
 
           // Car Name Field
           _FormField(
-            label: 'Car Name',
+            label: AppLocalizations.of(context)!.carName,
             controller: controller.carNameController,
             icon: Icons.directions_car_outlined,
             keyboardType: TextInputType.text,
-            hintText: 'e.g., BMW, Mercedes',
+            hintText: AppLocalizations.of(context)!.carNameHint,
           ),
 
           const SizedBox(height: 20),
 
           // Car Model Field
           _FormField(
-            label: 'Car Model',
+            label: AppLocalizations.of(context)!.carModel,
             controller: controller.carModelController,
             icon: Icons.build_outlined,
             keyboardType: TextInputType.text,
-            hintText: 'e.g., 3 Series, C-Class',
+            hintText: AppLocalizations.of(context)!.carModelHint,
           ),
 
           const SizedBox(height: 20),
@@ -188,9 +190,9 @@ class _BookingForm extends StatelessWidget {
                     data: Theme.of(context).copyWith(
                       colorScheme: ColorScheme.dark(
                         primary: AppTheme.redPrimary,
-                        onPrimary: AppTheme.textPrimary,
-                        surface: AppTheme.bgSecondary,
-                        onSurface: AppTheme.textPrimary,
+                        onPrimary: AppDesign.getTextPrimary(context),
+                        surface: AppDesign.getBgSecondary(context),
+                        onSurface: AppDesign.getTextPrimary(context),
                       ),
                     ),
                     child: child!,
@@ -217,9 +219,9 @@ class _BookingForm extends StatelessWidget {
                     data: Theme.of(context).copyWith(
                       colorScheme: ColorScheme.dark(
                         primary: AppTheme.redPrimary,
-                        onPrimary: AppTheme.textPrimary,
-                        surface: AppTheme.bgSecondary,
-                        onSurface: AppTheme.textPrimary,
+                        onPrimary: AppDesign.getTextPrimary(context),
+                        surface: AppDesign.getBgSecondary(context),
+                        onSurface: AppDesign.getTextPrimary(context),
                       ),
                     ),
                     child: child!,
@@ -282,12 +284,12 @@ class _BookingForm extends StatelessWidget {
                           ),
                         )
                       : Text(
-                          'Submit Booking',
+                          AppLocalizations.of(context)!.submitBooking,
                           style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 0.5,
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontFamily: AppTheme.fontFamily,
                             shadows: [
                               Shadow(
@@ -336,7 +338,7 @@ class _FormField extends StatelessWidget {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
             letterSpacing: 0.2,
           ),
@@ -346,14 +348,14 @@ class _FormField extends StatelessWidget {
           controller: controller,
           keyboardType: keyboardType,
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
             fontSize: 16,
           ),
           decoration: InputDecoration(
             hintText: hintText,
             hintStyle: TextStyle(
-              color: AppTheme.textMuted,
+              color: AppDesign.getTextTertiary(context),
               fontFamily: AppTheme.fontFamily,
             ),
             prefixIcon: Container(
@@ -366,14 +368,14 @@ class _FormField extends StatelessWidget {
               child: Icon(icon, color: AppTheme.redPrimary, size: 22),
             ),
             filled: true,
-            fillColor: AppTheme.bgSecondary,
+            fillColor: AppDesign.getBgSecondary(context),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppTheme.border, width: 1.5),
+              borderSide: BorderSide(color: AppDesign.getBorder(context), width: 1.5),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppTheme.border, width: 1.5),
+              borderSide: BorderSide(color: AppDesign.getBorder(context), width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -402,11 +404,11 @@ class _DescriptionField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Description',
+          AppLocalizations.of(context)!.description,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
             letterSpacing: 0.2,
           ),
@@ -417,14 +419,14 @@ class _DescriptionField extends StatelessWidget {
           maxLines: 4,
           keyboardType: TextInputType.multiline,
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
             fontSize: 16,
           ),
           decoration: InputDecoration(
-            hintText: 'Enter service description or additional notes',
+            hintText: AppLocalizations.of(context)!.enterServiceDescription,
             hintStyle: TextStyle(
-              color: AppTheme.textMuted,
+              color: AppDesign.getTextTertiary(context),
               fontFamily: AppTheme.fontFamily,
             ),
             prefixIcon: Padding(
@@ -444,14 +446,14 @@ class _DescriptionField extends StatelessWidget {
               ),
             ),
             filled: true,
-            fillColor: AppTheme.bgSecondary,
+            fillColor: AppDesign.getBgSecondary(context),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppTheme.border, width: 1.5),
+              borderSide: BorderSide(color: AppDesign.getBorder(context), width: 1.5),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
-              borderSide: BorderSide(color: AppTheme.border, width: 1.5),
+              borderSide: BorderSide(color: AppDesign.getBorder(context), width: 1.5),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14),
@@ -481,11 +483,11 @@ class _DatePickerField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Preferred Date',
+          AppLocalizations.of(context)!.preferredDate,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
             letterSpacing: 0.2,
           ),
@@ -497,9 +499,9 @@ class _DatePickerField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: AppTheme.bgSecondary,
+              color: AppDesign.getBgSecondary(context),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border, width: 1.5),
+              border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
             ),
             child: Row(
               children: [
@@ -520,11 +522,11 @@ class _DatePickerField extends StatelessWidget {
                   child: Text(
                     selectedDate != null
                         ? '${selectedDate!.year}-${selectedDate!.month.toString().padLeft(2, '0')}-${selectedDate!.day.toString().padLeft(2, '0')}'
-                        : 'Select preferred date',
+                        : AppLocalizations.of(context)!.selectPreferredDate,
                     style: TextStyle(
                       color: selectedDate != null
-                          ? AppTheme.textPrimary
-                          : AppTheme.textMuted,
+                          ? AppDesign.getTextPrimary(context)
+                          : AppDesign.getTextTertiary(context),
                       fontSize: 16,
                       fontFamily: AppTheme.fontFamily,
                     ),
@@ -532,7 +534,7 @@ class _DatePickerField extends StatelessWidget {
                 ),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  color: AppTheme.textSecondary,
+                  color: AppDesign.getTextSecondary(context),
                   size: 28,
                 ),
               ],
@@ -557,11 +559,11 @@ class _TimePickerField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Preferred Time',
+          AppLocalizations.of(context)!.preferredTime,
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w600,
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
             letterSpacing: 0.2,
           ),
@@ -573,9 +575,9 @@ class _TimePickerField extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
             decoration: BoxDecoration(
-              color: AppTheme.bgSecondary,
+              color: AppDesign.getBgSecondary(context),
               borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: AppTheme.border, width: 1.5),
+              border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
             ),
             child: Row(
               children: [
@@ -596,11 +598,11 @@ class _TimePickerField extends StatelessWidget {
                   child: Text(
                     selectedTime != null
                         ? '${selectedTime!.hour.toString().padLeft(2, '0')}:${selectedTime!.minute.toString().padLeft(2, '0')}'
-                        : 'Select preferred time',
+                        : AppLocalizations.of(context)!.selectPreferredTime,
                     style: TextStyle(
                       color: selectedTime != null
-                          ? AppTheme.textPrimary
-                          : AppTheme.textMuted,
+                          ? AppDesign.getTextPrimary(context)
+                          : AppDesign.getTextTertiary(context),
                       fontSize: 16,
                       fontFamily: AppTheme.fontFamily,
                     ),
@@ -608,7 +610,7 @@ class _TimePickerField extends StatelessWidget {
                 ),
                 Icon(
                   Icons.arrow_drop_down_rounded,
-                  color: AppTheme.textSecondary,
+                  color: AppDesign.getTextSecondary(context),
                   size: 28,
                 ),
               ],
