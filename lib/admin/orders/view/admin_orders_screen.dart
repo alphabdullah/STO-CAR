@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/admin_part_purchase_model.dart';
 import '../controller/admin_orders_controller.dart';
 import '../../../core/utils/responsive.dart';
@@ -17,13 +18,13 @@ class AdminOrdersScreen extends StatelessWidget {
     final controller = Get.put(AdminOrdersController());
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: SafeArea(
         child: Obx(() {
@@ -95,11 +96,11 @@ class _Header extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        AppStrings.orders,
+                        AppLocalizations.of(context)!.orders,
                         style: TextStyle(
                           fontSize: isSmallScreen ? 24 : 32,
                           fontWeight: FontWeight.bold,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                           letterSpacing: -0.5,
                         ),
@@ -108,10 +109,10 @@ class _Header extends StatelessWidget {
                       ),
                       SizedBox(height: isSmallScreen ? 2 : 4),
                       Text(
-                        'Part purchases & order history',
+                        AppLocalizations.of(context)!.partPurchasesAndOrderHistory,
                         style: TextStyle(
                           fontSize: isSmallScreen ? 13 : 16,
-                          color: AppTheme.textSecondary,
+                          color: AppDesign.getTextSecondary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                       ),
@@ -120,7 +121,7 @@ class _Header extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: controller.reload,
-                  icon: const Icon(Icons.refresh_rounded, color: AppTheme.redPrimary),
+                  icon: Icon(Icons.refresh_rounded, color: AppTheme.redPrimary),
                 ),
               ],
             ),
@@ -148,31 +149,31 @@ class _StatusFilter extends StatelessWidget {
               child: Row(
                 children: [
                   _FilterChip(
-                    label: 'All',
+                    label: AppLocalizations.of(context)!.filterAll,
                     isSelected: controller.statusFilter == null,
                     onTap: () => controller.setStatusFilter(null),
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
-                    label: 'Pending',
+                    label: AppLocalizations.of(context)!.pending,
                     isSelected: controller.statusFilter == 'pending',
                     onTap: () => controller.setStatusFilter('pending'),
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
-                    label: 'Paid',
+                    label: AppLocalizations.of(context)!.paid,
                     isSelected: controller.statusFilter == 'paid',
                     onTap: () => controller.setStatusFilter('paid'),
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
-                    label: 'Shipped',
+                    label: AppLocalizations.of(context)!.shipped,
                     isSelected: controller.statusFilter == 'shipped',
                     onTap: () => controller.setStatusFilter('shipped'),
                   ),
                   const SizedBox(width: 8),
                   _FilterChip(
-                    label: 'Delivered',
+                    label: AppLocalizations.of(context)!.delivered,
                     isSelected: controller.statusFilter == 'delivered',
                     onTap: () => controller.setStatusFilter('delivered'),
                   ),
@@ -209,10 +210,10 @@ class _FilterChip extends StatelessWidget {
           decoration: BoxDecoration(
             color: isSelected
                 ? AppTheme.redPrimary.withValues(alpha: 0.2)
-                : AppTheme.bgSecondary,
+                : AppDesign.getBgSecondary(context),
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: isSelected ? AppTheme.redPrimary : AppTheme.border,
+              color: isSelected ? AppTheme.redPrimary : AppDesign.getBorder(context),
               width: 1.5,
             ),
           ),
@@ -221,7 +222,7 @@ class _FilterChip extends StatelessWidget {
             style: TextStyle(
               fontSize: 14,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-              color: isSelected ? AppTheme.redPrimary : AppTheme.textSecondary,
+              color: isSelected ? AppTheme.redPrimary : AppDesign.getTextSecondary(context),
               fontFamily: AppTheme.fontFamily,
             ),
           ),
@@ -252,24 +253,24 @@ class _EmptyState extends StatelessWidget {
                 Icon(
                   Icons.shopping_bag_outlined,
                   size: 64,
-                  color: AppTheme.textSecondary.withValues(alpha: 0.5),
+                  color: AppDesign.getTextSecondary(context).withValues(alpha: 0.5),
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'No Orders Yet',
+                  AppLocalizations.of(context)!.noOrdersYet,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Part purchases will appear here',
+                  AppLocalizations.of(context)!.partPurchasesWillAppearHere,
                   style: TextStyle(
                     fontSize: 14,
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -334,9 +335,9 @@ class _OrderCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -361,12 +362,12 @@ class _OrderCard extends StatelessWidget {
                           width: 72,
                           height: 72,
                           fit: BoxFit.cover,
-                          loadingBuilder: (_, child, progress) {
+                          loadingBuilder: (imgContext, child, progress) {
                             if (progress == null) return child;
                             return Container(
                               width: 72,
                               height: 72,
-                              color: AppTheme.border,
+                              color: AppDesign.getBorder(imgContext),
                               child: const Center(
                                 child: SizedBox(
                                   width: 20,
@@ -384,10 +385,10 @@ class _OrderCard extends StatelessWidget {
                           errorBuilder: (_, __, ___) => Container(
                             width: 72,
                             height: 72,
-                            color: AppTheme.border,
-                            child: const Icon(
+                            color: AppDesign.getBorder(context),
+                            child: Icon(
                               Icons.build_rounded,
-                              color: AppTheme.textSecondary,
+                              color: AppDesign.getTextSecondary(context),
                             ),
                           ),
                         )
@@ -395,12 +396,12 @@ class _OrderCard extends StatelessWidget {
                           width: 72,
                           height: 72,
                           decoration: BoxDecoration(
-                            color: AppTheme.border.withValues(alpha: 0.5),
+                            color: AppDesign.getBorder(context).withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             Icons.build_rounded,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             size: 32,
                           ),
                         ),
@@ -415,7 +416,7 @@ class _OrderCard extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                         maxLines: 2,
@@ -427,7 +428,7 @@ class _OrderCard extends StatelessWidget {
                           'PN: ${part.partNumber}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -441,7 +442,7 @@ class _OrderCard extends StatelessWidget {
                           ].join(' • '),
                           style: TextStyle(
                             fontSize: 12,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -454,12 +455,12 @@ class _OrderCard extends StatelessWidget {
                               horizontal: 10,
                               vertical: 4,
                             ),
-                            decoration: BoxDecoration(
-                              color: _statusColor(purchase.status)
+decoration: BoxDecoration(
+                            color: _statusColor(context, purchase.status)
                                   .withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: _statusColor(purchase.status)
+                                color: _statusColor(context, purchase.status)
                                     .withValues(alpha: 0.4),
                                 width: 1,
                               ),
@@ -469,7 +470,7 @@ class _OrderCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: _statusColor(purchase.status),
+                                color: _statusColor(context, purchase.status),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                             ),
@@ -499,11 +500,11 @@ class _OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Buyer',
+                        AppLocalizations.of(context)!.buyer,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textSecondary,
+                          color: AppDesign.getTextSecondary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                       ),
@@ -512,7 +513,7 @@ class _OrderCard extends StatelessWidget {
                         buyer?.name ?? '—',
                         style: TextStyle(
                           fontSize: 13,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                         maxLines: 1,
@@ -523,7 +524,7 @@ class _OrderCard extends StatelessWidget {
                           buyer!.email,
                           style: TextStyle(
                             fontSize: 11,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                           maxLines: 1,
@@ -534,7 +535,7 @@ class _OrderCard extends StatelessWidget {
                           buyer!.phone!,
                           style: TextStyle(
                             fontSize: 11,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -546,11 +547,11 @@ class _OrderCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Seller',
+                        AppLocalizations.of(context)!.seller,
                         style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.textSecondary,
+                          color: AppDesign.getTextSecondary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                       ),
@@ -559,7 +560,7 @@ class _OrderCard extends StatelessWidget {
                         seller?.name ?? '—',
                         style: TextStyle(
                           fontSize: 13,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                         maxLines: 1,
@@ -570,7 +571,7 @@ class _OrderCard extends StatelessWidget {
                           seller!.email,
                           style: TextStyle(
                             fontSize: 11,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                           maxLines: 1,
@@ -585,11 +586,11 @@ class _OrderCard extends StatelessWidget {
                 purchase.shippingAddress!.isNotEmpty) ...[
               const SizedBox(height: 12),
               Text(
-                'Address',
+                AppLocalizations.of(context)!.address,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: AppTheme.textSecondary,
+                  color: AppDesign.getTextSecondary(context),
                   fontFamily: AppTheme.fontFamily,
                 ),
               ),
@@ -598,7 +599,7 @@ class _OrderCard extends StatelessWidget {
                 purchase.shippingAddress!,
                 style: TextStyle(
                   fontSize: 12,
-                  color: AppTheme.textPrimary,
+                  color: AppDesign.getTextPrimary(context),
                   fontFamily: AppTheme.fontFamily,
                 ),
                 maxLines: 2,
@@ -607,10 +608,10 @@ class _OrderCard extends StatelessWidget {
             ],
             const SizedBox(height: 8),
             Text(
-              'Order #${purchase.id} • ${purchase.quantity} × ${AppConstants.currency} ${purchase.soldPrice.toStringAsFixed(0)} • ${_formatDate(purchase.purchasedAt)}',
+              '${AppLocalizations.of(context)!.orderNumber}${purchase.id} • ${purchase.quantity} × ${AppConstants.currency} ${purchase.soldPrice.toStringAsFixed(0)} • ${_formatDate(purchase.purchasedAt)}',
               style: TextStyle(
                 fontSize: 11,
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -620,7 +621,7 @@ class _OrderCard extends StatelessWidget {
     );
   }
 
-  Color _statusColor(String status) {
+  Color _statusColor(BuildContext context, String status) {
     switch (status.toLowerCase()) {
       case 'pending':
         return AppTheme.warning;
@@ -631,7 +632,7 @@ class _OrderCard extends StatelessWidget {
       case 'delivered':
         return AppTheme.success;
       default:
-        return AppTheme.textSecondary;
+        return AppDesign.getTextSecondary(context);
     }
   }
 

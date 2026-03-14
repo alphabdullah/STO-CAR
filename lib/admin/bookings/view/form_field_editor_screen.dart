@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/booking_model.dart';
 import '../../../state/booking_state.dart';
 
@@ -93,23 +95,20 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
 
   void _saveFields() {
     // Update the form fields template in booking state
-    // In a real app, this would save to backend
-    Get.snackbar(
-      'Success',
-      'Form fields updated successfully',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: AppTheme.success,
-      colorText: AppTheme.textPrimary,
-    );
-    Navigator.pop(context);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.formFieldsUpdatedSuccessfully)),
+      );
+      Navigator.pop(context);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
@@ -138,9 +137,9 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.arrow_back_ios_rounded,
-                        color: AppTheme.textPrimary,
+                        color: AppDesign.getTextPrimary(context),
                         size: 20,
                       ),
                       onPressed: () => Navigator.pop(context),
@@ -154,21 +153,21 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Edit Form Fields',
+                            AppLocalizations.of(context)!.editFormFields,
                             style: TextStyle(
                               fontSize: 26,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               fontFamily: AppTheme.fontFamily,
                               letterSpacing: -0.5,
                             ),
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Customize booking form fields',
+                            AppLocalizations.of(context)!.customizeBookingFormFields,
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.textSecondary,
+                              color: AppDesign.getTextSecondary(context),
                               fontFamily: AppTheme.fontFamily,
                             ),
                           ),
@@ -202,11 +201,11 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
                               vertical: 12,
                             ),
                             child: Text(
-                              'Save',
+                              AppLocalizations.of(context)!.save,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                             ),
@@ -255,10 +254,10 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Customize the booking form fields. Users will see these fields when creating a booking.',
+                      AppLocalizations.of(context)!.customizeFormDescription,
                       style: TextStyle(
                         fontSize: 13,
-                        color: AppTheme.textSecondary,
+                        color: AppDesign.getTextSecondary(context),
                         fontFamily: AppTheme.fontFamily,
                         height: 1.4,
                       ),
@@ -300,24 +299,24 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
                           Container(
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
-                              color: AppTheme.textPrimary.withValues(
+                              color: AppDesign.getTextPrimary(context).withValues(
                                 alpha: 0.2,
                               ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Icon(
                               Icons.add_rounded,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               size: 20,
                             ),
                           ),
                           const SizedBox(width: 12),
                           Text(
-                            'Add New Field',
+                            AppLocalizations.of(context)!.addNewField,
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               fontFamily: AppTheme.fontFamily,
                               letterSpacing: 0.5,
                             ),
@@ -344,42 +343,42 @@ class _FormFieldEditorScreenState extends State<FormFieldEditorScreen> {
                             Container(
                               padding: const EdgeInsets.all(24),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppTheme.bgSecondary,
-                                    AppTheme.bgElevated,
+gradient: LinearGradient(
+                                    colors: [
+                                    AppDesign.getBgSecondary(context),
+                                    AppDesign.getBgElevated(context),
                                   ],
                                   begin: Alignment.topLeft,
                                   end: Alignment.bottomRight,
                                 ),
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: AppTheme.border,
+                                  color: AppDesign.getBorder(context),
                                   width: 1.5,
                                 ),
                               ),
                               child: Icon(
                                 Icons.add_circle_outline_rounded,
                                 size: 64,
-                                color: AppTheme.textMuted,
+                                color: AppDesign.getTextTertiary(context),
                               ),
                             ),
                             const SizedBox(height: 24),
                             Text(
-                              'No fields added yet',
+                              AppLocalizations.of(context)!.noFieldsAddedYet,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Tap "Add New Field" to create your first field',
+                              AppLocalizations.of(context)!.tapAddNewFieldHint,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                               textAlign: TextAlign.center,
@@ -485,9 +484,9 @@ class _FormFieldItemState extends State<_FormFieldItem> {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -586,7 +585,7 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                         padding: const EdgeInsets.all(10),
                         child: Icon(
                           Icons.delete_outline_rounded,
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           size: 20,
                         ),
                       ),
@@ -606,22 +605,22 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                 TextField(
                   controller: widget.labelController,
                   decoration: InputDecoration(
-                    labelText: 'Field Label',
-                    hintText: 'Enter field label',
+                    labelText: AppLocalizations.of(context)!.fieldLabel,
+                    hintText: AppLocalizations.of(context)!.fieldLabelHint,
                     prefixIcon: Icon(
                       Icons.label_outline_rounded,
-                      color: AppTheme.textSecondary,
+                      color: AppDesign.getTextSecondary(context),
                       size: 20,
                     ),
                     filled: true,
-                    fillColor: AppTheme.bgElevated,
+                    fillColor: AppDesign.getBgElevated(context),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -631,16 +630,16 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                       ),
                     ),
                     labelStyle: TextStyle(
-                      color: AppTheme.textSecondary,
+                      color: AppDesign.getTextSecondary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                     hintStyle: TextStyle(
-                      color: AppTheme.textMuted,
+                      color: AppDesign.getTextTertiary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                   ),
                   style: TextStyle(
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -651,21 +650,21 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                 DropdownButtonFormField<BookingFieldType>(
                   initialValue: _currentField.type,
                   decoration: InputDecoration(
-                    labelText: 'Field Type',
+                    labelText: AppLocalizations.of(context)!.fieldType,
                     prefixIcon: Icon(
                       Icons.category_outlined,
-                      color: AppTheme.textSecondary,
+                      color: AppDesign.getTextSecondary(context),
                       size: 20,
                     ),
                     filled: true,
-                    fillColor: AppTheme.bgElevated,
+                    fillColor: AppDesign.getBgElevated(context),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: AppTheme.border),
+                      borderSide: BorderSide(color: AppDesign.getBorder(context)),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -675,13 +674,13 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                       ),
                     ),
                     labelStyle: TextStyle(
-                      color: AppTheme.textSecondary,
+                      color: AppDesign.getTextSecondary(context),
                       fontFamily: AppTheme.fontFamily,
                     ),
                   ),
-                  dropdownColor: AppTheme.bgSecondary,
+                  dropdownColor: AppDesign.getBgSecondary(context),
                   style: TextStyle(
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   items: BookingFieldType.values.map((type) {
@@ -726,22 +725,22 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                             widget.placeholderController ??
                             TextEditingController(),
                         decoration: InputDecoration(
-                          labelText: 'Placeholder (Optional)',
-                          hintText: 'Enter placeholder text',
+                          labelText: AppLocalizations.of(context)!.placeholderOptional,
+                          hintText: AppLocalizations.of(context)!.placeholderHint,
                           prefixIcon: Icon(
                             Icons.place_outlined,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             size: 20,
                           ),
                           filled: true,
-                          fillColor: AppTheme.bgElevated,
+                          fillColor: AppDesign.getBgElevated(context),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppTheme.border),
+                            borderSide: BorderSide(color: AppDesign.getBorder(context)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppTheme.border),
+                            borderSide: BorderSide(color: AppDesign.getBorder(context)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -751,16 +750,16 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                             ),
                           ),
                           labelStyle: TextStyle(
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                           hintStyle: TextStyle(
-                            color: AppTheme.textMuted,
+                            color: AppDesign.getTextTertiary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
                         style: TextStyle(
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                       ),
@@ -778,22 +777,22 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                             widget.optionsController ?? TextEditingController(),
                         maxLines: 3,
                         decoration: InputDecoration(
-                          labelText: 'Options (comma-separated)',
-                          hintText: 'Option 1, Option 2, Option 3',
+                          labelText: AppLocalizations.of(context)!.optionsCommaSeparated,
+                          hintText: AppLocalizations.of(context)!.optionsHint,
                           prefixIcon: Icon(
                             Icons.list_rounded,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             size: 20,
                           ),
                           filled: true,
-                          fillColor: AppTheme.bgElevated,
+                          fillColor: AppDesign.getBgElevated(context),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppTheme.border),
+                            borderSide: BorderSide(color: AppDesign.getBorder(context)),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide(color: AppTheme.border),
+                            borderSide: BorderSide(color: AppDesign.getBorder(context)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -803,16 +802,16 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                             ),
                           ),
                           labelStyle: TextStyle(
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                           hintStyle: TextStyle(
-                            color: AppTheme.textMuted,
+                            color: AppDesign.getTextTertiary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
                         style: TextStyle(
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontFamily: AppTheme.fontFamily,
                         ),
                       ),
@@ -824,12 +823,12 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppTheme.bgElevated,
+                    color: AppDesign.getBgElevated(context),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
                       color: _currentField.isRequired
                           ? AppTheme.redPrimary.withValues(alpha: 0.3)
-                          : AppTheme.border,
+                          : AppDesign.getBorder(context),
                       width: 1.5,
                     ),
                   ),
@@ -839,7 +838,7 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                         decoration: BoxDecoration(
                           color: _currentField.isRequired
                               ? AppTheme.redPrimary.withValues(alpha: 0.2)
-                              : AppTheme.bgSecondary,
+                              : AppDesign.getBgSecondary(context),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Checkbox(
@@ -853,7 +852,7 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                             });
                           },
                           activeColor: AppTheme.redPrimary,
-                          checkColor: AppTheme.textPrimary,
+                          checkColor: AppDesign.getTextPrimary(context),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -866,7 +865,7 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                             ),
@@ -875,7 +874,7 @@ class _FormFieldItemState extends State<_FormFieldItem> {
                               'Users must fill this field',
                               style: TextStyle(
                                 fontSize: 12,
-                                color: AppTheme.textMuted,
+                                color: AppDesign.getTextTertiary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                             ),

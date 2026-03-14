@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/auction_state.dart';
 import '../../../models/auction_model.dart';
 import '../controller/admin_auction_controller.dart';
@@ -27,8 +28,8 @@ class _AdminAuctionsScreenState extends State<AdminAuctionsScreen>
     // Load pending auctions when screen is shown
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = Get.find<AdminAuctionController>();
-      // Always refresh to show current data from the live server
-      controller.loadPendingAuctions(forceRefresh: true);
+      final ctx = context;
+      controller.loadPendingAuctions(ctx, forceRefresh: true);
     });
   }
 
@@ -44,13 +45,13 @@ class _AdminAuctionsScreenState extends State<AdminAuctionsScreen>
     final controller = Get.find<AdminAuctionController>();
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: SafeArea(
         child: Obx(() {
@@ -97,21 +98,21 @@ class _AdminAuctionsScreenState extends State<AdminAuctionsScreen>
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          AppStrings.manageAuctions,
+                          AppLocalizations.of(context)!.manageAuctions,
                           style: TextStyle(
                             fontSize: 32,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             fontFamily: AppTheme.fontFamily,
                             letterSpacing: -0.5,
                           ),
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          'Manage and approve auctions',
+                          AppLocalizations.of(context)!.manageAndApproveAuctions,
                           style: TextStyle(
                             fontSize: 16,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -166,8 +167,8 @@ class _PendingApprovalTab extends StatelessWidget {
     if (pendingAuctions.isEmpty) {
       return _EmptyState(
         icon: Icons.pending_actions_rounded,
-        title: 'No Pending Auctions',
-        message: 'All auctions have been reviewed',
+        title: AppLocalizations.of(context)!.noPendingAuctions,
+        message: AppLocalizations.of(context)!.allAuctionsReviewed,
       );
     }
 
@@ -179,8 +180,8 @@ class _PendingApprovalTab extends StatelessWidget {
           final auction = pendingAuctions[index];
           return _AdminAuctionCard(
             auction: auction,
-            onApprove: () => controller.approveAuction(auction.id),
-            onReject: () => controller.rejectAuction(auction.id),
+            onApprove: () => controller.approveAuction(context, auction.id),
+            onReject: () => controller.rejectAuction(context, auction.id),
           );
         },
       ),
@@ -197,8 +198,8 @@ class _PendingApprovalTab extends StatelessWidget {
           final auction = pendingAuctions[index];
           return _AdminAuctionCard(
             auction: auction,
-            onApprove: () => controller.approveAuction(auction.id),
-            onReject: () => controller.rejectAuction(auction.id),
+            onApprove: () => controller.approveAuction(context, auction.id),
+            onReject: () => controller.rejectAuction(context, auction.id),
           );
         },
       ),
@@ -215,8 +216,8 @@ class _PendingApprovalTab extends StatelessWidget {
           final auction = pendingAuctions[index];
           return _AdminAuctionCard(
             auction: auction,
-            onApprove: () => controller.approveAuction(auction.id),
-            onReject: () => controller.rejectAuction(auction.id),
+            onApprove: () => controller.approveAuction(context, auction.id),
+            onReject: () => controller.rejectAuction(context, auction.id),
           );
         },
       ),
@@ -236,8 +237,8 @@ class _AllAuctionsTab extends StatelessWidget {
     if (allAuctions.isEmpty) {
       return _EmptyState(
         icon: Icons.gavel_rounded,
-        title: 'No Auctions',
-        message: 'No auctions have been created yet',
+        title: AppLocalizations.of(context)!.noAuctions,
+        message: AppLocalizations.of(context)!.noAuctionsCreatedYet,
       );
     }
 
@@ -250,10 +251,10 @@ class _AllAuctionsTab extends StatelessWidget {
           return _AdminAuctionCard(
             auction: auction,
             onApprove: auction.isPendingApproval
-                ? () => controller.approveAuction(auction.id)
+                ? () => controller.approveAuction(context, auction.id)
                 : null,
             onReject: auction.isPendingApproval
-                ? () => controller.rejectAuction(auction.id)
+                ? () => controller.rejectAuction(context, auction.id)
                 : null,
             onEditPrice: (auction.isLive || auction.status == AuctionStatus.approved)
                 ? () => _showEditPriceDialog(context, auction, controller)
@@ -275,10 +276,10 @@ class _AllAuctionsTab extends StatelessWidget {
           return _AdminAuctionCard(
             auction: auction,
             onApprove: auction.isPendingApproval
-                ? () => controller.approveAuction(auction.id)
+                ? () => controller.approveAuction(context, auction.id)
                 : null,
             onReject: auction.isPendingApproval
-                ? () => controller.rejectAuction(auction.id)
+                ? () => controller.rejectAuction(context, auction.id)
                 : null,
             onEditPrice: (auction.isLive || auction.status == AuctionStatus.approved)
                 ? () => _showEditPriceDialog(context, auction, controller)
@@ -300,10 +301,10 @@ class _AllAuctionsTab extends StatelessWidget {
           return _AdminAuctionCard(
             auction: auction,
             onApprove: auction.isPendingApproval
-                ? () => controller.approveAuction(auction.id)
+                ? () => controller.approveAuction(context, auction.id)
                 : null,
             onReject: auction.isPendingApproval
-                ? () => controller.rejectAuction(auction.id)
+                ? () => controller.rejectAuction(context, auction.id)
                 : null,
             onEditPrice: (auction.isLive || auction.status == AuctionStatus.approved)
                 ? () => _showEditPriceDialog(context, auction, controller)
@@ -326,13 +327,14 @@ void _showEditPriceDialog(
   );
   final incrementCtrl = TextEditingController(text: '500');
 
+  final l10n = AppLocalizations.of(context)!;
   showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      backgroundColor: AppTheme.bgSecondary,
+      backgroundColor: AppDesign.getBgSecondary(ctx),
       title: Text(
-        'Edit Auction Price',
-        style: TextStyle(color: AppTheme.textPrimary),
+        l10n.editAuctionPrice,
+        style: TextStyle(color: AppDesign.getTextPrimary(ctx)),
       ),
       content: SingleChildScrollView(
         child: Column(
@@ -341,40 +343,40 @@ void _showEditPriceDialog(
             TextField(
               controller: startCtrl,
               decoration: InputDecoration(
-                labelText: 'Starting Bid (AED)',
-                labelStyle: TextStyle(color: AppTheme.textSecondary),
+                labelText: l10n.startingBidAed,
+                labelStyle: TextStyle(color: AppDesign.getTextSecondary(ctx)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               keyboardType: TextInputType.number,
-              style: TextStyle(color: AppTheme.textPrimary),
+              style: TextStyle(color: AppDesign.getTextPrimary(ctx)),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: currentCtrl,
               decoration: InputDecoration(
-                labelText: 'Current Bid (AED) - optional',
-                labelStyle: TextStyle(color: AppTheme.textSecondary),
+                labelText: l10n.currentBidAedOptional,
+                labelStyle: TextStyle(color: AppDesign.getTextSecondary(ctx)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               keyboardType: TextInputType.number,
-              style: TextStyle(color: AppTheme.textPrimary),
+              style: TextStyle(color: AppDesign.getTextPrimary(ctx)),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: incrementCtrl,
               decoration: InputDecoration(
-                labelText: 'Bid Increment (AED)',
-                labelStyle: TextStyle(color: AppTheme.textSecondary),
+                labelText: l10n.bidIncrementAed,
+                labelStyle: TextStyle(color: AppDesign.getTextSecondary(ctx)),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               keyboardType: TextInputType.number,
-              style: TextStyle(color: AppTheme.textPrimary),
+              style: TextStyle(color: AppDesign.getTextPrimary(ctx)),
             ),
           ],
         ),
@@ -382,14 +384,14 @@ void _showEditPriceDialog(
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(ctx),
-          child: Text('Cancel', style: TextStyle(color: AppTheme.textSecondary)),
+          child: Text(l10n.cancel, style: TextStyle(color: AppDesign.getTextSecondary(ctx))),
         ),
         ElevatedButton(
           onPressed: () async {
             final start = double.tryParse(startCtrl.text);
             if (start == null || start < 1) {
               ScaffoldMessenger.of(ctx).showSnackBar(
-                const SnackBar(content: Text('Invalid starting bid')),
+                SnackBar(content: Text(l10n.invalidStartingBid)),
               );
               return;
             }
@@ -397,6 +399,7 @@ void _showEditPriceDialog(
             final increment = double.tryParse(incrementCtrl.text) ?? 500;
             Navigator.pop(ctx);
             await controller.updateAuctionPrice(
+              context,
               auction.id,
               startingBid: start,
               currentBid: (current != null && current > 0) ? current : null,
@@ -404,7 +407,7 @@ void _showEditPriceDialog(
             );
           },
           style: ElevatedButton.styleFrom(backgroundColor: AppTheme.redPrimary),
-          child: const Text('Save'),
+          child: Text(l10n.save),
         ),
       ],
     ),
@@ -419,19 +422,20 @@ class _CustomTabBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
       ),
       child: Row(
         children: [
           Expanded(
             child: _CustomTab(
-              label: 'Pending Approval',
+              label: l10n.pendingApproval,
               index: 0,
               controller: controller,
             ),
@@ -439,7 +443,7 @@ class _CustomTabBar extends StatelessWidget {
           const SizedBox(width: 4),
           Expanded(
             child: _CustomTab(
-              label: 'All Auctions',
+              label: l10n.allAuctionsTab,
               index: 1,
               controller: controller,
             ),
@@ -502,7 +506,7 @@ class _CustomTab extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                color: isSelected ? AppTheme.textPrimary : AppTheme.textMuted,
+                color: isSelected ? AppDesign.getTextPrimary(context) : AppDesign.getTextTertiary(context),
                 fontFamily: AppTheme.fontFamily,
                 letterSpacing: 0.5,
               ),
@@ -530,14 +534,14 @@ class _AdminAuctionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusColor = _getStatusColor(auction.status);
+    final statusColor = _getStatusColor(context, auction.status);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -570,7 +574,7 @@ class _AdminAuctionCard extends StatelessWidget {
                       child: Container(
                         width: 80,
                         height: 80,
-                        color: AppTheme.bgElevated,
+                        color: AppDesign.getBgElevated(context),
                         child:
                             (auction.carImageUrl != null ||
                                 auction.images.isNotEmpty)
@@ -578,7 +582,7 @@ class _AdminAuctionCard extends StatelessWidget {
                                 auction.carImageUrl ?? auction.images[0],
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) =>
-                                    _buildImagePlaceholder(),
+                                    _buildImagePlaceholder(context),
                                 loadingBuilder:
                                     (context, child, loadingProgress) {
                                       if (loadingProgress == null) return child;
@@ -602,7 +606,7 @@ class _AdminAuctionCard extends StatelessWidget {
                                       );
                                     },
                               )
-                            : _buildImagePlaceholder(),
+                            : _buildImagePlaceholder(context),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -620,7 +624,7 @@ class _AdminAuctionCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
-                                    color: AppTheme.textPrimary,
+                                    color: AppDesign.getTextPrimary(context),
                                     fontFamily: AppTheme.fontFamily,
                                   ),
                                   maxLines: 2,
@@ -642,7 +646,7 @@ class _AdminAuctionCard extends StatelessWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  _getStatusText(auction.status),
+                                  _getStatusText(context, auction.status),
                                   style: TextStyle(
                                     color: statusColor,
                                     fontSize: 10,
@@ -658,7 +662,7 @@ class _AdminAuctionCard extends StatelessWidget {
                             '${auction.carMake} ${auction.carModel} ${auction.carYear}',
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppTheme.textSecondary,
+                              color: AppDesign.getTextSecondary(context),
                               fontFamily: AppTheme.fontFamily,
                             ),
                           ),
@@ -667,7 +671,7 @@ class _AdminAuctionCard extends StatelessWidget {
                             'Lot # ${auction.id.length >= 6 ? auction.id.substring(0, 6) : auction.id}',
                             style: TextStyle(
                               fontSize: 12,
-                              color: AppTheme.textMuted,
+                              color: AppDesign.getTextTertiary(context),
                               fontFamily: AppTheme.fontFamily,
                             ),
                           ),
@@ -686,18 +690,18 @@ class _AdminAuctionCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
-                          color: AppTheme.bgElevated,
+                          color: AppDesign.getBgElevated(context),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppTheme.border, width: 1),
+                          border: Border.all(color: AppDesign.getBorder(context), width: 1),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Starting Bid',
+                              AppLocalizations.of(context)!.startingBid,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                                 fontFamily: AppTheme.fontFamily,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -708,7 +712,7 @@ class _AdminAuctionCard extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                             ),
@@ -733,10 +737,10 @@ class _AdminAuctionCard extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Current Bid',
+                                AppLocalizations.of(context)!.currentBid,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: AppTheme.textSecondary,
+                                  color: AppDesign.getTextSecondary(context),
                                   fontFamily: AppTheme.fontFamily,
                                   fontWeight: FontWeight.w500,
                                 ),
@@ -767,7 +771,7 @@ class _AdminAuctionCard extends StatelessWidget {
                       if (onEditPrice != null)
                         Expanded(
                           child: _ActionButton(
-                            label: 'Edit Price',
+                            label: AppLocalizations.of(context)!.editPrice,
                             icon: Icons.edit_rounded,
                             color: AppTheme.info,
                             onPressed: onEditPrice!,
@@ -778,7 +782,7 @@ class _AdminAuctionCard extends StatelessWidget {
                       if (onApprove != null)
                         Expanded(
                           child: _ActionButton(
-                            label: AppStrings.approve,
+                            label: AppLocalizations.of(context)!.approve,
                             icon: Icons.check_circle_rounded,
                             color: AppTheme.success,
                             onPressed: onApprove!,
@@ -789,7 +793,7 @@ class _AdminAuctionCard extends StatelessWidget {
                       if (onReject != null)
                         Expanded(
                           child: _ActionButton(
-                            label: AppStrings.reject,
+                            label: AppLocalizations.of(context)!.reject,
                             icon: Icons.cancel_rounded,
                             color: AppTheme.error,
                             onPressed: onReject!,
@@ -806,17 +810,17 @@ class _AdminAuctionCard extends StatelessWidget {
     );
   }
 
-  Widget _buildImagePlaceholder() {
+  Widget _buildImagePlaceholder(BuildContext context) {
     return Center(
       child: Icon(
         Icons.directions_car_rounded,
         size: 32,
-        color: AppTheme.textMuted.withValues(alpha: 0.5),
+        color: AppDesign.getTextTertiary(context).withValues(alpha: 0.5),
       ),
     );
   }
 
-  Color _getStatusColor(AuctionStatus status) {
+  Color _getStatusColor(BuildContext context, AuctionStatus status) {
     switch (status) {
       case AuctionStatus.pendingApproval:
         return AppTheme.warning;
@@ -825,24 +829,25 @@ class _AdminAuctionCard extends StatelessWidget {
       case AuctionStatus.live:
         return AppTheme.success;
       case AuctionStatus.closed:
-        return AppTheme.textMuted;
+        return AppDesign.getTextTertiary(context);
       case AuctionStatus.rejected:
         return AppTheme.error;
     }
   }
 
-  String _getStatusText(AuctionStatus status) {
+  String _getStatusText(BuildContext context, AuctionStatus status) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case AuctionStatus.pendingApproval:
-        return 'PENDING';
+        return l10n.statusPending;
       case AuctionStatus.approved:
-        return 'APPROVED';
+        return l10n.statusApproved;
       case AuctionStatus.live:
-        return 'LIVE';
+        return l10n.statusLive;
       case AuctionStatus.closed:
-        return 'CLOSED';
+        return l10n.statusClosed;
       case AuctionStatus.rejected:
-        return 'REJECTED';
+        return l10n.statusRejected;
     }
   }
 }
@@ -889,14 +894,14 @@ class _ActionButton extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(icon, color: AppTheme.textPrimary, size: 20),
+                Icon(icon, color: AppDesign.getTextPrimary(context), size: 20),
                 const SizedBox(width: 8),
                 Text(
                   label,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -932,11 +937,11 @@ class _EmptyState extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.bgSecondary,
+                color: AppDesign.getBgSecondary(context),
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.border, width: 1.5),
+                border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
               ),
-              child: Icon(icon, size: 64, color: AppTheme.textMuted),
+              child: Icon(icon, size: 64, color: AppDesign.getTextTertiary(context)),
             ),
             const SizedBox(height: 24),
             Text(
@@ -944,7 +949,7 @@ class _EmptyState extends StatelessWidget {
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
@@ -953,7 +958,7 @@ class _EmptyState extends StatelessWidget {
               message,
               style: TextStyle(
                 fontSize: 16,
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
               textAlign: TextAlign.center,

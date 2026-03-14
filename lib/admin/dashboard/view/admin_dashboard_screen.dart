@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/admin_stats_state.dart';
 import '../../../state/auth_state.dart';
 import '../../../core/utils/responsive.dart';
@@ -49,13 +50,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     final statsState = Get.find<AdminStatsState>();
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
-        iconTheme: const IconThemeData(color: AppTheme.textPrimary),
+        iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
       body: SafeArea(
         child: Obx(() {
@@ -100,11 +101,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Dashboard',
+                                    AppLocalizations.of(context)!.adminDashboard,
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 26 : 32,
                                       fontWeight: FontWeight.bold,
-                                      color: AppTheme.textPrimary,
+                                      color: AppDesign.getTextPrimary(context),
                                       fontFamily: AppTheme.fontFamily,
                                       letterSpacing: -0.5,
                                     ),
@@ -113,10 +114,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                   ),
                                   SizedBox(height: isSmallScreen ? 2 : 4),
                                   Text(
-                                    'Admin Overview',
+                                    AppLocalizations.of(context)!.adminOverview,
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 14 : 16,
-                                      color: AppTheme.textSecondary,
+                                      color: AppDesign.getTextSecondary(context),
                                       fontFamily: AppTheme.fontFamily,
                                     ),
                                     maxLines: 1,
@@ -129,9 +130,9 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             // Settings Button
                             Container(
                               decoration: BoxDecoration(
-                                color: AppTheme.bgSecondary,
+                                color: AppDesign.getBgSecondary(context),
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: AppTheme.border, width: 1.5),
+                                border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
                               ),
                               child: Material(
                                 color: Colors.transparent,
@@ -140,7 +141,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                   child: Container(
                                     padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-                                    child: Icon(Icons.settings_rounded, color: AppTheme.textPrimary, size: isSmallScreen ? 20 : 24),
+                                    child: Icon(Icons.settings_rounded, color: AppDesign.getTextPrimary(context), size: isSmallScreen ? 20 : 24),
                                   ),
                                 ),
                               ),
@@ -149,10 +150,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                             // Refresh Button
                             Container(
                               decoration: BoxDecoration(
-                                color: AppTheme.bgSecondary,
+                                color: AppDesign.getBgSecondary(context),
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
-                                  color: AppTheme.border,
+                                  color: AppDesign.getBorder(context),
                                   width: 1.5,
                                 ),
                               ),
@@ -214,7 +215,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                     ),
                                     child: Icon(
                                       Icons.logout_rounded,
-                                      color: AppTheme.textPrimary,
+                                      color: AppDesign.getTextPrimary(context),
                                       size: isSmallScreen ? 20 : 24,
                                     ),
                                   ),
@@ -271,13 +272,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               const SizedBox(height: 16),
               Text(
                 errorMessage,
-                style: TextStyle(color: AppTheme.textSecondary, fontSize: 16),
+                style: TextStyle(color: AppDesign.getTextSecondary(context), fontSize: 16),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => statsState.refresh(),
-                child: const Text('Retry'),
+                child: Text(AppLocalizations.of(context)!.retry),
               ),
             ],
           ),
@@ -306,11 +307,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Statistics Overview',
+                      AppLocalizations.of(context)!.statisticsOverview,
                       style: TextStyle(
                         fontSize: isSmallScreen ? 20 : 22,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary,
+                        color: AppDesign.getTextPrimary(context),
                         fontFamily: AppTheme.fontFamily,
                         letterSpacing: -0.3,
                       ),
@@ -322,7 +323,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: 'Auction Revenue',
+                            title: AppLocalizations.of(context)!.auctionRevenue,
                             value:
                                 '${AppConstants.currency} ${stats.totalAuctionValue.toStringAsFixed(0)}',
                             icon: Icons.payments_rounded,
@@ -333,7 +334,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         SizedBox(width: isSmallScreen ? 8 : 12),
                         Expanded(
                           child: _StatCard(
-                            title: 'Parts Revenue',
+                            title: AppLocalizations.of(context)!.partsRevenue,
                             value:
                                 '${AppConstants.currency} ${stats.totalPartsSold.toStringAsFixed(0)}',
                             icon: Icons.shopping_bag_rounded,
@@ -350,7 +351,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: AppStrings.totalAuctions,
+                            title: AppLocalizations.of(context)!.totalAuctions,
                             value: stats.totalAuctions.toString(),
                             icon: Icons.gavel_rounded,
                             color: AppTheme.info,
@@ -360,7 +361,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         SizedBox(width: isSmallScreen ? 8 : 12),
                         Expanded(
                           child: _StatCard(
-                            title: 'Live Auctions',
+                            title: AppLocalizations.of(context)!.liveAuctions,
                             value: stats.liveAuctions.toString(),
                             icon: Icons.trending_up_rounded,
                             color: AppTheme.success,
@@ -376,7 +377,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: 'Pending Auctions',
+                            title: AppLocalizations.of(context)!.pendingAuctions,
                             value: stats.pendingApprovalAuctions.toString(),
                             icon: Icons.pending_rounded,
                             color: AppTheme.warning,
@@ -386,7 +387,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         SizedBox(width: isSmallScreen ? 8 : 12),
                         Expanded(
                           child: _StatCard(
-                            title: 'Parts Available',
+                            title: AppLocalizations.of(context)!.partsAvailable,
                             value: stats.availableParts.toString(),
                             icon: Icons.inventory_2_outlined,
                             color: AppTheme.redPrimary,
@@ -402,7 +403,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: 'Bookings Today',
+                            title: AppLocalizations.of(context)!.bookingsToday,
                             value: stats.todayBookings.toString(),
                             icon: Icons.today_rounded,
                             color: AppTheme.success,
@@ -412,7 +413,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         SizedBox(width: isSmallScreen ? 8 : 12),
                         Expanded(
                           child: _StatCard(
-                            title: 'Pending Bookings',
+                            title: AppLocalizations.of(context)!.pendingBookings,
                             value: stats.pendingBookings.toString(),
                             icon: Icons.pending_actions_rounded,
                             color: AppTheme.warning,
@@ -428,7 +429,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       children: [
                         Expanded(
                           child: _StatCard(
-                            title: AppStrings.totalUsers,
+                            title: AppLocalizations.of(context)!.totalUsers,
                             value: stats.totalUsers.toString(),
                             icon: Icons.people_rounded,
                             color: AppTheme.info,
@@ -438,7 +439,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                         SizedBox(width: isSmallScreen ? 8 : 12),
                         Expanded(
                           child: _StatCard(
-                            title: 'Verified Users',
+                            title: AppLocalizations.of(context)!.verifiedUsers,
                             value: stats.verifiedUsers.toString(),
                             icon: Icons.verified_user_rounded,
                             color: AppTheme.success,
@@ -451,11 +452,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
                     // Statistics Graphs Section
                     Text(
-                      'Visual Analytics',
+                      AppLocalizations.of(context)!.visualAnalytics,
                       style: TextStyle(
                         fontSize: isSmallScreen ? 20 : 22,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.textPrimary,
+                        color: AppDesign.getTextPrimary(context),
                         fontFamily: AppTheme.fontFamily,
                         letterSpacing: -0.3,
                       ),
@@ -575,7 +576,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         backgroundColor: Colors.transparent,
         child: Container(
           decoration: BoxDecoration(
-            color: AppTheme.bgSecondary,
+            color: AppDesign.getBgSecondary(context),
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
@@ -618,11 +619,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
                 // Title
                 Text(
-                  AppStrings.logout,
+                  AppLocalizations.of(context)!.logout,
                   style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                 ),
@@ -630,10 +631,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
                 // Message
                 Text(
-                  'Are you sure you want to logout?',
+                  AppLocalizations.of(context)!.logoutMessage,
                   style: TextStyle(
                     fontSize: 16,
-                    color: AppTheme.textSecondary,
+                    color: AppDesign.getTextSecondary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   textAlign: TextAlign.center,
@@ -651,17 +652,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                             side: BorderSide(
-                              color: AppTheme.border,
+                              color: AppDesign.getBorder(context),
                               width: 1.5,
                             ),
                           ),
                         ),
                         child: Text(
-                          AppStrings.cancel,
+                          AppLocalizations.of(context)!.cancel,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -701,11 +702,11 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 14),
                               child: Center(
                                 child: Text(
-                                  AppStrings.logout,
-                                  style: const TextStyle(
+                                  AppLocalizations.of(context)!.logout,
+                                  style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: AppTheme.textPrimary,
+                                    color: AppDesign.getTextPrimary(context),
                                     fontFamily: AppTheme.fontFamily,
                                   ),
                                 ),
@@ -747,51 +748,34 @@ class _MetricFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
       ),
       child: DropdownButton<String>(
         value: selectedMetric,
         isExpanded: true,
         underline: const SizedBox(),
-        dropdownColor: AppTheme.bgSecondary,
+        dropdownColor: AppDesign.getBgSecondary(context),
         style: TextStyle(
-          color: AppTheme.textPrimary,
+          color: AppDesign.getTextPrimary(context),
           fontSize: isSmallScreen ? 13 : 14,
           fontFamily: AppTheme.fontFamily,
         ),
-        items: const [
-          DropdownMenuItem(value: 'All Metrics', child: Text('All Metrics')),
-          DropdownMenuItem(
-            value: 'Total Auctions',
-            child: Text('Total Auctions'),
-          ),
-          DropdownMenuItem(
-            value: 'Live Auctions',
-            child: Text('Live Auctions'),
-          ),
-          DropdownMenuItem(
-            value: 'Pending Approval',
-            child: Text('Pending Approval'),
-          ),
-          DropdownMenuItem(value: 'Total Parts', child: Text('Total Parts')),
-          DropdownMenuItem(
-            value: 'Total Bookings',
-            child: Text('Total Bookings'),
-          ),
-          DropdownMenuItem(
-            value: 'Pending Bookings',
-            child: Text('Pending Bookings'),
-          ),
-          DropdownMenuItem(value: 'Total Users', child: Text('Total Users')),
-          DropdownMenuItem(
-            value: 'Verified Users',
-            child: Text('Verified Users'),
-          ),
+        items: [
+          DropdownMenuItem(value: 'All Metrics', child: Text(l10n.allMetrics)),
+          DropdownMenuItem(value: 'Total Auctions', child: Text(l10n.totalAuctions)),
+          DropdownMenuItem(value: 'Live Auctions', child: Text(l10n.liveAuctions)),
+          DropdownMenuItem(value: 'Pending Approval', child: Text(l10n.pendingApproval)),
+          DropdownMenuItem(value: 'Total Parts', child: Text(l10n.totalParts)),
+          DropdownMenuItem(value: 'Total Bookings', child: Text(l10n.totalBookings)),
+          DropdownMenuItem(value: 'Pending Bookings', child: Text(l10n.pendingBookings)),
+          DropdownMenuItem(value: 'Total Users', child: Text(l10n.totalUsers)),
+          DropdownMenuItem(value: 'Verified Users', child: Text(l10n.verifiedUsers)),
         ],
         onChanged: (value) {
           if (value != null) {
@@ -817,28 +801,29 @@ class _GraphTimePeriodFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
       ),
       child: DropdownButton<String>(
         value: selectedTimePeriod,
         isExpanded: true,
         underline: const SizedBox(),
-        dropdownColor: AppTheme.bgSecondary,
+        dropdownColor: AppDesign.getBgSecondary(context),
         style: TextStyle(
-          color: AppTheme.textPrimary,
+          color: AppDesign.getTextPrimary(context),
           fontSize: isSmallScreen ? 13 : 14,
           fontFamily: AppTheme.fontFamily,
         ),
-        items: const [
-          DropdownMenuItem(value: 'All Time', child: Text('All Time')),
-          DropdownMenuItem(value: 'This Week', child: Text('This Week')),
-          DropdownMenuItem(value: 'This Month', child: Text('This Month')),
-          DropdownMenuItem(value: 'This Year', child: Text('This Year')),
+        items: [
+          DropdownMenuItem(value: 'All Time', child: Text(l10n.allTime)),
+          DropdownMenuItem(value: 'This Week', child: Text(l10n.thisWeek)),
+          DropdownMenuItem(value: 'This Month', child: Text(l10n.thisMonth)),
+          DropdownMenuItem(value: 'This Year', child: Text(l10n.thisYear)),
         ],
         onChanged: (value) {
           if (value != null) {
@@ -864,27 +849,28 @@ class _GraphTypeFilter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
       ),
       child: DropdownButton<String>(
         value: selectedGraphType,
         isExpanded: true,
         underline: const SizedBox(),
-        dropdownColor: AppTheme.bgSecondary,
+        dropdownColor: AppDesign.getBgSecondary(context),
         style: TextStyle(
-          color: AppTheme.textPrimary,
+          color: AppDesign.getTextPrimary(context),
           fontSize: isSmallScreen ? 13 : 14,
           fontFamily: AppTheme.fontFamily,
         ),
-        items: const [
-          DropdownMenuItem(value: 'Bar Chart', child: Text('Bar Chart')),
-          DropdownMenuItem(value: 'Pie Chart', child: Text('Pie Chart')),
-          DropdownMenuItem(value: 'Line Chart', child: Text('Line Chart')),
+        items: [
+          DropdownMenuItem(value: 'Bar Chart', child: Text(l10n.barChart)),
+          DropdownMenuItem(value: 'Pie Chart', child: Text(l10n.pieChart)),
+          DropdownMenuItem(value: 'Line Chart', child: Text(l10n.lineChart)),
         ],
         onChanged: (value) {
           if (value != null) {
@@ -916,9 +902,9 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -981,7 +967,7 @@ class _StatCard extends StatelessWidget {
             title,
             style: TextStyle(
               fontSize: isSmallScreen ? 12 : 14,
-              color: AppTheme.textSecondary,
+              color: AppDesign.getTextSecondary(context),
               fontWeight: FontWeight.w500,
               fontFamily: AppTheme.fontFamily,
             ),
@@ -1008,118 +994,37 @@ class _StatsBarChart extends StatelessWidget {
     this.selectedMetric = 'All Metrics',
   });
 
-  List<Map<String, dynamic>> _getChartData() {
+  List<Map<String, dynamic>> _getChartData(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (selectedMetric == 'All Metrics') {
       return [
-        {
-          'label': 'Auctions',
-          'value': stats.totalAuctions.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Live',
-          'value': stats.liveAuctions.toDouble(),
-          'color': AppTheme.success,
-        },
-        {
-          'label': 'Pending',
-          'value': stats.pendingApprovalAuctions.toDouble(),
-          'color': AppTheme.warning,
-        },
-        {
-          'label': 'Parts',
-          'value': stats.totalParts.toDouble(),
-          'color': AppTheme.redPrimary,
-        },
-        {
-          'label': 'Bookings',
-          'value': stats.totalBookings.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Pending B',
-          'value': stats.pendingBookings.toDouble(),
-          'color': AppTheme.warning,
-        },
-        {
-          'label': 'Users',
-          'value': stats.totalUsers.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Verified',
-          'value': stats.verifiedUsers.toDouble(),
-          'color': AppTheme.success,
-        },
+        {'label': l10n.chartLabelAuctions, 'value': stats.totalAuctions.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelLive, 'value': stats.liveAuctions.toDouble(), 'color': AppTheme.success},
+        {'label': l10n.chartLabelPending, 'value': stats.pendingApprovalAuctions.toDouble(), 'color': AppTheme.warning},
+        {'label': l10n.chartLabelParts, 'value': stats.totalParts.toDouble(), 'color': AppTheme.redPrimary},
+        {'label': l10n.chartLabelBookings, 'value': stats.totalBookings.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelPendingB, 'value': stats.pendingBookings.toDouble(), 'color': AppTheme.warning},
+        {'label': l10n.chartLabelUsers, 'value': stats.totalUsers.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelVerified, 'value': stats.verifiedUsers.toDouble(), 'color': AppTheme.success},
       ];
     }
-
-    // Single metric selected
     switch (selectedMetric) {
       case 'Total Auctions':
-        return [
-          {
-            'label': 'Total Auctions',
-            'value': stats.totalAuctions.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalAuctions, 'value': stats.totalAuctions.toDouble(), 'color': AppTheme.info}];
       case 'Live Auctions':
-        return [
-          {
-            'label': 'Live Auctions',
-            'value': stats.liveAuctions.toDouble(),
-            'color': AppTheme.success,
-          },
-        ];
+        return [{'label': l10n.liveAuctions, 'value': stats.liveAuctions.toDouble(), 'color': AppTheme.success}];
       case 'Pending Approval':
-        return [
-          {
-            'label': 'Pending Approval',
-            'value': stats.pendingApprovalAuctions.toDouble(),
-            'color': AppTheme.warning,
-          },
-        ];
+        return [{'label': l10n.pendingApproval, 'value': stats.pendingApprovalAuctions.toDouble(), 'color': AppTheme.warning}];
       case 'Total Parts':
-        return [
-          {
-            'label': 'Total Parts',
-            'value': stats.totalParts.toDouble(),
-            'color': AppTheme.redPrimary,
-          },
-        ];
+        return [{'label': l10n.totalParts, 'value': stats.totalParts.toDouble(), 'color': AppTheme.redPrimary}];
       case 'Total Bookings':
-        return [
-          {
-            'label': 'Total Bookings',
-            'value': stats.totalBookings.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalBookings, 'value': stats.totalBookings.toDouble(), 'color': AppTheme.info}];
       case 'Pending Bookings':
-        return [
-          {
-            'label': 'Pending Bookings',
-            'value': stats.pendingBookings.toDouble(),
-            'color': AppTheme.warning,
-          },
-        ];
+        return [{'label': l10n.pendingBookings, 'value': stats.pendingBookings.toDouble(), 'color': AppTheme.warning}];
       case 'Total Users':
-        return [
-          {
-            'label': 'Total Users',
-            'value': stats.totalUsers.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalUsers, 'value': stats.totalUsers.toDouble(), 'color': AppTheme.info}];
       case 'Verified Users':
-        return [
-          {
-            'label': 'Verified Users',
-            'value': stats.verifiedUsers.toDouble(),
-            'color': AppTheme.success,
-          },
-        ];
+        return [{'label': l10n.verifiedUsers, 'value': stats.verifiedUsers.toDouble(), 'color': AppTheme.success}];
       default:
         return [];
     }
@@ -1127,19 +1032,21 @@ class _StatsBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chartData = _getChartData();
+    final chartData = _getChartData(context);
     final maxValue = chartData.isEmpty
         ? 10.0
         : chartData
               .map((e) => e['value'] as double)
               .reduce((a, b) => a > b ? a : b);
 
+    final l10n = AppLocalizations.of(context)!;
+    final chartLabels = chartData.map((e) => e['label'] as String).toList();
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -1157,12 +1064,12 @@ class _StatsBarChart extends StatelessWidget {
               Flexible(
                 child: Text(
                   selectedMetric == 'All Metrics'
-                      ? 'Statistics Comparison'
-                      : selectedMetric,
+                      ? l10n.statisticsComparison
+                      : (chartData.isNotEmpty ? chartData.first['label'] as String? : selectedMetric) ?? selectedMetric,
                   style: TextStyle(
                     fontSize: isSmallScreen ? 16 : 18,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   maxLines: 1,
@@ -1183,7 +1090,15 @@ class _StatsBarChart extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  timePeriod,
+                  timePeriod == 'All Time'
+                      ? l10n.allTime
+                      : timePeriod == 'This Week'
+                          ? l10n.thisWeek
+                          : timePeriod == 'This Month'
+                              ? l10n.thisMonth
+                              : timePeriod == 'This Year'
+                                  ? l10n.thisYear
+                                  : timePeriod,
                   style: TextStyle(
                     fontSize: isSmallScreen ? 10 : 12,
                     color: AppTheme.redPrimary,
@@ -1204,7 +1119,7 @@ class _StatsBarChart extends StatelessWidget {
                 barTouchData: BarTouchData(
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
-                    getTooltipColor: (group) => AppTheme.bgSecondary,
+                    getTooltipColor: (group) => AppDesign.getBgSecondary(context),
                     tooltipRoundedRadius: 8,
                     tooltipPadding: const EdgeInsets.all(8),
                     tooltipMargin: 8,
@@ -1212,7 +1127,7 @@ class _StatsBarChart extends StatelessWidget {
                       return BarTooltipItem(
                         rod.toY.toInt().toString(),
                         TextStyle(
-                          color: AppTheme.textPrimary,
+                          color: AppDesign.getTextPrimary(context),
                           fontWeight: FontWeight.bold,
                           fontFamily: AppTheme.fontFamily,
                         ),
@@ -1226,25 +1141,14 @@ class _StatsBarChart extends StatelessWidget {
                     sideTitles: SideTitles(
                       showTitles: true,
                       getTitlesWidget: (value, meta) {
-                        const labels = [
-                          'Auctions',
-                          'Live',
-                          'Pending',
-                          'Parts',
-                          'Bookings',
-                          'Pending B',
-                          'Users',
-                          'Verified',
-                        ];
-                        if (value.toInt() >= 0 &&
-                            value.toInt() < labels.length) {
+                        if (value.toInt() >= 0 && value.toInt() < chartLabels.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
                             child: Text(
-                              labels[value.toInt()],
+                              chartLabels[value.toInt()],
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 9 : 11,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                               textAlign: TextAlign.center,
@@ -1265,7 +1169,7 @@ class _StatsBarChart extends StatelessWidget {
                           value.toInt().toString(),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         );
@@ -1285,14 +1189,14 @@ class _StatsBarChart extends StatelessWidget {
                   horizontalInterval: maxValue > 0 ? maxValue / 5 : 2,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: AppTheme.border.withValues(alpha: 0.3),
+                      color: AppDesign.getBorder(context).withValues(alpha: 0.3),
                       strokeWidth: 1,
                     );
                   },
                 ),
                 borderData: FlBorderData(
                   show: true,
-                  border: Border.all(color: AppTheme.border, width: 1),
+                  border: Border.all(color: AppDesign.getBorder(context), width: 1),
                 ),
                 barGroups: chartData.asMap().entries.map((entry) {
                   final index = entry.key;
@@ -1334,118 +1238,37 @@ class _StatsPieChart extends StatelessWidget {
     this.selectedMetric = 'All Metrics',
   });
 
-  List<Map<String, dynamic>> _getChartData() {
+  List<Map<String, dynamic>> _getChartData(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (selectedMetric == 'All Metrics') {
       return [
-        {
-          'label': 'Total Auctions',
-          'value': stats.totalAuctions.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Live Auctions',
-          'value': stats.liveAuctions.toDouble(),
-          'color': AppTheme.success,
-        },
-        {
-          'label': 'Pending Approval',
-          'value': stats.pendingApprovalAuctions.toDouble(),
-          'color': AppTheme.warning,
-        },
-        {
-          'label': 'Total Parts',
-          'value': stats.totalParts.toDouble(),
-          'color': AppTheme.redPrimary,
-        },
-        {
-          'label': 'Total Bookings',
-          'value': stats.totalBookings.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Pending Bookings',
-          'value': stats.pendingBookings.toDouble(),
-          'color': AppTheme.warning,
-        },
-        {
-          'label': 'Total Users',
-          'value': stats.totalUsers.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Verified Users',
-          'value': stats.verifiedUsers.toDouble(),
-          'color': AppTheme.success,
-        },
+        {'label': l10n.chartLabelAuctions, 'value': stats.totalAuctions.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelLive, 'value': stats.liveAuctions.toDouble(), 'color': AppTheme.success},
+        {'label': l10n.chartLabelPending, 'value': stats.pendingApprovalAuctions.toDouble(), 'color': AppTheme.warning},
+        {'label': l10n.chartLabelParts, 'value': stats.totalParts.toDouble(), 'color': AppTheme.redPrimary},
+        {'label': l10n.chartLabelBookings, 'value': stats.totalBookings.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelPendingB, 'value': stats.pendingBookings.toDouble(), 'color': AppTheme.warning},
+        {'label': l10n.chartLabelUsers, 'value': stats.totalUsers.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelVerified, 'value': stats.verifiedUsers.toDouble(), 'color': AppTheme.success},
       ];
     }
-
-    // Single metric selected - show it as 100%
     switch (selectedMetric) {
       case 'Total Auctions':
-        return [
-          {
-            'label': 'Total Auctions',
-            'value': stats.totalAuctions.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalAuctions, 'value': stats.totalAuctions.toDouble(), 'color': AppTheme.info}];
       case 'Live Auctions':
-        return [
-          {
-            'label': 'Live Auctions',
-            'value': stats.liveAuctions.toDouble(),
-            'color': AppTheme.success,
-          },
-        ];
+        return [{'label': l10n.liveAuctions, 'value': stats.liveAuctions.toDouble(), 'color': AppTheme.success}];
       case 'Pending Approval':
-        return [
-          {
-            'label': 'Pending Approval',
-            'value': stats.pendingApprovalAuctions.toDouble(),
-            'color': AppTheme.warning,
-          },
-        ];
+        return [{'label': l10n.pendingApproval, 'value': stats.pendingApprovalAuctions.toDouble(), 'color': AppTheme.warning}];
       case 'Total Parts':
-        return [
-          {
-            'label': 'Total Parts',
-            'value': stats.totalParts.toDouble(),
-            'color': AppTheme.redPrimary,
-          },
-        ];
+        return [{'label': l10n.totalParts, 'value': stats.totalParts.toDouble(), 'color': AppTheme.redPrimary}];
       case 'Total Bookings':
-        return [
-          {
-            'label': 'Total Bookings',
-            'value': stats.totalBookings.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalBookings, 'value': stats.totalBookings.toDouble(), 'color': AppTheme.info}];
       case 'Pending Bookings':
-        return [
-          {
-            'label': 'Pending Bookings',
-            'value': stats.pendingBookings.toDouble(),
-            'color': AppTheme.warning,
-          },
-        ];
+        return [{'label': l10n.pendingBookings, 'value': stats.pendingBookings.toDouble(), 'color': AppTheme.warning}];
       case 'Total Users':
-        return [
-          {
-            'label': 'Total Users',
-            'value': stats.totalUsers.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalUsers, 'value': stats.totalUsers.toDouble(), 'color': AppTheme.info}];
       case 'Verified Users':
-        return [
-          {
-            'label': 'Verified Users',
-            'value': stats.verifiedUsers.toDouble(),
-            'color': AppTheme.success,
-          },
-        ];
+        return [{'label': l10n.verifiedUsers, 'value': stats.verifiedUsers.toDouble(), 'color': AppTheme.success}];
       default:
         return [];
     }
@@ -1453,14 +1276,15 @@ class _StatsPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chartData = _getChartData();
+    final chartData = _getChartData(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -1476,11 +1300,11 @@ class _StatsPieChart extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Distribution Overview',
+                l10n.distributionOverview,
                 style: TextStyle(
                   fontSize: isSmallScreen ? 16 : 18,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textPrimary,
+                  color: AppDesign.getTextPrimary(context),
                   fontFamily: AppTheme.fontFamily,
                 ),
               ),
@@ -1498,7 +1322,15 @@ class _StatsPieChart extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  timePeriod,
+                  timePeriod == 'All Time'
+                      ? l10n.allTime
+                      : timePeriod == 'This Week'
+                          ? l10n.thisWeek
+                          : timePeriod == 'This Month'
+                              ? l10n.thisMonth
+                              : timePeriod == 'This Year'
+                                  ? l10n.thisYear
+                                  : timePeriod,
                   style: TextStyle(
                     fontSize: isSmallScreen ? 10 : 12,
                     color: AppTheme.redPrimary,
@@ -1532,7 +1364,7 @@ class _StatsPieChart extends StatelessWidget {
                           titleStyle: TextStyle(
                             fontSize: isSmallScreen ? 12 : 14,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         );
@@ -1584,118 +1416,37 @@ class _StatsLineChart extends StatelessWidget {
     this.selectedMetric = 'All Metrics',
   });
 
-  List<Map<String, dynamic>> _getChartData() {
+  List<Map<String, dynamic>> _getChartData(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     if (selectedMetric == 'All Metrics') {
       return [
-        {
-          'label': 'Auctions',
-          'value': stats.totalAuctions.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Live',
-          'value': stats.liveAuctions.toDouble(),
-          'color': AppTheme.success,
-        },
-        {
-          'label': 'Pending',
-          'value': stats.pendingApprovalAuctions.toDouble(),
-          'color': AppTheme.warning,
-        },
-        {
-          'label': 'Parts',
-          'value': stats.totalParts.toDouble(),
-          'color': AppTheme.redPrimary,
-        },
-        {
-          'label': 'Bookings',
-          'value': stats.totalBookings.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Pending B',
-          'value': stats.pendingBookings.toDouble(),
-          'color': AppTheme.warning,
-        },
-        {
-          'label': 'Users',
-          'value': stats.totalUsers.toDouble(),
-          'color': AppTheme.info,
-        },
-        {
-          'label': 'Verified',
-          'value': stats.verifiedUsers.toDouble(),
-          'color': AppTheme.success,
-        },
+        {'label': l10n.chartLabelAuctions, 'value': stats.totalAuctions.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelLive, 'value': stats.liveAuctions.toDouble(), 'color': AppTheme.success},
+        {'label': l10n.chartLabelPending, 'value': stats.pendingApprovalAuctions.toDouble(), 'color': AppTheme.warning},
+        {'label': l10n.chartLabelParts, 'value': stats.totalParts.toDouble(), 'color': AppTheme.redPrimary},
+        {'label': l10n.chartLabelBookings, 'value': stats.totalBookings.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelPendingB, 'value': stats.pendingBookings.toDouble(), 'color': AppTheme.warning},
+        {'label': l10n.chartLabelUsers, 'value': stats.totalUsers.toDouble(), 'color': AppTheme.info},
+        {'label': l10n.chartLabelVerified, 'value': stats.verifiedUsers.toDouble(), 'color': AppTheme.success},
       ];
     }
-
-    // Single metric selected
     switch (selectedMetric) {
       case 'Total Auctions':
-        return [
-          {
-            'label': 'Total Auctions',
-            'value': stats.totalAuctions.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalAuctions, 'value': stats.totalAuctions.toDouble(), 'color': AppTheme.info}];
       case 'Live Auctions':
-        return [
-          {
-            'label': 'Live Auctions',
-            'value': stats.liveAuctions.toDouble(),
-            'color': AppTheme.success,
-          },
-        ];
+        return [{'label': l10n.liveAuctions, 'value': stats.liveAuctions.toDouble(), 'color': AppTheme.success}];
       case 'Pending Approval':
-        return [
-          {
-            'label': 'Pending Approval',
-            'value': stats.pendingApprovalAuctions.toDouble(),
-            'color': AppTheme.warning,
-          },
-        ];
+        return [{'label': l10n.pendingApproval, 'value': stats.pendingApprovalAuctions.toDouble(), 'color': AppTheme.warning}];
       case 'Total Parts':
-        return [
-          {
-            'label': 'Total Parts',
-            'value': stats.totalParts.toDouble(),
-            'color': AppTheme.redPrimary,
-          },
-        ];
+        return [{'label': l10n.totalParts, 'value': stats.totalParts.toDouble(), 'color': AppTheme.redPrimary}];
       case 'Total Bookings':
-        return [
-          {
-            'label': 'Total Bookings',
-            'value': stats.totalBookings.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalBookings, 'value': stats.totalBookings.toDouble(), 'color': AppTheme.info}];
       case 'Pending Bookings':
-        return [
-          {
-            'label': 'Pending Bookings',
-            'value': stats.pendingBookings.toDouble(),
-            'color': AppTheme.warning,
-          },
-        ];
+        return [{'label': l10n.pendingBookings, 'value': stats.pendingBookings.toDouble(), 'color': AppTheme.warning}];
       case 'Total Users':
-        return [
-          {
-            'label': 'Total Users',
-            'value': stats.totalUsers.toDouble(),
-            'color': AppTheme.info,
-          },
-        ];
+        return [{'label': l10n.totalUsers, 'value': stats.totalUsers.toDouble(), 'color': AppTheme.info}];
       case 'Verified Users':
-        return [
-          {
-            'label': 'Verified Users',
-            'value': stats.verifiedUsers.toDouble(),
-            'color': AppTheme.success,
-          },
-        ];
+        return [{'label': l10n.verifiedUsers, 'value': stats.verifiedUsers.toDouble(), 'color': AppTheme.success}];
       default:
         return [];
     }
@@ -1703,7 +1454,8 @@ class _StatsLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chartData = _getChartData();
+    final chartData = _getChartData(context);
+    final l10n = AppLocalizations.of(context)!;
     final maxValue = chartData.isEmpty
         ? 10.0
         : chartData
@@ -1713,9 +1465,9 @@ class _StatsLineChart extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
       decoration: BoxDecoration(
-        color: AppTheme.bgSecondary,
+        color: AppDesign.getBgSecondary(context),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border, width: 1.5),
+        border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.1),
@@ -1733,12 +1485,12 @@ class _StatsLineChart extends StatelessWidget {
               Flexible(
                 child: Text(
                   selectedMetric == 'All Metrics'
-                      ? 'Trend Analysis'
-                      : selectedMetric,
+                      ? l10n.trendAnalysis
+                      : (chartData.isNotEmpty ? chartData.first['label'] as String? : selectedMetric) ?? selectedMetric,
                   style: TextStyle(
                     fontSize: isSmallScreen ? 16 : 18,
                     fontWeight: FontWeight.bold,
-                    color: AppTheme.textPrimary,
+                    color: AppDesign.getTextPrimary(context),
                     fontFamily: AppTheme.fontFamily,
                   ),
                   maxLines: 1,
@@ -1759,7 +1511,15 @@ class _StatsLineChart extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  timePeriod,
+                  timePeriod == 'All Time'
+                      ? l10n.allTime
+                      : timePeriod == 'This Week'
+                          ? l10n.thisWeek
+                          : timePeriod == 'This Month'
+                              ? l10n.thisMonth
+                              : timePeriod == 'This Year'
+                                  ? l10n.thisYear
+                                  : timePeriod,
                   style: TextStyle(
                     fontSize: isSmallScreen ? 10 : 12,
                     color: AppTheme.redPrimary,
@@ -1781,7 +1541,7 @@ class _StatsLineChart extends StatelessWidget {
                   horizontalInterval: maxValue > 0 ? maxValue / 5 : 2,
                   getDrawingHorizontalLine: (value) {
                     return FlLine(
-                      color: AppTheme.border.withValues(alpha: 0.3),
+                      color: AppDesign.getBorder(context).withValues(alpha: 0.3),
                       strokeWidth: 1,
                     );
                   },
@@ -1802,7 +1562,7 @@ class _StatsLineChart extends StatelessWidget {
                               label,
                               style: TextStyle(
                                 fontSize: isSmallScreen ? 9 : 11,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                                 fontFamily: AppTheme.fontFamily,
                               ),
                               textAlign: TextAlign.center,
@@ -1825,7 +1585,7 @@ class _StatsLineChart extends StatelessWidget {
                           value.toInt().toString(),
                           style: TextStyle(
                             fontSize: isSmallScreen ? 10 : 12,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         );
@@ -1841,7 +1601,7 @@ class _StatsLineChart extends StatelessWidget {
                 ),
                 borderData: FlBorderData(
                   show: true,
-                  border: Border.all(color: AppTheme.border, width: 1),
+                  border: Border.all(color: AppDesign.getBorder(context), width: 1),
                 ),
                 lineBarsData: chartData.isEmpty
                     ? []
@@ -1863,7 +1623,7 @@ class _StatsLineChart extends StatelessWidget {
                                 radius: 4,
                                 color: chartData[0]['color'] as Color,
                                 strokeWidth: 2,
-                                strokeColor: AppTheme.bgSecondary,
+                                strokeColor: AppDesign.getBgSecondary(context),
                               );
                             },
                           ),
@@ -1913,7 +1673,7 @@ class _LegendItem extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 11,
-              color: AppTheme.textSecondary,
+              color: AppDesign.getTextSecondary(context),
               fontFamily: AppTheme.fontFamily,
             ),
             maxLines: 1,
@@ -1925,7 +1685,7 @@ class _LegendItem extends StatelessWidget {
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.bold,
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontFamily: AppTheme.fontFamily,
           ),
         ),

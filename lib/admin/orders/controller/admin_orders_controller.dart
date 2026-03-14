@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_strings.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/admin_part_purchase_model.dart';
 import '../../../services/admin_service.dart';
 
@@ -54,13 +54,17 @@ class AdminOrdersController extends GetxController {
       _lastPage.value = (meta['last_page'] as num?)?.toInt() ?? 1;
       _total.value = (meta['total'] as num?)?.toInt() ?? 0;
     } catch (e) {
-      Get.snackbar(
-        AppStrings.error,
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      final ctx = Get.key.currentContext;
+      if (ctx != null && ctx.mounted) {
+        ScaffoldMessenger.of(ctx).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(ctx)!.error}: ${e.toString()}')),
+        );
+      } else {
+        Get.snackbar('Error', e.toString(),
+            snackPosition: SnackPosition.BOTTOM,
+            backgroundColor: Colors.red,
+            colorText: Colors.white);
+      }
     } finally {
       _isLoading.value = false;
     }

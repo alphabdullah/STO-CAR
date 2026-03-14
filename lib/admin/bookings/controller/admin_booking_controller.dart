@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_strings.dart';
-// import '../../../state/booking_state.dart';
+import '../../../l10n/app_localizations.dart';
+import '../../../core/theme/app_design_system.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../models/booking_model.dart';
 import '../../../services/admin_service.dart';
 
@@ -36,8 +37,9 @@ class AdminBookingController extends GetxController {
       final data = await _adminService.getServiceBookings();
       _bookings.value = data.map((json) => BookingModel.fromJson(json)).toList();
     } catch (e) {
+      // No context in loadBookings; keep Get.snackbar for error
       Get.snackbar(
-        AppStrings.error,
+        'Error',
         e.toString(),
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
@@ -48,7 +50,7 @@ class AdminBookingController extends GetxController {
     }
   }
 
-  Future<void> approveBooking(String bookingId) async {
+  Future<void> approveBooking(BuildContext context, String bookingId) async {
     try {
       await _adminService.approveBooking(bookingId);
       
@@ -59,21 +61,17 @@ class AdminBookingController extends GetxController {
          _bookings.refresh();
       }
 
-      Get.snackbar(
-        AppStrings.success,
-        'Booking approved successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context)!.bookingApprovedSuccessfully)),
+        );
+      }
     } catch (e) {
-       Get.snackbar(
-        AppStrings.error,
-        e.toString(),
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${AppLocalizations.of(context)!.error}: ${e.toString()}')),
+        );
+      }
     }
   }
 
@@ -81,28 +79,32 @@ class AdminBookingController extends GetxController {
     _rejectNotesController.clear();
     final reasonController = TextEditingController();
 
+    final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Reject Booking'),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppDesign.getBgSecondary(ctx),
+        title: Text(l10n.rejectBookingTitle, style: TextStyle(color: AppDesign.getTextPrimary(ctx))),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text('Are you sure you want to reject this booking?'),
+            Text(l10n.rejectBookingMessage, style: TextStyle(color: AppDesign.getTextSecondary(ctx))),
             const SizedBox(height: 16),
-             TextField(
+            TextField(
               controller: reasonController,
-              decoration: const InputDecoration(
-                labelText: 'Rejection Reason *',
-                hintText: 'e.g., Service not available',
+              decoration: InputDecoration(
+                labelText: l10n.rejectionReason,
+                hintText: l10n.rejectionReasonHint,
+                labelStyle: TextStyle(color: AppDesign.getTextSecondary(ctx)),
               ),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: _rejectNotesController,
-              decoration: const InputDecoration(
-                labelText: 'Additional Notes',
-                hintText: 'Please choose another date',
+              decoration: InputDecoration(
+                labelText: l10n.additionalNotes,
+                hintText: l10n.additionalNotesHint,
+                labelStyle: TextStyle(color: AppDesign.getTextSecondary(ctx)),
               ),
               maxLines: 3,
             ),
@@ -110,19 +112,21 @@ class AdminBookingController extends GetxController {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text(AppStrings.cancel),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel, style: TextStyle(color: AppDesign.getTextSecondary(ctx))),
           ),
           ElevatedButton(
             onPressed: () {
               if (reasonController.text.isEmpty) {
-                Get.snackbar('Error', 'Rejection reason is required');
+                ScaffoldMessenger.of(ctx).showSnackBar(
+                  SnackBar(content: Text(l10n.rejectionReasonRequired)),
+                );
                 return;
               }
-              Navigator.pop(context, true);
+              Navigator.pop(ctx, true);
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text(AppStrings.reject),
+            child: Text(l10n.reject),
           ),
         ],
       ),
@@ -146,21 +150,17 @@ class AdminBookingController extends GetxController {
           _bookings.refresh();
         }
 
-        Get.snackbar(
-          AppStrings.success,
-          'Booking rejected',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(l10n.bookingRejectedSuccessfully)),
+          );
+        }
       } catch (e) {
-        Get.snackbar(
-          AppStrings.error,
-          e.toString(),
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('${AppLocalizations.of(context)!.error}: ${e.toString()}')),
+          );
+        }
       }
     }
   }
@@ -170,68 +170,69 @@ class AdminBookingController extends GetxController {
 
     if (booking == null) return;
 
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text('${booking.serviceType} Details'),
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppDesign.getBgSecondary(ctx),
+        title: Text('${booking.serviceType} Details', style: TextStyle(color: AppDesign.getTextPrimary(ctx))),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              _DetailRow(label: 'Booking ID', value: booking.formData['bookingNumber'] ?? booking.id),
-              _DetailRow(label: 'User', value: booking.userName),
-              _DetailRow(label: 'Status', value: _getStatusText(booking.status)),
-              _DetailRow(label: 'Date', value: booking.scheduledDate?.toString().split(' ')[0] ?? 'N/A'),
-              _DetailRow(label: 'Time', value: booking.formData['time']?.toString() ?? 'N/A'),
+              _DetailRow(label: l10n.bookingId, value: booking.formData['bookingNumber'] ?? booking.id),
+              _DetailRow(label: l10n.user, value: booking.userName),
+              _DetailRow(label: l10n.status, value: _getStatusText(ctx, booking.status)),
+              _DetailRow(label: l10n.date, value: booking.scheduledDate?.toString().split(' ')[0] ?? 'N/A'),
+              _DetailRow(label: l10n.time, value: booking.formData['time']?.toString() ?? 'N/A'),
               const Divider(height: 24),
-              const Text('Vehicle Details', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(l10n.vehicleDetails, style: TextStyle(fontWeight: FontWeight.bold, color: AppDesign.getTextPrimary(ctx))),
               const SizedBox(height: 8),
-              _DetailRow(label: 'Car', value: booking.formData['carName']?.toString() ?? 'N/A'),
-              _DetailRow(label: 'Model', value: booking.formData['carModel']?.toString() ?? 'N/A'),
+              _DetailRow(label: l10n.car, value: booking.formData['carName']?.toString() ?? 'N/A'),
+              _DetailRow(label: l10n.model, value: booking.formData['carModel']?.toString() ?? 'N/A'),
               const Divider(height: 24),
-               const Text('Contact Info', style: TextStyle(fontWeight: FontWeight.bold)),
+              Text(l10n.contactInfo, style: TextStyle(fontWeight: FontWeight.bold, color: AppDesign.getTextPrimary(ctx))),
               const SizedBox(height: 8),
-              _DetailRow(label: 'Phone', value: booking.formData['phoneNumber']?.toString() ?? 'N/A'),
-              
+              _DetailRow(label: l10n.phone, value: booking.formData['phoneNumber']?.toString() ?? 'N/A'),
               if (booking.notes != null) ...[
                 const Divider(height: 24),
-                const Text('Description/Notes', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(l10n.descriptionNotes, style: TextStyle(fontWeight: FontWeight.bold, color: AppDesign.getTextPrimary(ctx))),
                 const SizedBox(height: 4),
-                Text(booking.notes!),
+                Text(booking.notes!, style: TextStyle(color: AppDesign.getTextSecondary(ctx))),
               ],
-              
               if (booking.adminNotes != null) ...[
                 const Divider(height: 24),
-                const Text('Admin Notes', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                Text(l10n.adminNotes, style: TextStyle(fontWeight: FontWeight.bold, color: AppTheme.info)),
                 const SizedBox(height: 4),
-                Text(booking.adminNotes!),
+                Text(booking.adminNotes!, style: TextStyle(color: AppDesign.getTextSecondary(ctx))),
               ],
             ],
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(l10n.close, style: TextStyle(color: AppDesign.getTextSecondary(ctx))),
           ),
         ],
       ),
     );
   }
 
-  String _getStatusText(BookingStatus status) {
+  String _getStatusText(BuildContext context, BookingStatus status) {
+    final l10n = AppLocalizations.of(context)!;
     switch (status) {
       case BookingStatus.pending:
-        return AppStrings.pending;
+        return l10n.pending;
       case BookingStatus.approved:
-        return AppStrings.approved;
+        return l10n.approved;
       case BookingStatus.rejected:
-        return AppStrings.rejected;
+        return l10n.rejected;
       case BookingStatus.completed:
-        return AppStrings.completed;
+        return l10n.completed;
       case BookingStatus.cancelled:
-        return 'Cancelled';
+        return l10n.cancelled;
     }
   }
 }
@@ -253,10 +254,10 @@ class _DetailRow extends StatelessWidget {
             width: 100,
             child: Text(
               '$label:',
-              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
+              style: TextStyle(fontWeight: FontWeight.bold, color: AppDesign.getTextTertiary(context)),
             ),
           ),
-          Expanded(child: Text(value)),
+          Expanded(child: Text(value, style: TextStyle(color: AppDesign.getTextPrimary(context)))),
         ],
       ),
     );

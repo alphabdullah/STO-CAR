@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/parts_state.dart';
 import '../../../models/sold_part_model.dart';
 import '../controller/admin_parts_controller.dart';
@@ -17,9 +19,9 @@ class AdminPartsScreen extends StatelessWidget {
     final controller = Get.put(AdminPartsController());
 
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         toolbarHeight: 0,
         automaticallyImplyLeading: false,
@@ -67,21 +69,23 @@ class AdminPartsScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Sold Parts',
+                                AppLocalizations.of(context)!.soldParts,
                                 style: TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
-                                  color: AppTheme.textPrimary,
+                                  color: AppDesign.getTextPrimary(context),
                                   fontFamily: AppTheme.fontFamily,
                                   letterSpacing: -0.5,
                                 ),
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${soldParts.length} ${soldParts.length == 1 ? 'sale' : 'sales'} recorded',
+                                soldParts.length == 1
+                                    ? AppLocalizations.of(context)!.oneSaleRecorded
+                                    : AppLocalizations.of(context)!.salesRecordedCount(soldParts.length),
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: AppTheme.textSecondary,
+                                  color: AppDesign.getTextSecondary(context),
                                   fontFamily: AppTheme.fontFamily,
                                 ),
                               ),
@@ -123,7 +127,7 @@ class AdminPartsScreen extends StatelessWidget {
                                 ),
                                 child: Icon(
                                   Icons.add_rounded,
-                                  color: AppTheme.textPrimary,
+                                  color: AppDesign.getTextPrimary(context),
                                   size: 24,
                                 ),
                               ),
@@ -202,7 +206,7 @@ class _SoldPartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final categoryColor = _getCategoryColor(soldPart.category);
-    final dateStr = _formatDate(soldPart.soldAt);
+    final dateStr = _formatDate(context, soldPart.soldAt);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -211,9 +215,9 @@ class _SoldPartCard extends StatelessWidget {
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           decoration: BoxDecoration(
-            color: AppTheme.bgSecondary,
+            color: AppDesign.getBgSecondary(context),
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppTheme.border, width: 1.5),
+            border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.2),
@@ -285,7 +289,7 @@ class _SoldPartCard extends StatelessWidget {
                             style: TextStyle(
                               fontSize: isSmallScreen ? 18 : 22,
                               fontWeight: FontWeight.bold,
-                              color: AppTheme.textPrimary,
+                              color: AppDesign.getTextPrimary(context),
                               fontFamily: AppTheme.fontFamily,
                               letterSpacing: -0.4,
                             ),
@@ -298,7 +302,7 @@ class _SoldPartCard extends StatelessWidget {
                               Icon(
                                 Icons.business_rounded,
                                 size: isSmallScreen ? 14 : 16,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                               ),
                               SizedBox(width: isSmallScreen ? 4 : 6),
                               Flexible(
@@ -306,7 +310,7 @@ class _SoldPartCard extends StatelessWidget {
                                   soldPart.companyName,
                                   style: TextStyle(
                                     fontSize: isSmallScreen ? 13 : 15,
-                                    color: AppTheme.textSecondary,
+                                    color: AppDesign.getTextSecondary(context),
                                     fontFamily: AppTheme.fontFamily,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -382,16 +386,16 @@ class _SoldPartCard extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Quantity',
+                                        AppLocalizations.of(context)!.quantity,
                                         style: TextStyle(
                                           fontSize: isSmallScreen ? 10 : 11,
-                                          color: AppTheme.textSecondary,
+                                          color: AppDesign.getTextSecondary(context),
                                           fontFamily: AppTheme.fontFamily,
                                         ),
                                       ),
                                       SizedBox(height: isSmallScreen ? 2 : 4),
                                       Text(
-                                        '${soldPart.quantity} ${soldPart.quantity == 1 ? 'unit' : 'units'}',
+                                        '${soldPart.quantity} ${soldPart.quantity == 1 ? AppLocalizations.of(context)!.unit : AppLocalizations.of(context)!.units}',
                                         style: TextStyle(
                                           fontSize: isSmallScreen ? 14 : 16,
                                           fontWeight: FontWeight.bold,
@@ -462,10 +466,10 @@ class _SoldPartCard extends StatelessWidget {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        'Total',
+                                        AppLocalizations.of(context)!.totalLabel,
                                         style: TextStyle(
                                           fontSize: isSmallScreen ? 10 : 11,
-                                          color: AppTheme.textSecondary,
+                                          color: AppDesign.getTextSecondary(context),
                                           fontFamily: AppTheme.fontFamily,
                                         ),
                                       ),
@@ -495,16 +499,16 @@ class _SoldPartCard extends StatelessWidget {
                     Container(
                       padding: EdgeInsets.all(isSmallScreen ? 12 : 14),
                       decoration: BoxDecoration(
-                        color: AppTheme.bgElevated,
+                        color: AppDesign.getBgElevated(context),
                         borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: AppTheme.border, width: 1),
+                        border: Border.all(color: AppDesign.getBorder(context), width: 1),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.calendar_today_rounded,
                             size: isSmallScreen ? 16 : 18,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                           ),
                           SizedBox(width: isSmallScreen ? 8 : 10),
                           Expanded(
@@ -512,10 +516,10 @@ class _SoldPartCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Sold on',
+                                  AppLocalizations.of(context)!.soldOn,
                                   style: TextStyle(
                                     fontSize: isSmallScreen ? 11 : 12,
-                                    color: AppTheme.textSecondary,
+                                    color: AppDesign.getTextSecondary(context),
                                     fontFamily: AppTheme.fontFamily,
                                   ),
                                 ),
@@ -525,7 +529,7 @@ class _SoldPartCard extends StatelessWidget {
                                   style: TextStyle(
                                     fontSize: isSmallScreen ? 13 : 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppTheme.textPrimary,
+                                    color: AppDesign.getTextPrimary(context),
                                     fontFamily: AppTheme.fontFamily,
                                   ),
                                 ),
@@ -537,7 +541,7 @@ class _SoldPartCard extends StatelessWidget {
                             Icon(
                               Icons.person_rounded,
                               size: isSmallScreen ? 16 : 18,
-                              color: AppTheme.textSecondary,
+                              color: AppDesign.getTextSecondary(context),
                             ),
                             SizedBox(width: isSmallScreen ? 4 : 6),
                             Flexible(
@@ -545,10 +549,10 @@ class _SoldPartCard extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Buyer',
+                                    AppLocalizations.of(context)!.buyer,
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 11 : 12,
-                                      color: AppTheme.textSecondary,
+                                      color: AppDesign.getTextSecondary(context),
                                       fontFamily: AppTheme.fontFamily,
                                     ),
                                   ),
@@ -558,7 +562,7 @@ class _SoldPartCard extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: isSmallScreen ? 13 : 14,
                                       fontWeight: FontWeight.w600,
-                                      color: AppTheme.textPrimary,
+                                      color: AppDesign.getTextPrimary(context),
                                       fontFamily: AppTheme.fontFamily,
                                     ),
                                     maxLines: 1,
@@ -581,19 +585,22 @@ class _SoldPartCard extends StatelessWidget {
     );
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
+    final l10n = AppLocalizations.of(context)!;
 
     if (difference.inDays == 0) {
       if (difference.inHours == 0) {
-        return '${difference.inMinutes} min ago';
+        return l10n.minAgo(difference.inMinutes);
       }
-      return '${difference.inHours} hour${difference.inHours == 1 ? '' : 's'} ago';
+      return difference.inHours == 1
+          ? l10n.hoursAgo(1)
+          : l10n.hoursAgoPlural(difference.inHours);
     } else if (difference.inDays == 1) {
-      return 'Yesterday';
+      return l10n.yesterday;
     } else if (difference.inDays < 7) {
-      return '${difference.inDays} days ago';
+      return l10n.daysAgo(difference.inDays);
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
@@ -652,12 +659,12 @@ class _EmptyState extends StatelessWidget {
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [AppTheme.bgSecondary, AppTheme.bgElevated],
+                  colors: [AppTheme.bgSecondary, AppDesign.getBgElevated(context)],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.border, width: 1.5),
+                border: Border.all(color: AppDesign.getBorder(context), width: 1.5),
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.1),
@@ -669,25 +676,25 @@ class _EmptyState extends StatelessWidget {
               child: Icon(
                 Icons.build_circle_outlined,
                 size: 64,
-                color: AppTheme.textMuted,
+                color: AppDesign.getTextTertiary(context),
               ),
             ),
             const SizedBox(height: 24),
             Text(
-              'No Sales Recorded',
+              AppLocalizations.of(context)!.noSalesRecorded,
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.textPrimary,
+                color: AppDesign.getTextPrimary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'No parts have been sold yet',
+              AppLocalizations.of(context)!.noPartsSoldYet,
               style: TextStyle(
                 fontSize: 14,
-                color: AppTheme.textSecondary,
+                color: AppDesign.getTextSecondary(context),
                 fontFamily: AppTheme.fontFamily,
               ),
               textAlign: TextAlign.center,
@@ -725,22 +732,22 @@ class _EmptyState extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(6),
                           decoration: BoxDecoration(
-                            color: AppTheme.textPrimary.withValues(alpha: 0.2),
+                            color: AppDesign.getTextPrimary(context).withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
                             Icons.add_rounded,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             size: 20,
                           ),
                         ),
                         const SizedBox(width: 12),
                         Text(
-                          'Add Part',
-                          style: TextStyle(
+AppLocalizations.of(context)!.addPart,
+                            style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             fontFamily: AppTheme.fontFamily,
                             letterSpacing: 0.5,
                           ),

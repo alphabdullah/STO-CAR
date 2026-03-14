@@ -4,7 +4,9 @@ import '../../../core/constants/app_constants.dart';
 import '../../../core/shared_widgets/custom_button.dart';
 import '../../../core/shared_widgets/custom_card.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
+import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/admin_service.dart';
 
 /// Admin Settings - Stripe account configuration
@@ -81,9 +83,9 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Settings saved successfully'),
-            backgroundColor: Colors.green,
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.settingsSavedSuccessfully),
+            backgroundColor: AppTheme.success,
           ),
         );
       }
@@ -98,18 +100,18 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.bgPrimary,
+      backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        backgroundColor: AppTheme.bgPrimary,
+        backgroundColor: AppDesign.getBgPrimary(context),
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
           onPressed: () => context.go(AppConstants.routeAdminDashboard),
         ),
         title: Text(
-          'Settings',
+          AppLocalizations.of(context)!.settings,
           style: TextStyle(
-            color: AppTheme.textPrimary,
+            color: AppDesign.getTextPrimary(context),
             fontWeight: FontWeight.w600,
             fontFamily: AppTheme.fontFamily,
           ),
@@ -147,10 +149,10 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Configure your Stripe account. Payments from users will go to this account.',
+                          AppLocalizations.of(context)!.stripeAccountDescription,
                           style: TextStyle(
                             fontSize: 14,
-                            color: AppTheme.textSecondary,
+                            color: AppDesign.getTextSecondary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -177,28 +179,28 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Publishable Key (pk_live_... or pk_test_...)',
+                          AppLocalizations.of(context)!.publishableKeyLabel,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
                         const SizedBox(height: 8),
                         TextField(
                           controller: _stripeKeyController,
-                          decoration: const InputDecoration(
-                            hintText: 'pk_live_... or pk_test_...',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            hintText: AppLocalizations.of(context)!.publishableKeyHint,
+                            border: const OutlineInputBorder(),
                           ),
                           obscureText: false,
                         ),
                         const SizedBox(height: 16),
                         Text(
-                          'Secret Key (sk_live_... or sk_test_...)',
+                          AppLocalizations.of(context)!.secretKeyLabel,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -207,8 +209,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                           controller: _stripeSecretController,
                           decoration: InputDecoration(
                             hintText: _stripe?['stripe_secret_set'] == true
-                                ? 'Leave blank to keep current'
-                                : 'sk_live_... or sk_test_...',
+                                ? AppLocalizations.of(context)!.leaveBlankToKeepCurrent
+                                : AppLocalizations.of(context)!.secretKeyHint,
                             border: const OutlineInputBorder(),
                           ),
                           obscureText: true,
@@ -217,19 +219,19 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 4),
                             child: Text(
-                              'Current: ${_stripe!['stripe_secret_masked']}',
+                              AppLocalizations.of(context)!.secretKeyCurrent(_stripe!['stripe_secret_masked']!.toString()),
                               style: TextStyle(
                                 fontSize: 12,
-                                color: AppTheme.textSecondary,
+                                color: AppDesign.getTextSecondary(context),
                               ),
                             ),
                           ),
                         const SizedBox(height: 16),
                         Text(
-                          'Webhook Secret (whsec_...) - Optional',
+                          AppLocalizations.of(context)!.webhookSecretLabel,
                           style: TextStyle(
                             fontWeight: FontWeight.w600,
-                            color: AppTheme.textPrimary,
+                            color: AppDesign.getTextPrimary(context),
                             fontFamily: AppTheme.fontFamily,
                           ),
                         ),
@@ -238,8 +240,8 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                           controller: _webhookSecretController,
                           decoration: InputDecoration(
                             hintText: _stripe?['stripe_webhook_secret_set'] == true
-                                ? 'Leave blank to keep current'
-                                : 'whsec_...',
+                                ? AppLocalizations.of(context)!.leaveBlankToKeepCurrent
+                                : AppLocalizations.of(context)!.webhookSecretHint,
                             border: const OutlineInputBorder(),
                           ),
                           obscureText: true,
@@ -252,12 +254,12 @@ class _AdminSettingsScreenState extends State<AdminSettingsScreen> {
                       padding: const EdgeInsets.only(top: 12),
                       child: Text(
                         _error!,
-                        style: const TextStyle(color: Colors.red),
+                        style: TextStyle(color: AppTheme.error),
                       ),
                     ),
                   const SizedBox(height: 24),
                   CustomButton(
-                    text: 'Save Settings',
+                    text: AppLocalizations.of(context)!.saveSettings,
                     onPressed: _isSaving ? null : _save,
                     isLoading: _isSaving,
                     icon: Icons.save,

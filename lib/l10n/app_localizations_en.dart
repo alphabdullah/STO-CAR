@@ -536,4 +536,572 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pleaseSelectTime => 'Please select a time';
+
+  @override
+  String get emailAddress => 'Email Address';
+
+  @override
+  String get emailHint => 'example@email.com';
+
+  @override
+  String get enterPassword => 'Enter your password';
+
+  @override
+  String get forgotPassword => 'Forgot Password?';
+
+  @override
+  String get dontHaveAccount => 'Don\'t have an account? ';
+
+  @override
+  String get alreadyHaveAccount => 'Already have an account? ';
+
+  @override
+  String get rememberPassword => 'Remember your password? ';
+
+  @override
+  String get forgotPasswordTitle => 'Forgot Password';
+
+  @override
+  String get forgotPasswordMessage =>
+      'Enter your email address and we\'ll send you a link to reset your password.';
+
+  @override
+  String get sendResetLink => 'Send Reset Link';
+
+  @override
+  String get tapToUpload => 'Tap to upload';
+
+  @override
+  String get uploadEmiratesId => 'Upload Emirates ID';
+
+  @override
+  String get uploadEmiratesIdMessage =>
+      'Please upload both the front and back of your Emirates Card for verification.';
+
+  @override
+  String get confirmPasswordHint => 'Confirm your password';
+
+  @override
+  String get adminDashboard => 'Dashboard';
+
+  @override
+  String get adminOverview => 'Admin Overview';
+
+  @override
+  String get statisticsOverview => 'Statistics Overview';
+
+  @override
+  String get auctionRevenue => 'Auction Revenue';
+
+  @override
+  String get partsRevenue => 'Parts Revenue';
+
+  @override
+  String get totalAuctions => 'Total Auctions';
+
+  @override
+  String get pendingAuctions => 'Pending Auctions';
+
+  @override
+  String get partsAvailable => 'Parts Available';
+
+  @override
+  String get bookingsToday => 'Bookings Today';
+
+  @override
+  String get pendingBookings => 'Pending Bookings';
+
+  @override
+  String get totalUsers => 'Total Users';
+
+  @override
+  String get verifiedUsers => 'Verified Users';
+
+  @override
+  String get visualAnalytics => 'Visual Analytics';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get allMetrics => 'All Metrics';
+
+  @override
+  String get totalParts => 'Total Parts';
+
+  @override
+  String get totalBookings => 'Total Bookings';
+
+  @override
+  String get pendingApproval => 'Pending Approval';
+
+  @override
+  String get allTime => 'All Time';
+
+  @override
+  String get thisWeek => 'This Week';
+
+  @override
+  String get thisMonth => 'This Month';
+
+  @override
+  String get thisYear => 'This Year';
+
+  @override
+  String get barChart => 'Bar Chart';
+
+  @override
+  String get pieChart => 'Pie Chart';
+
+  @override
+  String get lineChart => 'Line Chart';
+
+  @override
+  String get statisticsComparison => 'Statistics Comparison';
+
+  @override
+  String get distributionOverview => 'Distribution Overview';
+
+  @override
+  String get trendAnalysis => 'Trend Analysis';
+
+  @override
+  String get chartLabelAuctions => 'Auctions';
+
+  @override
+  String get chartLabelLive => 'Live';
+
+  @override
+  String get chartLabelPending => 'Pending';
+
+  @override
+  String get chartLabelParts => 'Parts';
+
+  @override
+  String get chartLabelBookings => 'Bookings';
+
+  @override
+  String get chartLabelPendingB => 'Pending B';
+
+  @override
+  String get chartLabelUsers => 'Users';
+
+  @override
+  String get chartLabelVerified => 'Verified';
+
+  @override
+  String get manageAuctions => 'Manage Auctions';
+
+  @override
+  String get manageAndApproveAuctions => 'Manage and approve auctions';
+
+  @override
+  String get noPendingAuctions => 'No Pending Auctions';
+
+  @override
+  String get allAuctionsReviewed => 'All auctions have been reviewed';
+
+  @override
+  String get noAuctions => 'No Auctions';
+
+  @override
+  String get noAuctionsCreatedYet => 'No auctions have been created yet';
+
+  @override
+  String get editAuctionPrice => 'Edit Auction Price';
+
+  @override
+  String get startingBidAed => 'Starting Bid (AED)';
+
+  @override
+  String get currentBidAedOptional => 'Current Bid (AED) - optional';
+
+  @override
+  String get bidIncrementAed => 'Bid Increment (AED)';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get invalidStartingBid => 'Invalid starting bid';
+
+  @override
+  String get allAuctionsTab => 'All Auctions';
+
+  @override
+  String get startingBid => 'Starting Bid';
+
+  @override
+  String get editPrice => 'Edit Price';
+
+  @override
+  String get statusPending => 'PENDING';
+
+  @override
+  String get statusApproved => 'APPROVED';
+
+  @override
+  String get statusLive => 'LIVE';
+
+  @override
+  String get statusClosed => 'CLOSED';
+
+  @override
+  String get statusRejected => 'REJECTED';
+
+  @override
+  String get approve => 'Approve';
+
+  @override
+  String get reject => 'Reject';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get success => 'Success';
+
+  @override
+  String get failedToLoadPendingAuctions =>
+      'Failed to load pending auctions. Please try again.';
+
+  @override
+  String get auctionApprovedSuccessfully => 'Auction approved successfully';
+
+  @override
+  String get auctionRejected => 'Auction rejected';
+
+  @override
+  String get failedToApproveAuction =>
+      'Failed to approve auction. Please try again.';
+
+  @override
+  String get failedToRejectAuction =>
+      'Failed to reject auction. Please try again.';
+
+  @override
+  String get auctionPriceUpdatedSuccessfully =>
+      'Auction price updated successfully';
+
+  @override
+  String get failedToUpdateAuction =>
+      'Failed to update auction. Please try again.';
+
+  @override
+  String get manageBookings => 'Manage Bookings';
+
+  @override
+  String get manageAndApproveBookings => 'Manage and approve bookings';
+
+  @override
+  String get noPendingBookings => 'No Pending Bookings';
+
+  @override
+  String get allBookingsReviewed => 'All bookings have been reviewed';
+
+  @override
+  String get noBookings => 'No Bookings';
+
+  @override
+  String get noBookingsCreatedYet => 'No bookings have been created yet';
+
+  @override
+  String get allBookingsTab => 'All Bookings';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get bookingApprovedSuccessfully => 'Booking approved successfully';
+
+  @override
+  String get bookingRejectedSuccessfully => 'Booking rejected';
+
+  @override
+  String get rejectBookingTitle => 'Reject Booking';
+
+  @override
+  String get rejectBookingMessage =>
+      'Are you sure you want to reject this booking?';
+
+  @override
+  String get rejectionReasonRequired => 'Rejection reason is required';
+
+  @override
+  String get rejectionReason => 'Rejection Reason *';
+
+  @override
+  String get rejectionReasonHint => 'e.g., Service not available';
+
+  @override
+  String get additionalNotes => 'Additional Notes';
+
+  @override
+  String get additionalNotesHint => 'Please choose another date';
+
+  @override
+  String get bookingId => 'Booking ID';
+
+  @override
+  String get user => 'User';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get vehicleDetails => 'Vehicle Details';
+
+  @override
+  String get car => 'Car';
+
+  @override
+  String get model => 'Model';
+
+  @override
+  String get contactInfo => 'Contact Info';
+
+  @override
+  String get descriptionNotes => 'Description/Notes';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get approved => 'Approved';
+
+  @override
+  String get rejected => 'Rejected';
+
+  @override
+  String get completed => 'Completed';
+
+  @override
+  String get formFieldsUpdatedSuccessfully =>
+      'Form fields updated successfully';
+
+  @override
+  String get editFormFields => 'Edit Form Fields';
+
+  @override
+  String get customizeBookingFormFields => 'Customize booking form fields';
+
+  @override
+  String get customizeFormDescription =>
+      'Customize the booking form fields. Users will see these fields when creating a booking.';
+
+  @override
+  String get newField => 'New Field';
+
+  @override
+  String get addNewField => 'Add New Field';
+
+  @override
+  String get noFieldsAddedYet => 'No fields added yet';
+
+  @override
+  String get tapAddNewFieldHint =>
+      'Tap \"Add New Field\" to create your first field';
+
+  @override
+  String get fieldLabel => 'Field Label';
+
+  @override
+  String get fieldLabelHint => 'Enter field label';
+
+  @override
+  String get fieldType => 'Field Type';
+
+  @override
+  String get placeholderOptional => 'Placeholder (Optional)';
+
+  @override
+  String get placeholderHint => 'Enter placeholder text';
+
+  @override
+  String get optionsCommaSeparated => 'Options (comma-separated)';
+
+  @override
+  String get optionsHint => 'Option 1, Option 2, Option 3';
+
+  @override
+  String get orders => 'Orders';
+
+  @override
+  String get partPurchasesAndOrderHistory => 'Part purchases & order history';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get paid => 'Paid';
+
+  @override
+  String get shipped => 'Shipped';
+
+  @override
+  String get delivered => 'Delivered';
+
+  @override
+  String get noOrdersYet => 'No Orders Yet';
+
+  @override
+  String get partPurchasesWillAppearHere => 'Part purchases will appear here';
+
+  @override
+  String get buyer => 'Buyer';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get orderNumber => 'Order #';
+
+  @override
+  String get soldParts => 'Sold Parts';
+
+  @override
+  String get oneSaleRecorded => '1 sale recorded';
+
+  @override
+  String salesRecordedCount(int count) {
+    return '$count sales recorded';
+  }
+
+  @override
+  String get noSalesRecorded => 'No Sales Recorded';
+
+  @override
+  String get noPartsSoldYet => 'No parts have been sold yet';
+
+  @override
+  String get addPart => 'Add Part';
+
+  @override
+  String get editPart => 'Edit Part';
+
+  @override
+  String get quantity => 'Quantity';
+
+  @override
+  String get unit => 'unit';
+
+  @override
+  String get units => 'units';
+
+  @override
+  String get totalLabel => 'Total';
+
+  @override
+  String get soldOn => 'Sold on';
+
+  @override
+  String get company => 'Company';
+
+  @override
+  String get partName => 'Part Name';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get priceAed => 'Price (AED)';
+
+  @override
+  String get stockQuantity => 'Stock Quantity';
+
+  @override
+  String get pleaseFillRequiredFields => 'Please fill all required fields';
+
+  @override
+  String get partUpdatedSuccessfully => 'Part updated successfully';
+
+  @override
+  String get partAddedSuccessfully => 'Part added successfully';
+
+  @override
+  String get deletePart => 'Delete Part';
+
+  @override
+  String get deletePartConfirm => 'Are you sure you want to delete this part?';
+
+  @override
+  String get partDeletedSuccessfully => 'Part deleted successfully';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String minAgo(int count) {
+    return '$count min ago';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return '$count hour ago';
+  }
+
+  @override
+  String hoursAgoPlural(int count) {
+    return '$count hours ago';
+  }
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String daysAgo(int count) {
+    return '$count days ago';
+  }
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get stripeAccount => 'Stripe Account';
+
+  @override
+  String get stripeAccountDescription =>
+      'Configure your Stripe account. Payments from users will go to this account.';
+
+  @override
+  String get stripeIsConfigured => 'Stripe is configured';
+
+  @override
+  String get publishableKeyLabel =>
+      'Publishable Key (pk_live_... or pk_test_...)';
+
+  @override
+  String get publishableKeyHint => 'pk_live_... or pk_test_...';
+
+  @override
+  String get secretKeyLabel => 'Secret Key (sk_live_... or sk_test_...)';
+
+  @override
+  String get secretKeyHint => 'sk_live_... or sk_test_...';
+
+  @override
+  String get leaveBlankToKeepCurrent => 'Leave blank to keep current';
+
+  @override
+  String secretKeyCurrent(String masked) {
+    return 'Current: $masked';
+  }
+
+  @override
+  String get webhookSecretLabel => 'Webhook Secret (whsec_...) - Optional';
+
+  @override
+  String get webhookSecretHint => 'whsec_...';
+
+  @override
+  String get saveSettings => 'Save Settings';
+
+  @override
+  String get settingsSavedSuccessfully => 'Settings saved successfully';
 }

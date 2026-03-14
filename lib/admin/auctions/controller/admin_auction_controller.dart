@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../core/constants/app_strings.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../services/admin_service.dart';
 import '../../../core/api/api_client.dart' as api;
 import '../../../models/auction_model.dart';
@@ -28,7 +28,7 @@ class AdminAuctionController extends GetxController {
   /// Load pending auctions from API
   ///
   /// [forceRefresh] - If true, will reload even if data already exists
-  Future<void> loadPendingAuctions({bool forceRefresh = false}) async {
+  Future<void> loadPendingAuctions(BuildContext? context, {bool forceRefresh = false}) async {
     // If already loaded and not forcing refresh, skip
     if (_hasLoadedPendingAuctions &&
         !forceRefresh &&
@@ -83,114 +83,92 @@ class AdminAuctionController extends GetxController {
       print('AdminAuctionController: Parsed ${auctions.length} auctions');
     } on api.ApiException catch (e) {
       print('AdminAuctionController: API error - ${e.message}');
-      Get.snackbar(
-        'Error',
-        e.message,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context != null && context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: ${e.message}')),
+        );
+      }
     } catch (e) {
       print('AdminAuctionController: Unexpected error - $e');
-      Get.snackbar(
-        'Error',
-        'Failed to load pending auctions. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context != null && context.mounted) {
+        final l10n = AppLocalizations.of(context)!;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.failedToLoadPendingAuctions)),
+        );
+      }
     } finally {
       _isLoadingPending.value = false;
     }
   }
 
-  Future<void> approveAuction(String auctionId) async {
+  Future<void> approveAuction(BuildContext context, String auctionId) async {
     _isLoading.value = true;
+    final l10n = AppLocalizations.of(context)!;
     try {
       await _adminService.approveAuction(auctionId);
-      Get.snackbar(
-        AppStrings.success,
-        'Auction approved successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
-      // Remove from pending list and refresh
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.auctionApprovedSuccessfully)),
+        );
+      }
       _pendingAuctions.removeWhere((a) => a.id == auctionId);
-      // Reload to get fresh data
-      await loadPendingAuctions(forceRefresh: true);
+      await loadPendingAuctions(context, forceRefresh: true);
     } on api.ApiException catch (e) {
-      Get.snackbar(
-        'Error',
-        e.message,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: ${e.message}')),
+        );
+      }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to approve auction. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.failedToApproveAuction)),
+        );
+      }
     } finally {
       _isLoading.value = false;
     }
   }
 
-  Future<void> rejectAuction(String auctionId) async {
+  Future<void> rejectAuction(BuildContext context, String auctionId) async {
     _isLoading.value = true;
+    final l10n = AppLocalizations.of(context)!;
     try {
       await _adminService.rejectAuction(auctionId);
-      Get.snackbar(
-        AppStrings.success,
-        'Auction rejected',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
-      // Remove from pending list and refresh
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.auctionRejected)),
+        );
+      }
       _pendingAuctions.removeWhere((a) => a.id == auctionId);
-      // Reload to get fresh data
-      await loadPendingAuctions(forceRefresh: true);
+      await loadPendingAuctions(context, forceRefresh: true);
     } on api.ApiException catch (e) {
-      Get.snackbar(
-        'Error',
-        e.message,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: ${e.message}')),
+        );
+      }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to reject auction. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.failedToRejectAuction)),
+        );
+      }
     } finally {
       _isLoading.value = false;
     }
   }
 
   Future<void> updateAuctionPrice(
+    BuildContext context,
     String auctionId, {
     required double startingBid,
     double? currentBid,
     double? bidIncrement,
   }) async {
     _isLoading.value = true;
+    final l10n = AppLocalizations.of(context)!;
     try {
       await _adminService.updateAuction(
         auctionId,
@@ -198,34 +176,25 @@ class AdminAuctionController extends GetxController {
         currentBid: currentBid,
         bidIncrement: bidIncrement,
       );
-      Get.snackbar(
-        AppStrings.success,
-        'Auction price updated successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
-      await loadPendingAuctions(forceRefresh: true);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.auctionPriceUpdatedSuccessfully)),
+        );
+      }
+      await loadPendingAuctions(context, forceRefresh: true);
       Get.find<AuctionState>().loadAuctions(forceRefresh: true);
     } on api.ApiException catch (e) {
-      Get.snackbar(
-        'Error',
-        e.message,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${l10n.error}: ${e.message}')),
+        );
+      }
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Failed to update auction. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 3),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(l10n.failedToUpdateAuction)),
+        );
+      }
     } finally {
       _isLoading.value = false;
     }
