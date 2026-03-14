@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/constants/app_strings.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../models/cart_item_model.dart';
 import '../../../state/cart_state.dart';
 import '../../../state/auth_state.dart';
@@ -24,9 +24,12 @@ class CartScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppDesign.getBgPrimary(context),
       appBar: AppBar(
-        title: const Text(
-          AppStrings.cart,
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          AppLocalizations.of(context)!.cart,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: AppDesign.getTextPrimary(context),
+          ),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -61,7 +64,7 @@ class CartScreen extends StatelessWidget {
                           child: Container(
                             padding: const EdgeInsets.all(12),
                             decoration: BoxDecoration(
-                              color: AppTheme.error.withOpacity(0.1),
+                              color: AppTheme.error.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Row(
@@ -101,9 +104,12 @@ class CartScreen extends StatelessWidget {
                 children: [
                   Icon(Icons.login, size: 64, color: AppDesign.getTextTertiary(context)),
                   const SizedBox(height: 16),
-                  const Text(
-                    'Login required to view cart',
-                    style: TextStyle(fontSize: 16),
+                  Text(
+                    AppLocalizations.of(context)!.loginRequiredToViewCart,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: AppDesign.getTextPrimary(context),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
@@ -111,14 +117,12 @@ class CartScreen extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.redPrimary,
                     ),
-                    child: const Text(AppStrings.login),
+                    child: Text(AppLocalizations.of(context)!.login),
                   ),
                 ],
               ),
             ),
-      bottomNavigationBar: authState.isAuthenticated
-          ? const RoleBottomNav(currentIndex: -1)
-          : null,
+      bottomNavigationBar: const RoleBottomNav(currentIndex: -1),
     );
   }
 }
@@ -138,20 +142,24 @@ class _EmptyCart extends StatelessWidget {
               color: AppDesign.getTextTertiary(context),
             ),
             const SizedBox(height: 24),
-            const Text(
-              AppStrings.yourCartIsEmpty,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              AppLocalizations.of(context)!.yourCartIsEmpty,
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppDesign.getTextPrimary(context),
+              ),
             ),
             const SizedBox(height: 8),
             Text(
-              AppStrings.continueShopping,
+              AppLocalizations.of(context)!.continueShopping,
               style: TextStyle(color: AppDesign.getTextSecondary(context)),
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               onPressed: () => context.go(AppConstants.routeParts),
               icon: const Icon(Icons.storefront_rounded),
-              label: const Text(AppStrings.continueShopping),
+              label: Text(AppLocalizations.of(context)!.continueShopping),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.redPrimary,
                 padding: const EdgeInsets.symmetric(
@@ -329,7 +337,7 @@ class _CheckoutSummary extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Subtotal',
+                  AppLocalizations.of(context)!.subtotal,
                   style: TextStyle(color: AppDesign.getTextSecondary(context)),
                 ),
                 Text(
@@ -355,9 +363,9 @@ class _CheckoutSummary extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: const Text(
-                  AppStrings.checkout,
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                child: Text(
+                  AppLocalizations.of(context)!.checkout,
+                  style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
               ),
             ),
@@ -386,16 +394,20 @@ class _CheckoutSummary extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text(
-                'Enter shipping address',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Text(
+                AppLocalizations.of(ctx)!.enterShippingAddress,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: AppDesign.getTextPrimary(ctx),
+                ),
               ),
               const SizedBox(height: 16),
               TextField(
                 controller: addressController,
                 maxLines: 3,
                 decoration: InputDecoration(
-                  hintText: 'Full address, city, postal code',
+                  hintText: AppLocalizations.of(ctx)!.fullAddressHint,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -409,10 +421,12 @@ class _CheckoutSummary extends StatelessWidget {
                       : () async {
                           final addr = addressController.text.trim();
                           if (addr.isEmpty) {
-                            Get.snackbar(
-                              'Error',
-                              'Please enter shipping address',
-                              backgroundColor: AppTheme.error.withOpacity(0.8),
+                            final l10n = AppLocalizations.of(context)!;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.pleaseEnterShippingAddress),
+                                backgroundColor: AppTheme.error,
+                              ),
                             );
                             return;
                           }
@@ -420,10 +434,11 @@ class _CheckoutSummary extends StatelessWidget {
                           if (context.mounted) Navigator.pop(ctx);
                           if (result != null) {
                             Get.find<PartsState>().loadMyPurchases();
+                            final amount = '${result['total_amount']} ${AppConstants.currency}';
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
-                                  'Purchase complete! Total: ${result['total_amount']} ${AppConstants.currency}',
+                                  AppLocalizations.of(context)!.purchaseCompleteTotal(amount),
                                 ),
                                 backgroundColor: AppTheme.success,
                                 behavior: SnackBarBehavior.floating,
@@ -446,7 +461,7 @@ class _CheckoutSummary extends StatelessWidget {
                             color: Colors.white,
                           ),
                         )
-                      : const Text('Confirm Purchase'),
+                      : Text(AppLocalizations.of(ctx)!.confirmPurchase),
                 ),
               ),
             ],

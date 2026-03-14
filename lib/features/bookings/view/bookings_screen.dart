@@ -18,7 +18,7 @@ class BookingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final authState = Get.put(AuthState());
+    Get.put(AuthState());
 
     return Scaffold(
       backgroundColor: AppDesign.getBgPrimary(context),
@@ -33,11 +33,7 @@ class BookingsScreen extends StatelessWidget {
         actionDescription: AppLocalizations.of(context)!.loginToViewBookings,
         child: Responsive.constrained(_BookingsContent()),
       ),
-      bottomNavigationBar: Obx(
-        () => authState.isAuthenticated
-            ? const RoleBottomNav(currentIndex: 1)
-            : const SizedBox.shrink(),
-      ),
+      bottomNavigationBar: const RoleBottomNav(currentIndex: 1),
     );
   }
 }

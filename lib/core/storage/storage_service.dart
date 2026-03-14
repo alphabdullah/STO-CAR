@@ -9,6 +9,7 @@ class StorageKeys {
   static const String authToken = 'auth_token';
   static const String isLoggedIn = 'is_logged_in';
   static const String loginApiResponse = 'login_api_response';
+  static const String selectedLocale = 'selected_locale';
 }
 
 /// Storage Service
@@ -121,6 +122,20 @@ class StorageService {
   /// Remove login status
   Future<bool> removeLoginStatus() async {
     return await prefs.remove(StorageKeys.isLoggedIn);
+  }
+
+  // ============================================================================
+  // Selected Locale (Language)
+  // ============================================================================
+
+  /// Save selected locale language code (e.g. 'en', 'ar')
+  Future<bool> setSelectedLocale(String languageCode) async {
+    return await prefs.setString(StorageKeys.selectedLocale, languageCode);
+  }
+
+  /// Get selected locale language code, or null if not set
+  String? getSelectedLocale() {
+    return prefs.getString(StorageKeys.selectedLocale);
   }
 
   // ============================================================================

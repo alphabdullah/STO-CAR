@@ -87,6 +87,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get logout => 'تسجيل الخروج';
 
   @override
+  String get guest => 'زائر';
+
+  @override
   String get verifiedAccount => 'حساب موثق';
 
   @override
@@ -436,6 +439,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get loginToViewBookings => 'سجّل الدخول لعرض وإنشاء الحجوزات';
+
+  @override
+  String get loginToViewProfile => 'يرجى تسجيل الدخول لعرض ملفك الشخصي';
+
+  @override
+  String get loginToViewWallet => 'يرجى تسجيل الدخول لعرض محفظتك';
+
+  @override
+  String get loginToViewPurchaseHistory =>
+      'يرجى تسجيل الدخول لعرض سجل المشتريات';
+
+  @override
+  String get pleaseLoginToContinue => 'يرجى تسجيل الدخول للمتابعة';
 
   @override
   String get noBookingsYet => 'لا توجد حجوزات بعد';
@@ -1089,4 +1105,36 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get settingsSavedSuccessfully => 'تم حفظ الإعدادات بنجاح';
+
+  @override
+  String get loginRequiredToViewCart => 'تسجيل الدخول مطلوب لعرض السلة';
+
+  @override
+  String get yourCartIsEmpty => 'سلتك فارغة';
+
+  @override
+  String get continueShopping => 'متابعة التسوق';
+
+  @override
+  String get checkout => 'إتمام الطلب';
+
+  @override
+  String get subtotal => 'المجموع الفرعي';
+
+  @override
+  String get enterShippingAddress => 'أدخل عنوان الشحن';
+
+  @override
+  String get fullAddressHint => 'العنوان الكامل، المدينة، الرمز البريدي';
+
+  @override
+  String get pleaseEnterShippingAddress => 'يرجى إدخال عنوان الشحن';
+
+  @override
+  String purchaseCompleteTotal(String amount) {
+    return 'تم الشراء بنجاح! الإجمالي: $amount';
+  }
+
+  @override
+  String get confirmPurchase => 'تأكيد الشراء';
 }

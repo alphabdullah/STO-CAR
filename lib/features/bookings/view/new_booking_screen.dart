@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/guards/auth_guard_widget.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../l10n/app_localizations.dart';
@@ -24,11 +25,13 @@ class NewBookingScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
-      body: SafeArea(
-        child: Responsive.constrained(
-          Column(
-            children: [
-              // Back Button and Title
+      body: AuthGuardWidget(
+        actionDescription: AppLocalizations.of(context)!.loginToViewBookings,
+        child: SafeArea(
+          child: Responsive.constrained(
+            Column(
+              children: [
+                // Back Button and Title
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
                 child: Row(
@@ -75,6 +78,7 @@ class NewBookingScreen extends StatelessWidget {
           ),
         ),
       ),
+        ),
     );
   }
 }

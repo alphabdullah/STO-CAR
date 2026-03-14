@@ -74,16 +74,10 @@ class AppRouter {
           return AppConstants.routeHomeFeature;
         }
 
-        // Protected routes require authentication
-        final protectedRoutes = [
-          AppConstants.routeCart,
-          AppConstants.routeBookings,
-          AppConstants.routeWallet,
-          AppConstants.routeProfile,
-        ];
-        if (!isAuthenticated && protectedRoutes.contains(state.uri.path)) {
-          return AppConstants.routeLogin;
-        }
+        // Do not redirect protected feature routes to login here.
+        // Let the user land on the screen; each screen shows an in-screen
+        // login prompt (AuthGuardWidget). That way "Login" uses push and
+        // back from login returns to the previous screen instead of closing the app.
 
         return null;
       },
@@ -137,37 +131,30 @@ class AppRouter {
         GoRoute(
           path: AppConstants.routeCart,
           builder: (context, state) => const CartScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
         GoRoute(
           path: AppConstants.routeBookings,
           builder: (context, state) => const BookingsScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
         GoRoute(
           path: AppConstants.routeNewBooking,
           builder: (context, state) => const NewBookingScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
         GoRoute(
           path: AppConstants.routeWallet,
           builder: (context, state) => const UserWalletScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
         GoRoute(
           path: AppConstants.routeProfile,
           builder: (context, state) => const UserProfileScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
         GoRoute(
           path: AppConstants.routeNotifications,
           builder: (context, state) => const NotificationsScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
         GoRoute(
           path: AppConstants.routePurchaseHistory,
           builder: (context, state) => const PurchaseHistoryScreen(),
-          redirect: (context, state) => AuthGuard.check(context),
         ),
 
         // Legacy Routes (Redirect to new routes)

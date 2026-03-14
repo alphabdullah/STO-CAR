@@ -30,11 +30,11 @@ class HomeScreen extends StatelessWidget {
 
       return Scaffold(
         backgroundColor: AppDesign.getBgPrimary(context),
-        drawer: Obx(
-          () => authState.isAuthenticated
-              ? _buildDrawer(context, authState)
-              : const SizedBox.shrink(),
-        ),
+        drawer: Obx(() {
+          // Subscribe to auth so drawer rebuilds on login/logout; avoids GetX "improper use" error
+          final _ = authState.isAuthenticated;
+          return _buildDrawer(context, authState);
+        }),
         body: SafeArea(
           child: Responsive.constrained(
             SingleChildScrollView(
@@ -134,12 +134,13 @@ class HomeScreen extends StatelessWidget {
                               return Column(
                                 children: [
                                   SizedBox(height: isSmallScreen ? 16.0 : 24.0),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: isSmallScreen ? 16.0 : 20.0,
-                                    ),
-                                    child: _BottomAccountCTA(),
-                                  ),
+                                  // Unlock full access card – commented out
+                                  // Padding(
+                                  //   padding: EdgeInsets.symmetric(
+                                  //     horizontal: isSmallScreen ? 16.0 : 20.0,
+                                  //   ),
+                                  //   child: _BottomAccountCTA(),
+                                  // ),
                                   SizedBox(height: isSmallScreen ? 64.0 : 80.0),
                                 ],
                               );
@@ -152,11 +153,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ),
-        bottomNavigationBar: Obx(
-          () => authState.isAuthenticated
-              ? const RoleBottomNav(currentIndex: 0)
-              : const SizedBox.shrink(),
-        ),
+        bottomNavigationBar: const RoleBottomNav(currentIndex: 0),
       );
     } catch (e) {
       // Fallback UI if there's an error
@@ -326,18 +323,30 @@ class HomeScreen extends StatelessWidget {
                   endIndent: 20,
                 ),
                 const SizedBox(height: 8),
-                _DrawerMenuItem(
-                  icon: Icons.logout_rounded,
-                  title: AppLocalizations.of(context)!.logout,
-                  isDestructive: true,
-                  onTap: () async {
-                    await authState.logout();
-                    if (context.mounted) {
+                Obx(() {
+                  if (authState.isAuthenticated) {
+                    return _DrawerMenuItem(
+                      icon: Icons.logout_rounded,
+                      title: AppLocalizations.of(context)!.logout,
+                      isDestructive: true,
+                      onTap: () async {
+                        await authState.logout();
+                        if (context.mounted) {
+                          Navigator.pop(context);
+                          context.go(AppConstants.routeHomeFeature);
+                        }
+                      },
+                    );
+                  }
+                  return _DrawerMenuItem(
+                    icon: Icons.login_rounded,
+                    title: AppLocalizations.of(context)!.login,
+                    onTap: () {
                       Navigator.pop(context);
-                      context.go(AppConstants.routeHomeFeature);
-                    }
-                  },
-                ),
+                      context.push(AppConstants.routeLogin);
+                    },
+                  );
+                }),
               ],
             ),
           ),
@@ -418,12 +427,13 @@ class _DrawerHeader extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // User Name - Centered
+              // User Name - Centered (Guest when logged out)
               Obx(() {
                 final user = authState.currentUser;
+                final isAuthenticated = authState.isAuthenticated;
                 return Center(
                   child: Text(
-                    user?.name ?? 'User',
+                    isAuthenticated ? (user?.name ?? 'User') : AppLocalizations.of(context)!.guest,
                     style: TextStyle(
                       color: AppDesign.getTextPrimary(context),
                       fontSize: 22,
@@ -436,8 +446,9 @@ class _DrawerHeader extends StatelessWidget {
               }),
               const SizedBox(height: 6),
 
-              // User Email - Centered
+              // User Email - Centered (hidden when guest)
               Obx(() {
+                if (!authState.isAuthenticated) return const SizedBox.shrink();
                 final user = authState.currentUser;
                 return Center(
                   child: Text(
@@ -452,10 +463,11 @@ class _DrawerHeader extends StatelessWidget {
                   ),
                 );
               }),
-              const SizedBox(height: 16),
+              Obx(() => authState.isAuthenticated ? const SizedBox(height: 16) : const SizedBox(height: 8)),
 
-              // Verification Badge - Centered
+              // Verification Badge - Centered (hidden when guest)
               Obx(() {
+                if (!authState.isAuthenticated) return const SizedBox.shrink();
                 final isVerified = authState.isVerified;
                 return Center(
                   child: Container(
@@ -640,42 +652,38 @@ class _CustomHeader extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Left side: Welcome Back text and Menu button (if authenticated)
+            // Left side: Menu button and Welcome Back text (drawer shown for both guest and logged-in)
             Expanded(
-              child: Obx(
-                () => Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (authState.isAuthenticated)
-                      IconButton(
-                        icon: Icon(
-                          Icons.menu_rounded,
-                          color: AppDesign.getTextPrimary(context),
-                          size: menuIconSize,
-                        ),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () {
-                          Scaffold.of(context).openDrawer();
-                        },
-                      ),
-                    if (authState.isAuthenticated)
-                      SizedBox(width: isSmallScreen ? 4.0 : 8.0),
-                    Flexible(
-                      child: Text(
-                        AppLocalizations.of(context)!.welcomeBack,
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.w700,
-                          color: Theme.of(context).colorScheme.onSurface,
-                          letterSpacing: -0.5,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.menu_rounded,
+                      color: AppDesign.getTextPrimary(context),
+                      size: menuIconSize,
                     ),
-                  ],
-                ),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                  ),
+                  SizedBox(width: isSmallScreen ? 4.0 : 8.0),
+                  Flexible(
+                    child: Text(
+                      AppLocalizations.of(context)!.welcomeBack,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.onSurface,
+                        letterSpacing: -0.5,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
             ),
             // Right side: Language, Cart, and Notification icons
@@ -1523,141 +1531,142 @@ class _FeatureCard extends StatelessWidget {
   }
 }
 
-/// Professional Account CTA Section for the Home Page
-class _BottomAccountCTA extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.width < 360 ? 46.0 : 50.0;
-
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            AppDesign.getBgCard(context),
-            AppDesign.getBgTertiary(context),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: AppDesign.getBorder(context),
-          width: 2,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: (Theme.of(context).brightness == Brightness.dark
-                    ? Colors.white
-                    : Colors.black)
-                .withValues(alpha: 0.05),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppDesign.primary.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.account_circle_outlined,
-                  color: AppDesign.primary,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      AppLocalizations.of(context)!.unlockFullAccess,
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: -0.5,
-                        color: AppDesign.getTextPrimary(context),
-                      ),
-                    ),
-                    Text(
-                      AppLocalizations.of(context)!.joinEliteCommunity,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: AppDesign.getTextTertiary(context),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: SizedBox(
-                  height: h,
-                  child: ElevatedButton(
-                    onPressed: () => context.push(AppConstants.routeLogin),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppDesign.primary,
-                      foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                      elevation: 0,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.loginNow,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: SizedBox(
-                  height: h,
-                  child: OutlinedButton(
-                    onPressed: () => context.push(AppConstants.routeSignup),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppDesign.getTextPrimary(context),
-                      side: BorderSide(
-                        color: AppDesign.getBorder(context),
-                        width: 1.5,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                    ),
-                    child: Text(
-                      AppLocalizations.of(context)!.register,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
+// Unlock full access card – commented out
+// /// Professional Account CTA Section for the Home Page
+// class _BottomAccountCTA extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     final h = MediaQuery.of(context).size.width < 360 ? 46.0 : 50.0;
+//
+//     return Container(
+//       padding: const EdgeInsets.all(24),
+//       decoration: BoxDecoration(
+//         gradient: LinearGradient(
+//           colors: [
+//             AppDesign.getBgCard(context),
+//             AppDesign.getBgTertiary(context),
+//           ],
+//           begin: Alignment.topLeft,
+//           end: Alignment.bottomRight,
+//         ),
+//         borderRadius: BorderRadius.circular(28),
+//         border: Border.all(
+//           color: AppDesign.getBorder(context),
+//           width: 2,
+//         ),
+//         boxShadow: [
+//           BoxShadow(
+//             color: (Theme.of(context).brightness == Brightness.dark
+//                     ? Colors.white
+//                     : Colors.black)
+//                 .withValues(alpha: 0.05),
+//             blurRadius: 15,
+//             offset: const Offset(0, 8),
+//           ),
+//         ],
+//       ),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           Row(
+//             children: [
+//               Container(
+//                 padding: const EdgeInsets.all(12),
+//                 decoration: BoxDecoration(
+//                   color: AppDesign.primary.withOpacity(0.1),
+//                   shape: BoxShape.circle,
+//                 ),
+//                 child: const Icon(
+//                   Icons.account_circle_outlined,
+//                   color: AppDesign.primary,
+//                   size: 32,
+//                 ),
+//               ),
+//               const SizedBox(width: 16),
+//               Expanded(
+//                 child: Column(
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Text(
+//                       AppLocalizations.of(context)!.unlockFullAccess,
+//                       style: TextStyle(
+//                         fontSize: 18,
+//                         fontWeight: FontWeight.bold,
+//                         letterSpacing: -0.5,
+//                         color: AppDesign.getTextPrimary(context),
+//                       ),
+//                     ),
+//                     Text(
+//                       AppLocalizations.of(context)!.joinEliteCommunity,
+//                       style: TextStyle(
+//                         fontSize: 13,
+//                         color: AppDesign.getTextTertiary(context),
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ],
+//           ),
+//           const SizedBox(height: 24),
+//           Row(
+//             children: [
+//               Expanded(
+//                 child: SizedBox(
+//                   height: h,
+//                   child: ElevatedButton(
+//                     onPressed: () => context.push(AppConstants.routeLogin),
+//                     style: ElevatedButton.styleFrom(
+//                       backgroundColor: AppDesign.primary,
+//                       foregroundColor: Theme.of(context).colorScheme.onPrimary,
+//                       elevation: 0,
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(16),
+//                       ),
+//                     ),
+//                     child: Text(
+//                       AppLocalizations.of(context)!.loginNow,
+//                       style: const TextStyle(
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//               const SizedBox(width: 12),
+//               Expanded(
+//                 child: SizedBox(
+//                   height: h,
+//                   child: OutlinedButton(
+//                     onPressed: () => context.push(AppConstants.routeSignup),
+//                     style: OutlinedButton.styleFrom(
+//                       foregroundColor: AppDesign.getTextPrimary(context),
+//                       side: BorderSide(
+//                         color: AppDesign.getBorder(context),
+//                         width: 1.5,
+//                       ),
+//                       shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.circular(16),
+//                       ),
+//                     ),
+//                     child: Text(
+//                       AppLocalizations.of(context)!.register,
+//                       style: const TextStyle(
+//                         fontSize: 14,
+//                         fontWeight: FontWeight.bold,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//               ),
+//             ],
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }
 
 /// Live Auctions Preview Section
 class _LiveAuctionsPreview extends StatelessWidget {

@@ -4,11 +4,13 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/app_strings.dart';
+import '../../../core/guards/auth_guard_widget.dart';
 import '../../../core/shared_widgets/custom_card.dart';
 import '../../../core/shared_widgets/custom_button.dart';
 import '../../../core/background/app_background.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/wallet_model.dart';
 import '../controller/user_wallet_controller.dart';
@@ -87,21 +89,23 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
             ),
           ),
         ),
-        body: SafeArea(
-          child: Responsive.constrained(
-            RefreshIndicator(
-              onRefresh: () async {
-                await controller.loadWalletSummary();
-                await authState.refreshUser();
-              },
-              color: AppTheme.redPrimary,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Obx(() {
+        body: AuthGuardWidget(
+          actionDescription: AppLocalizations.of(context)!.loginToViewWallet,
+          child: SafeArea(
+            child: Responsive.constrained(
+              RefreshIndicator(
+                onRefresh: () async {
+                  await controller.loadWalletSummary();
+                  await authState.refreshUser();
+                },
+                color: AppTheme.redPrimary,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Obx(() {
                       final walletSummary = controller.walletSummary;
                       final isVerified = authState.isVerified;
                       final isLoadingSummary = controller.isLoadingSummary;
@@ -340,6 +344,7 @@ class _UserWalletScreenState extends State<UserWalletScreen> {
           ),
         ),
       ),
+        ),
     );
   }
 }

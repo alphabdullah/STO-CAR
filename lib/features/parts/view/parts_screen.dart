@@ -219,11 +219,7 @@ class PartsScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: Obx(
-        () => authState.isAuthenticated
-            ? const RoleBottomNav(currentIndex: 3)
-            : const SizedBox.shrink(),
-      ),
+      bottomNavigationBar: const RoleBottomNav(currentIndex: 3),
     );
   }
 

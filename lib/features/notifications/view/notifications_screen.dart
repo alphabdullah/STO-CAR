@@ -9,6 +9,7 @@ import '../../../state/notification_state.dart';
 import '../../../state/auth_state.dart';
 import '../../../models/notification_model.dart';
 import '../../../core/utils/responsive.dart';
+import '../../../core/shared_widgets/role_bottom_nav.dart';
 
 /// Notifications screen for logged-in users
 class NotificationsScreen extends StatelessWidget {
@@ -36,6 +37,7 @@ class NotificationsScreen extends StatelessWidget {
           ),
         ),
       ),
+      bottomNavigationBar: const RoleBottomNav(currentIndex: -1),
     );
   }
 }

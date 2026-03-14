@@ -87,6 +87,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
+  String get guest => 'Guest';
+
+  @override
   String get verifiedAccount => 'Verified Account';
 
   @override
@@ -444,6 +447,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginToViewBookings => 'Login to view and create bookings';
+
+  @override
+  String get loginToViewProfile => 'Please login to view your profile';
+
+  @override
+  String get loginToViewWallet => 'Please login to view your wallet';
+
+  @override
+  String get loginToViewPurchaseHistory =>
+      'Please login to view your purchase history';
+
+  @override
+  String get pleaseLoginToContinue => 'Please login to continue';
 
   @override
   String get noBookingsYet => 'No Bookings Yet';
@@ -1104,4 +1120,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSavedSuccessfully => 'Settings saved successfully';
+
+  @override
+  String get loginRequiredToViewCart => 'Login required to view cart';
+
+  @override
+  String get yourCartIsEmpty => 'Your cart is empty';
+
+  @override
+  String get continueShopping => 'Continue Shopping';
+
+  @override
+  String get checkout => 'Checkout';
+
+  @override
+  String get subtotal => 'Subtotal';
+
+  @override
+  String get enterShippingAddress => 'Enter shipping address';
+
+  @override
+  String get fullAddressHint => 'Full address, city, postal code';
+
+  @override
+  String get pleaseEnterShippingAddress => 'Please enter shipping address';
+
+  @override
+  String purchaseCompleteTotal(String amount) {
+    return 'Purchase complete! Total: $amount';
+  }
+
+  @override
+  String get confirmPurchase => 'Confirm Purchase';
 }

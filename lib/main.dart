@@ -47,6 +47,13 @@ void main() async {
   final storageService = StorageService();
   await storageService.init();
 
+  // Restore saved locale before creating LocaleState
+  final savedLocaleCode = storageService.getSelectedLocale();
+  final initialLocale = savedLocaleCode != null &&
+          (savedLocaleCode == 'en' || savedLocaleCode == 'ar')
+      ? Locale(savedLocaleCode)
+      : null;
+
   // Initialize state management
   Get.put(ThemeState());
   final authState = Get.put(AuthState());
@@ -56,7 +63,7 @@ void main() async {
   Get.put(PartsState());
   Get.put(BookingState());
   Get.put(AdminStatsState());
-  Get.put(LocaleState());
+  Get.put(LocaleState(initialLocale: initialLocale));
 
   try {
     await authState.autoLogin();

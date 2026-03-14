@@ -27,6 +27,7 @@
   "booking": "حجوزات الخدمة",
   "profile": "الملف الشخصي",
   "logout": "تسجيل الخروج",
+  "guest": "زائر",
 
   "verifiedAccount": "حساب موثق",
   "notVerified": "غير موثق",
@@ -159,6 +160,10 @@
   "bookingsCount": "{count} حجز",
   "@bookingsCount": { "placeholders": { "count": {} } },
   "loginToViewBookings": "سجّل الدخول لعرض وإنشاء الحجوزات",
+  "loginToViewProfile": "يرجى تسجيل الدخول لعرض ملفك الشخصي",
+  "loginToViewWallet": "يرجى تسجيل الدخول لعرض محفظتك",
+  "loginToViewPurchaseHistory": "يرجى تسجيل الدخول لعرض سجل المشتريات",
+  "pleaseLoginToContinue": "يرجى تسجيل الدخول للمتابعة",
   "noBookingsYet": "لا توجد حجوزات بعد",
   "bookFirstServiceAppointment": "احجز موعد الخدمة الأول",
   "viewDetails": "عرض التفاصيل",
@@ -395,5 +400,17 @@
   "webhookSecretLabel": "سر Webhook (whsec_...) - اختياري",
   "webhookSecretHint": "whsec_...",
   "saveSettings": "حفظ الإعدادات",
-  "settingsSavedSuccessfully": "تم حفظ الإعدادات بنجاح"
+  "settingsSavedSuccessfully": "تم حفظ الإعدادات بنجاح",
+
+  "loginRequiredToViewCart": "تسجيل الدخول مطلوب لعرض السلة",
+  "yourCartIsEmpty": "سلتك فارغة",
+  "continueShopping": "متابعة التسوق",
+  "checkout": "إتمام الطلب",
+  "subtotal": "المجموع الفرعي",
+  "enterShippingAddress": "أدخل عنوان الشحن",
+  "fullAddressHint": "العنوان الكامل، المدينة، الرمز البريدي",
+  "pleaseEnterShippingAddress": "يرجى إدخال عنوان الشحن",
+  "purchaseCompleteTotal": "تم الشراء بنجاح! الإجمالي: {amount}",
+  "@purchaseCompleteTotal": {"placeholders": {"amount": {"type": "String"}}},
+  "confirmPurchase": "تأكيد الشراء"
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/guards/auth_guard_widget.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../l10n/app_localizations.dart';
@@ -46,7 +47,9 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen> {
           ),
         ),
       ),
-      body: Obx(() {
+      body: AuthGuardWidget(
+        actionDescription: AppLocalizations.of(context)!.loginToViewPurchaseHistory,
+        child: Obx(() {
         if (partsState.isLoadingPurchases && partsState.purchaseHistory.isEmpty) {
           return Center(
             child: CircularProgressIndicator(
@@ -117,6 +120,7 @@ class _PurchaseHistoryScreenState extends State<PurchaseHistoryScreen> {
           ),
         );
       }),
+        ),
     );
   }
 }

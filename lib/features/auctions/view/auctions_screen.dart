@@ -41,7 +41,6 @@ class _AuctionsScreenState extends State<AuctionsScreen>
   @override
   Widget build(BuildContext context) {
     final auctionState = Get.find<AuctionState>();
-    final authState = Get.find<AuthState>();
     final controller = Get.find<AuctionController>();
 
     // Load auctions from API only if not already loaded
@@ -95,11 +94,7 @@ class _AuctionsScreenState extends State<AuctionsScreen>
           ),
         ),
       ),
-      bottomNavigationBar: Obx(
-        () => authState.isAuthenticated
-            ? const RoleBottomNav(currentIndex: 2)
-            : const SizedBox.shrink(),
-      ),
+      bottomNavigationBar: const RoleBottomNav(currentIndex: 2),
     );
   }
 }

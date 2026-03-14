@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_constants.dart';
 import 'package:sto_car_app/l10n/app_localizations.dart';
+import '../../../core/guards/auth_guard_widget.dart';
 import '../../../core/shared_widgets/role_bottom_nav.dart';
 import '../../../core/theme/app_design_system.dart';
 import '../../../core/theme/app_theme.dart';
@@ -28,19 +29,21 @@ class UserProfileScreen extends StatelessWidget {
         automaticallyImplyLeading: false,
         iconTheme: IconThemeData(color: AppDesign.getTextPrimary(context)),
       ),
-      body: SafeArea(
-        child: Responsive.constrained(
-          RefreshIndicator(
-            onRefresh: () async {
-              await authState.refreshUser();
-            },
-            color: AppTheme.redPrimary,
-            child: SingleChildScrollView(
-              physics:
-                  const AlwaysScrollableScrollPhysics(), // Enable pull-to-refresh even when content is short
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
+      body: AuthGuardWidget(
+        actionDescription: AppLocalizations.of(context)!.loginToViewProfile,
+        child: SafeArea(
+          child: Responsive.constrained(
+            RefreshIndicator(
+              onRefresh: () async {
+                await authState.refreshUser();
+              },
+              color: AppTheme.redPrimary,
+              child: SingleChildScrollView(
+                physics:
+                    const AlwaysScrollableScrollPhysics(), // Enable pull-to-refresh even when content is short
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
                   // Header Section with Gradient
                   Obx(() {
                     final user = authState.currentUser;
@@ -405,6 +408,7 @@ class UserProfileScreen extends StatelessWidget {
           ),
         ),
       ),
+        ),
       bottomNavigationBar: const RoleBottomNav(currentIndex: 4),
     );
   }

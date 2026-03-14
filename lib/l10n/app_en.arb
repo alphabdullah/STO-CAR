@@ -27,6 +27,7 @@
   "booking": "Service Booking",
   "profile": "Profile",
   "logout": "Logout",
+  "guest": "Guest",
 
   "verifiedAccount": "Verified Account",
   "notVerified": "Not Verified",
@@ -159,6 +160,10 @@
   "bookingsCount": "{count} bookings",
   "@bookingsCount": { "placeholders": { "count": {} } },
   "loginToViewBookings": "Login to view and create bookings",
+  "loginToViewProfile": "Please login to view your profile",
+  "loginToViewWallet": "Please login to view your wallet",
+  "loginToViewPurchaseHistory": "Please login to view your purchase history",
+  "pleaseLoginToContinue": "Please login to continue",
   "noBookingsYet": "No Bookings Yet",
   "bookFirstServiceAppointment": "Book your first service appointment",
   "viewDetails": "View Details",
@@ -395,5 +400,17 @@
   "webhookSecretLabel": "Webhook Secret (whsec_...) - Optional",
   "webhookSecretHint": "whsec_...",
   "saveSettings": "Save Settings",
-  "settingsSavedSuccessfully": "Settings saved successfully"
+  "settingsSavedSuccessfully": "Settings saved successfully",
+
+  "loginRequiredToViewCart": "Login required to view cart",
+  "yourCartIsEmpty": "Your cart is empty",
+  "continueShopping": "Continue Shopping",
+  "checkout": "Checkout",
+  "subtotal": "Subtotal",
+  "enterShippingAddress": "Enter shipping address",
+  "fullAddressHint": "Full address, city, postal code",
+  "pleaseEnterShippingAddress": "Please enter shipping address",
+  "purchaseCompleteTotal": "Purchase complete! Total: {amount}",
+  "@purchaseCompleteTotal": {"placeholders": {"amount": {"type": "String"}}},
+  "confirmPurchase": "Confirm Purchase"
 }

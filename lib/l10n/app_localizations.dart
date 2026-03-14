@@ -254,6 +254,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// No description provided for @guest.
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
   /// No description provided for @verifiedAccount.
   ///
   /// In en, this message translates to:
@@ -913,6 +919,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Login to view and create bookings'**
   String get loginToViewBookings;
+
+  /// No description provided for @loginToViewProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to view your profile'**
+  String get loginToViewProfile;
+
+  /// No description provided for @loginToViewWallet.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to view your wallet'**
+  String get loginToViewWallet;
+
+  /// No description provided for @loginToViewPurchaseHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to view your purchase history'**
+  String get loginToViewPurchaseHistory;
+
+  /// No description provided for @pleaseLoginToContinue.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to continue'**
+  String get pleaseLoginToContinue;
 
   /// No description provided for @noBookingsYet.
   ///
@@ -2179,6 +2209,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Settings saved successfully'**
   String get settingsSavedSuccessfully;
+
+  /// No description provided for @loginRequiredToViewCart.
+  ///
+  /// In en, this message translates to:
+  /// **'Login required to view cart'**
+  String get loginRequiredToViewCart;
+
+  /// No description provided for @yourCartIsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your cart is empty'**
+  String get yourCartIsEmpty;
+
+  /// No description provided for @continueShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Shopping'**
+  String get continueShopping;
+
+  /// No description provided for @checkout.
+  ///
+  /// In en, this message translates to:
+  /// **'Checkout'**
+  String get checkout;
+
+  /// No description provided for @subtotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtotal'**
+  String get subtotal;
+
+  /// No description provided for @enterShippingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter shipping address'**
+  String get enterShippingAddress;
+
+  /// No description provided for @fullAddressHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Full address, city, postal code'**
+  String get fullAddressHint;
+
+  /// No description provided for @pleaseEnterShippingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter shipping address'**
+  String get pleaseEnterShippingAddress;
+
+  /// No description provided for @purchaseCompleteTotal.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase complete! Total: {amount}'**
+  String purchaseCompleteTotal(String amount);
+
+  /// No description provided for @confirmPurchase.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Purchase'**
+  String get confirmPurchase;
 }
 
 class _AppLocalizationsDelegate
