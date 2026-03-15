@@ -379,7 +379,7 @@ class _DrawerHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Logo - Centered and prominent
+              // Profile icon - Centered and prominent
               Center(
                 child: Container(
                   width: 100,
@@ -398,30 +398,10 @@ class _DrawerHeader extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: ClipOval(
-                    child: Image.asset(
-                      'assets/images/rwlogo.png',
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container(
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                AppTheme.redPrimary,
-                                AppTheme.redPressed,
-                              ],
-                            ),
-                          ),
-                          child: Icon(
-                            Icons.directions_car,
-                            color: Theme.of(context).colorScheme.onPrimary,
-                            size: 50,
-                          ),
-                        );
-                      },
-                    ),
+                  child: Icon(
+                    Icons.person_rounded,
+                    size: 56,
+                    color: AppTheme.redPrimary,
                   ),
                 ),
               ),

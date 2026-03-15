@@ -98,12 +98,12 @@ class UserProfileScreen extends StatelessWidget {
                                     margin: const EdgeInsets.all(4),
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: AppTheme.bgSecondary,
+                                      color: AppDesign.getBgSecondary(context),
                                     ),
                                     child: Icon(
                                       Icons.person_rounded,
                                       size: 60,
-                                      color: AppTheme.redPrimary,
+                                      color: AppDesign.getTextPrimary(context),
                                     ),
                                   ),
                                 ),
@@ -119,7 +119,7 @@ class UserProfileScreen extends StatelessWidget {
                                           ? AppTheme.success
                                           : AppTheme.warning,
                                       border: Border.all(
-                                        color: AppTheme.bgSecondary,
+                                        color: AppDesign.getBgSecondary(context),
                                         width: 3,
                                       ),
                                       boxShadow: [
@@ -137,7 +137,7 @@ class UserProfileScreen extends StatelessWidget {
                                           ? Icons.verified_rounded
                                           : Icons.warning_rounded,
                                       size: 20,
-                                      color: AppTheme.textPrimary,
+                                      color: AppDesign.getTextPrimary(context),
                                     ),
                                   ),
                                 ),
@@ -151,7 +151,7 @@ class UserProfileScreen extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 28,
                                 fontWeight: FontWeight.bold,
-                                color: AppTheme.textPrimary,
+                                color: AppDesign.getTextPrimary(context),
                                 fontFamily: AppTheme.fontFamily,
                                 letterSpacing: -0.5,
                               ),

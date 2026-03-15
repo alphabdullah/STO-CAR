@@ -1409,7 +1409,7 @@ abstract class AppLocalizations {
   /// No description provided for @chartLabelPendingB.
   ///
   /// In en, this message translates to:
-  /// **'Pending B'**
+  /// **'Pending Bookings'**
   String get chartLabelPendingB;
 
   /// No description provided for @chartLabelUsers.

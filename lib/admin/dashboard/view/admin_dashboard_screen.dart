@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -1144,20 +1145,28 @@ class _StatsBarChart extends StatelessWidget {
                         if (value.toInt() >= 0 && value.toInt() < chartLabels.length) {
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              chartLabels[value.toInt()],
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 9 : 11,
-                                color: AppDesign.getTextSecondary(context),
-                                fontFamily: AppTheme.fontFamily,
+                            child: Transform.rotate(
+                              angle: -math.pi / 4,
+                              child: SizedBox(
+                                width: isSmallScreen ? 56 : 72,
+                                child: Text(
+                                  chartLabels[value.toInt()],
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 8 : 10,
+                                    color: AppDesign.getTextSecondary(context),
+                                    fontFamily: AppTheme.fontFamily,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
                             ),
                           );
                         }
                         return const Text('');
                       },
-                      reservedSize: isSmallScreen ? 30 : 40,
+                      reservedSize: isSmallScreen ? 52 : 64,
                     ),
                   ),
                   leftTitles: AxisTitles(
@@ -1558,22 +1567,28 @@ class _StatsLineChart extends StatelessWidget {
                               chartData[value.toInt()]['label'] as String;
                           return Padding(
                             padding: const EdgeInsets.only(top: 8),
-                            child: Text(
-                              label,
-                              style: TextStyle(
-                                fontSize: isSmallScreen ? 9 : 11,
-                                color: AppDesign.getTextSecondary(context),
-                                fontFamily: AppTheme.fontFamily,
+                            child: Transform.rotate(
+                              angle: -math.pi / 4,
+                              child: SizedBox(
+                                width: isSmallScreen ? 56 : 72,
+                                child: Text(
+                                  label,
+                                  style: TextStyle(
+                                    fontSize: isSmallScreen ? 8 : 10,
+                                    color: AppDesign.getTextSecondary(context),
+                                    fontFamily: AppTheme.fontFamily,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                ),
                               ),
-                              textAlign: TextAlign.center,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
                             ),
                           );
                         }
                         return const Text('');
                       },
-                      reservedSize: isSmallScreen ? 30 : 40,
+                      reservedSize: isSmallScreen ? 52 : 64,
                     ),
                   ),
                   leftTitles: AxisTitles(

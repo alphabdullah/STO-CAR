@@ -697,7 +697,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get chartLabelBookings => 'Bookings';
 
   @override
-  String get chartLabelPendingB => 'Pending B';
+  String get chartLabelPendingB => 'Pending Bookings';
 
   @override
   String get chartLabelUsers => 'Users';

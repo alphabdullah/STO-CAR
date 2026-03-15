@@ -175,7 +175,9 @@ class SignupScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/images/rwlogo.png',
+                    Theme.of(context).brightness == Brightness.dark
+                        ? 'assets/logos/black_logo.png'
+                        : 'assets/logos/white_logo.png',
                     width: iconSize,
                     height: iconSize,
                     fit: BoxFit.contain,
