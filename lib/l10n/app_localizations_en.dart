@@ -874,6 +874,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get model => 'Model';
 
   @override
+  String get year => 'Year';
+
+  @override
+  String get photos => 'Photos';
+
+  @override
   String get contactInfo => 'Contact Info';
 
   @override

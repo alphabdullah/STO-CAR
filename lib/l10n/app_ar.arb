@@ -306,6 +306,8 @@
   "vehicleDetails": "تفاصيل المركبة",
   "car": "السيارة",
   "model": "الموديل",
+  "year": "السنة",
+  "photos": "الصور",
   "contactInfo": "معلومات الاتصال",
   "descriptionNotes": "الوصف/الملاحظات",
   "adminNotes": "ملاحظات المسؤول",

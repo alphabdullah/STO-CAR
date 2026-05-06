@@ -29,11 +29,9 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    // Clear previous selected auction
     final auctionState = Get.find<AuctionState>();
-    auctionState.selectAuction(''); // Clear selection
-
-    // Load auction details on first build
+    // Load auction details after first frame to avoid mutating GetX state
+    // while router/build tree is still assembling.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!_hasLoadedDetails) {
         _hasLoadedDetails = true;
@@ -44,9 +42,11 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
 
   @override
   void dispose() {
-    // Clear selected auction when leaving screen
+    // Defer clear to next frame to avoid "widget tree was locked" errors.
     final auctionState = Get.find<AuctionState>();
-    auctionState.selectAuction('');
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      auctionState.selectAuction('');
+    });
     super.dispose();
   }
 
@@ -261,53 +261,53 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
                                     ),
                                     SizedBox(height: isTablet ? 28 : 24),
 
-                                    // Description
-                                    if (currentAuction
-                                        .description
-                                        .isNotEmpty) ...[
-                                      Text(
-                                        AppLocalizations.of(context)!.description,
-                                        style: TextStyle(
-                                          fontSize: isTablet
-                                              ? 22
-                                              : isLargeMobile
-                                              ? 20
-                                              : 18,
-                                          fontWeight: FontWeight.bold,
-                                          color: AppDesign.getTextPrimary(context),
-                                          fontFamily: AppTheme.fontFamily,
-                                        ),
-                                      ),
-                                      SizedBox(height: isTablet ? 16 : 12),
-                                      Container(
-                                        padding: EdgeInsets.all(
-                                          isTablet ? 20 : 16,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: AppDesign.getBgSecondary(context),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                          border: Border.all(
-                                            color: AppDesign.getBorder(context),
-                                          ),
-                                        ),
-                                        child: Text(
-                                          currentAuction.description,
-                                          style: TextStyle(
-                                            fontSize: isTablet
-                                                ? 16
-                                                : isLargeMobile
-                                                ? 15
-                                                : 14,
-                                            color: AppDesign.getTextSecondary(context),
-                                            height: 1.6,
-                                            fontFamily: AppTheme.fontFamily,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: isTablet ? 28 : 24),
-                                    ],
+                                    // // Description
+                                    // if (currentAuction
+                                    //     .description
+                                    //     .isNotEmpty) ...[
+                                    //   Text(
+                                    //     AppLocalizations.of(context)!.description,
+                                    //     style: TextStyle(
+                                    //       fontSize: isTablet
+                                    //           ? 22
+                                    //           : isLargeMobile
+                                    //           ? 20
+                                    //           : 18,
+                                    //       fontWeight: FontWeight.bold,
+                                    //       color: AppDesign.getTextPrimary(context),
+                                    //       fontFamily: AppTheme.fontFamily,
+                                    //     ),
+                                    //   ),
+                                    //   SizedBox(height: isTablet ? 16 : 12),
+                                    //   Container(
+                                    //     padding: EdgeInsets.all(
+                                    //       isTablet ? 20 : 16,
+                                    //     ),
+                                    //     decoration: BoxDecoration(
+                                    //       color: AppDesign.getBgSecondary(context),
+                                    //       borderRadius: BorderRadius.circular(
+                                    //         12,
+                                    //       ),
+                                    //       border: Border.all(
+                                    //         color: AppDesign.getBorder(context),
+                                    //       ),
+                                    //     ),
+                                    //     child: Text(
+                                    //       currentAuction.description,
+                                    //       style: TextStyle(
+                                    //         fontSize: isTablet
+                                    //             ? 16
+                                    //             : isLargeMobile
+                                    //             ? 15
+                                    //             : 14,
+                                    //         color: AppDesign.getTextSecondary(context),
+                                    //         height: 1.6,
+                                    //         fontFamily: AppTheme.fontFamily,
+                                    //       ),
+                                    //     ),
+                                    //   ),
+                                    //   SizedBox(height: isTablet ? 28 : 24),
+                                    // ],
 
                                     // Stats Grid
                                     _buildStatsGrid(
@@ -389,34 +389,41 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
           PageView.builder(
             itemCount: images.length,
             onPageChanged: (index) {
-              setState(() {
-                _currentImageIndex = index;
+              if (_currentImageIndex == index) return;
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (!mounted) return;
+                setState(() {
+                  _currentImageIndex = index;
+                });
               });
             },
             itemBuilder: (context, index) {
-              return Image.network(
-                images[index],
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _buildImagePlaceholder(context, auction, height: imageHeight),
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                    color: AppDesign.getBgSecondary(context),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                            : null,
-                        strokeWidth: 3,
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppTheme.redPrimary,
+              return GestureDetector(
+                onTap: () => _openImagePreview(context, images, index),
+                child: Image.network(
+                  images[index],
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) =>
+                      _buildImagePlaceholder(context, auction, height: imageHeight),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      color: AppDesign.getBgSecondary(context),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                              : null,
+                          strokeWidth: 3,
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                            AppTheme.redPrimary,
+                          ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               );
             },
           ),
@@ -486,6 +493,21 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  void _openImagePreview(
+    BuildContext context,
+    List<String> images,
+    int initialIndex,
+  ) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => _AuctionImagePreviewScreen(
+          images: images,
+          initialIndex: initialIndex,
+        ),
       ),
     );
   }
@@ -597,6 +619,34 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
 
     return Column(
       children: [
+        Row(
+          children: [
+            Expanded(
+              child: _buildStatCard(
+                context,
+                icon: Icons.confirmation_number_outlined,
+                label: AppLocalizations.of(context)!.lotNumber(auction.id),
+                value: '#${auction.id}',
+                isTablet: isTablet,
+                isLargeMobile: isLargeMobile,
+                isMediumMobile: isMediumMobile,
+              ),
+            ),
+            SizedBox(width: spacing),
+            Expanded(
+              child: _buildStatCard(
+                context,
+                icon: Icons.calendar_today_rounded,
+                label: 'Year',
+                value: auction.carYear.toString(),
+                isTablet: isTablet,
+                isLargeMobile: isLargeMobile,
+                isMediumMobile: isMediumMobile,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: spacing),
         Row(
           children: [
             Expanded(
@@ -1067,5 +1117,95 @@ class _AuctionDetailsScreenState extends State<AuctionDetailsScreen> {
         ),
       );
     });
+  }
+}
+
+class _AuctionImagePreviewScreen extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const _AuctionImagePreviewScreen({
+    required this.images,
+    required this.initialIndex,
+  });
+
+  @override
+  State<_AuctionImagePreviewScreen> createState() =>
+      _AuctionImagePreviewScreenState();
+}
+
+class _AuctionImagePreviewScreenState extends State<_AuctionImagePreviewScreen> {
+  late final PageController _pageController;
+  late int _activeIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _activeIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black.withValues(alpha: 0.7),
+        elevation: 0,
+        leading: IconButton(
+          onPressed: () => Navigator.of(context).pop(),
+          icon: const Icon(Icons.close_rounded, color: Colors.white),
+        ),
+        title: Text(
+          '${_activeIndex + 1} / ${widget.images.length}',
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      body: PageView.builder(
+        controller: _pageController,
+        itemCount: widget.images.length,
+        onPageChanged: (index) {
+          setState(() {
+            _activeIndex = index;
+          });
+        },
+        itemBuilder: (context, index) {
+          return InteractiveViewer(
+            minScale: 1.0,
+            maxScale: 4.0,
+            child: Center(
+              child: Image.network(
+                widget.images[index],
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) => const Icon(
+                  Icons.broken_image_outlined,
+                  color: Colors.white70,
+                  size: 72,
+                ),
+                loadingBuilder: (context, child, progress) {
+                  if (progress == null) return child;
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        AppTheme.redPrimary,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          );
+        },
+      ),
+    );
   }
 }

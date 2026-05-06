@@ -861,6 +861,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get model => 'الموديل';
 
   @override
+  String get year => 'السنة';
+
+  @override
+  String get photos => 'الصور';
+
+  @override
   String get contactInfo => 'معلومات الاتصال';
 
   @override

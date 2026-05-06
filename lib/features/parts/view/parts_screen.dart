@@ -219,6 +219,13 @@ class PartsScreen extends StatelessWidget {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.push(AppConstants.routeCart),
+        backgroundColor: AppTheme.redPrimary,
+        foregroundColor: Colors.white,
+        tooltip: AppLocalizations.of(context)!.cart,
+        child: const Icon(Icons.shopping_cart_rounded),
+      ),
       bottomNavigationBar: const RoleBottomNav(currentIndex: 3),
     );
   }
@@ -641,7 +648,7 @@ class _PartGridCard extends StatelessWidget {
                         padding: const EdgeInsets.all(12),
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            final isCompact = constraints.maxHeight <= 110;
+                            final isCompact = constraints.maxHeight <= 125;
 
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -699,17 +706,19 @@ class _PartGridCard extends StatelessWidget {
                                   maxLines: isCompact ? 1 : 2,
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                                SizedBox(height: isCompact ? 2 : 4),
-                                Text(
-                                  part.brand ?? part.companyName,
-                                  style: TextStyle(
-                                    fontSize: isCompact ? 10 : 11,
-                                    color: AppDesign.getTextSecondary(context),
-                                    fontWeight: FontWeight.w500,
+                                if (!isCompact) ...[
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    part.brand ?? part.companyName,
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: AppDesign.getTextSecondary(context),
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                                ],
                                 if (!isCompact &&
                                     (part.partNumber != null ||
                                         part.oemNumber != null))

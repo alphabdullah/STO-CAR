@@ -1748,6 +1748,18 @@ abstract class AppLocalizations {
   /// **'Model'**
   String get model;
 
+  /// No description provided for @year.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get year;
+
+  /// No description provided for @photos.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos'**
+  String get photos;
+
   /// No description provided for @contactInfo.
   ///
   /// In en, this message translates to:

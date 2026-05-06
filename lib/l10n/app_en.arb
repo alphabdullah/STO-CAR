@@ -306,6 +306,8 @@
   "vehicleDetails": "Vehicle Details",
   "car": "Car",
   "model": "Model",
+  "year": "Year",
+  "photos": "Photos",
   "contactInfo": "Contact Info",
   "descriptionNotes": "Description/Notes",
   "adminNotes": "Admin Notes",
